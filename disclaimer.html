@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="it" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUREA — Disclaimer</title>
+<style>
+  :root{
+    --bg: #10141b; --panel: #161c26; --panel-2: #1c2330; --line: #2a3242;
+    --ink: #e8e6df; --ink-dim: #9aa3b2; --ink-faint: #6c7686;
+    --gold: #c9a24b; --gold-dim: #8a7238; --bond: #6f8fae; --stock: #6fa88a;
+    --serif: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  body{ margin:0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height:1.6; padding: 40px 20px 90px; }
+  .wrap{ max-width: 780px; margin: 0 auto; }
+  .topbar{ flex-wrap:wrap; gap:12px; display:flex; justify-content: space-between; align-items:center; margin-bottom: 22px; }
+  .pagenav{ display:flex; gap:16px; flex-wrap:wrap; }
+  .pagenav a{ color: var(--ink-dim); font-size:13px; text-decoration:none; padding-bottom:2px; border-bottom:1px solid transparent; white-space:nowrap; }
+  .pagenav a:hover{ color: var(--ink); }
+  .pagenav a.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .topbar-right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .donate-btn{ font-size:12px; color:#231a06; background: var(--gold); padding:6px 12px; border-radius:3px; text-decoration:none; font-family: var(--sans); white-space:nowrap; }
+  .donate-btn:hover{ background:#d9b45f; }
+  .langtoggle{ display:flex; gap: 6px; }
+  .langtoggle button{ background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-dim); font-size: 12px; padding: 5px 10px; border-radius: 3px; cursor:pointer; font-family: var(--sans); }
+  .langtoggle button.active{ color: var(--gold); border-color: var(--gold-dim); }
+
+  header{ margin-bottom: 30px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
+  header .kicker{ font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; }
+  header h1{ font-family: var(--serif); font-weight: 400; font-size: 28px; margin: 0 0 10px; }
+  header p{ color: var(--ink-dim); margin:0; font-size: 14px; }
+
+  section{ margin-bottom: 26px; }
+  section h2{ font-family: var(--serif); font-weight: 400; font-size: 18px; margin: 0 0 8px; color: var(--ink); }
+  section p{ font-size: 14px; color: var(--ink-dim); margin: 0 0 10px; }
+  section p b{ color: var(--ink); }
+
+  .box{ background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--gold-dim); border-radius: 0 4px 4px 0; padding: 16px 18px; margin: 16px 0; }
+  .box p{ margin: 0; }
+
+  footer{ margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-faint); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <nav class="pagenav">
+      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">Calcolatore</a>
+      <a href="metodologia.html" class="navitem" data-file="metodologia.html" data-i18n="nav.method">Metodologia</a>
+      <a href="lazy-portfolio.html" class="navitem" data-file="lazy-portfolio.html" data-i18n="nav.lazy">Lazy Portfolio</a>
+      <a href="bibliografia.html" class="navitem" data-file="bibliografia.html" data-i18n="nav.biblio">Bibliografia</a>
+      <a href="disclaimer.html" class="navitem" data-file="disclaimer.html" data-i18n="nav.disclaimer">Disclaimer</a>
+    </nav>
+    <div class="topbar-right">
+      <a class="donate-btn" href="https://www.paypal.com/donate?business=spawnguz%40gmail.com&currency_code=EUR" target="_blank" rel="noopener" data-i18n="nav.donate">☕ Sostieni il progetto</a>
+      <div class="langtoggle">
+        <button id="lang-it" class="active">IT</button>
+        <button id="lang-en">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="kicker" data-i18n="kicker">Note legali</div>
+    <h1 data-i18n="title">Disclaimer</h1>
+    <p data-i18n="subtitle">Leggi con attenzione prima di usare il calcolatore o qualsiasi contenuto di questo sito.</p>
+  </header>
+
+  <section>
+    <div class="box">
+      <p data-i18n="main"><b>AUREA è uno strumento educativo e sperimentale, non un servizio di consulenza finanziaria.</b> Nessun contenuto di questo sito — il calcolatore, le pagine di metodologia, bibliografia o lazy portfolio — costituisce una raccomandazione di investimento, una sollecitazione all'acquisto o alla vendita di strumenti finanziari, o una consulenza personalizzata ai sensi delle normative vigenti (in Italia, ad esempio, il TUF e la disciplina CONSOB sulla consulenza in materia di investimenti).</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="s1.h">Nessuna responsabilità per le decisioni di investimento</h2>
+    <p data-i18n="s1.p1">L'autore di questo sito declina ogni responsabilità per perdite, mancati guadagni, danni diretti o indiretti derivanti dall'uso — proprio o improprio — del calcolatore o delle informazioni qui contenute. Ogni decisione di investimento resta interamente ed esclusivamente a carico di chi la prende. Utilizzando questo sito accetti che le scelte relative al tuo patrimonio sono tue e solo tue.</p>
+    <p data-i18n="s1.p2">I mercati finanziari comportano un rischio di perdita, anche totale, del capitale investito. I rendimenti passati — inclusi quelli impliciti in qualunque backtest o simulazione citati in queste pagine — non sono garanzia di rendimenti futuri.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="s2.h">Natura delle ipotesi del modello</h2>
+    <p data-i18n="s2.p1">Il calcolatore applica formule (regola di Merton, un reverse glide path calibrato su letteratura accademica ed empirica, un aggiustamento TINA, un composite score per l'oro) basate su ipotesi semplificative, parametri di calibrazione scelti dall'autore e dati storici che non garantiscono risultati futuri. Piccole variazioni negli input o nelle calibrazioni possono produrre output molto diversi. Il modello non conosce la tua situazione fiscale, previdenziale, assicurativa, familiare o patrimoniale completa.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="s3.h">Nessuna verifica indipendente</h2>
+    <p data-i18n="s3.p1">Il codice, le formule e i riferimenti bibliografici non sono stati sottoposti a revisione paritaria (peer review) né certificati da un ente terzo. Possono contenere errori. Se noti un problema, segnalalo: la trasparenza del codice sorgente (visibile nel browser) è intenzionale, proprio per permetterti di verificare autonomamente ogni calcolo prima di fidartene.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="s4.h">Rivolgiti a un professionista</h2>
+    <p data-i18n="s4.p1">Per decisioni che riguardano il tuo patrimonio, la tua pensione o la tua situazione fiscale, consulta un consulente finanziario indipendente iscritto all'Albo OCF (o l'equivalente nel tuo paese), un commercialista o un consulente previdenziale. Nessun contenuto di questo sito sostituisce quel tipo di consulenza qualificata e personalizzata.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="s5.h">Donazioni</h2>
+    <p data-i18n="s5.p1">Il pulsante "Sostieni il progetto" rimanda a un link di donazione PayPal volontaria verso l'indirizzo email dell'autore. Una donazione è un gesto di sostegno libero e non rimborsabile: non costituisce pagamento per un servizio di consulenza, non crea alcun rapporto professionale o fiduciario, e non dà diritto a raccomandazioni personalizzate.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="s6.h">Privacy e dati</h2>
+    <p data-i18n="s6.p1">Il calcolatore gira interamente nel tuo browser: gli input che inserisci (età, tassi, inflazione, ecc.) non vengono inviati a nessun server e non sono salvati da questo sito.</p>
+  </section>
+
+  <footer data-i18n="footer">Ultimo aggiornamento di questa pagina: consulta la cronologia del file per la data. Continuando a usare il sito accetti questi termini.</footer>
+
+</div>
+
+<script>
+let LANG = 'it';
+const TR = {
+  it: {
+    "nav.home": "Calcolatore", "nav.method": "Metodologia", "nav.lazy": "Lazy Portfolio", "nav.biblio": "Bibliografia", "nav.disclaimer": "Disclaimer",
+    "nav.donate": "\u2615 Sostieni il progetto",
+    "kicker": "Note legali",
+    "title": "Disclaimer",
+    "subtitle": "Leggi con attenzione prima di usare il calcolatore o qualsiasi contenuto di questo sito.",
+    "main": "<b>AUREA è uno strumento educativo e sperimentale, non un servizio di consulenza finanziaria.</b> Nessun contenuto di questo sito — il calcolatore, le pagine di metodologia, bibliografia o lazy portfolio — costituisce una raccomandazione di investimento, una sollecitazione all'acquisto o alla vendita di strumenti finanziari, o una consulenza personalizzata ai sensi delle normative vigenti (in Italia, ad esempio, il TUF e la disciplina CONSOB sulla consulenza in materia di investimenti).",
+    "s1.h": "Nessuna responsabilità per le decisioni di investimento",
+    "s1.p1": "L'autore di questo sito declina ogni responsabilità per perdite, mancati guadagni, danni diretti o indiretti derivanti dall'uso — proprio o improprio — del calcolatore o delle informazioni qui contenute. Ogni decisione di investimento resta interamente ed esclusivamente a carico di chi la prende. Utilizzando questo sito accetti che le scelte relative al tuo patrimonio sono tue e solo tue.",
+    "s1.p2": "I mercati finanziari comportano un rischio di perdita, anche totale, del capitale investito. I rendimenti passati — inclusi quelli impliciti in qualunque backtest o simulazione citati in queste pagine — non sono garanzia di rendimenti futuri.",
+    "s2.h": "Natura delle ipotesi del modello",
+    "s2.p1": "Il calcolatore applica formule (regola di Merton, un reverse glide path calibrato su letteratura accademica ed empirica, un aggiustamento TINA, un composite score per l'oro) basate su ipotesi semplificative, parametri di calibrazione scelti dall'autore e dati storici che non garantiscono risultati futuri. Piccole variazioni negli input o nelle calibrazioni possono produrre output molto diversi. Il modello non conosce la tua situazione fiscale, previdenziale, assicurativa, familiare o patrimoniale completa.",
+    "s3.h": "Nessuna verifica indipendente",
+    "s3.p1": "Il codice, le formule e i riferimenti bibliografici non sono stati sottoposti a revisione paritaria (peer review) né certificati da un ente terzo. Possono contenere errori. Se noti un problema, segnalalo: la trasparenza del codice sorgente (visibile nel browser) è intenzionale, proprio per permetterti di verificare autonomamente ogni calcolo prima di fidartene.",
+    "s4.h": "Rivolgiti a un professionista",
+    "s4.p1": "Per decisioni che riguardano il tuo patrimonio, la tua pensione o la tua situazione fiscale, consulta un consulente finanziario indipendente iscritto all'Albo OCF (o l'equivalente nel tuo paese), un commercialista o un consulente previdenziale. Nessun contenuto di questo sito sostituisce quel tipo di consulenza qualificata e personalizzata.",
+    "s5.h": "Donazioni",
+    "s5.p1": "Il pulsante \u201cSostieni il progetto\u201d rimanda a un link di donazione PayPal volontaria verso l'indirizzo email dell'autore. Una donazione è un gesto di sostegno libero e non rimborsabile: non costituisce pagamento per un servizio di consulenza, non crea alcun rapporto professionale o fiduciario, e non dà diritto a raccomandazioni personalizzate.",
+    "s6.h": "Privacy e dati",
+    "s6.p1": "Il calcolatore gira interamente nel tuo browser: gli input che inserisci (età, tassi, inflazione, ecc.) non vengono inviati a nessun server e non sono salvati da questo sito.",
+    "footer": "Ultimo aggiornamento di questa pagina: consulta la cronologia del file per la data. Continuando a usare il sito accetti questi termini.",
+  },
+  en: {
+    "nav.home": "Calculator", "nav.method": "Methodology", "nav.lazy": "Lazy Portfolio", "nav.biblio": "Bibliography", "nav.disclaimer": "Disclaimer",
+    "nav.donate": "\u2615 Support this project",
+    "kicker": "Legal notice",
+    "title": "Disclaimer",
+    "subtitle": "Read carefully before using the calculator or any content on this site.",
+    "main": "<b>AUREA is an educational, experimental tool, not a financial advisory service.</b> No content on this site — the calculator, the methodology, bibliography, or lazy portfolio pages — constitutes investment advice, a solicitation to buy or sell financial instruments, or personalized advice under applicable regulations.",
+    "s1.h": "No liability for investment decisions",
+    "s1.p1": "The author of this site disclaims all liability for losses, lost profits, or direct or indirect damages arising from the use — proper or improper — of the calculator or the information contained here. Every investment decision remains entirely and exclusively the responsibility of the person making it. By using this site you accept that decisions about your own wealth are yours and yours alone.",
+    "s1.p2": "Financial markets carry a risk of loss, including total loss, of invested capital. Past returns — including any implied by backtests or simulations cited in these pages — are no guarantee of future returns.",
+    "s2.h": "Nature of the model's assumptions",
+    "s2.p1": "The calculator applies formulas (the Merton rule, a reverse glide path calibrated on academic and empirical literature, a TINA adjustment, a gold composite score) built on simplifying assumptions, calibration parameters chosen by the author, and historical data that do not guarantee future results. Small changes in inputs or calibrations can produce very different outputs. The model does not know your complete tax, pension, insurance, family, or wealth situation.",
+    "s3.h": "No independent verification",
+    "s3.p1": "The code, formulas, and bibliographic references have not undergone peer review or third-party certification. They may contain errors. If you notice a problem, please flag it: the transparency of the source code (visible in your browser) is intentional, precisely so you can independently verify every calculation before trusting it.",
+    "s4.h": "Consult a professional",
+    "s4.p1": "For decisions affecting your wealth, your pension, or your tax situation, consult an independent licensed financial advisor, an accountant, or a retirement planning professional. No content on this site replaces that kind of qualified, personalized advice.",
+    "s5.h": "Donations",
+    "s5.p1": "The \u201cSupport this project\u201d button links to a voluntary PayPal donation to the author's email address. A donation is a free, non-refundable gesture of support: it does not constitute payment for an advisory service, does not create any professional or fiduciary relationship, and does not entitle you to personalized recommendations.",
+    "s6.h": "Privacy and data",
+    "s6.p1": "The calculator runs entirely in your browser: the inputs you enter (age, rates, inflation, etc.) are never sent to any server and are not stored by this site.",
+    "footer": "Last updated: see the file's revision history for the date. By continuing to use the site you accept these terms.",
+  }
+};
+
+function updateNav(){
+  const current = (window.location.pathname.split('/').pop() || 'index.html');
+  document.querySelectorAll('.navitem').forEach(a => {
+    const base = a.getAttribute('data-file');
+    a.href = base + '?lang=' + LANG;
+    a.classList.toggle('active', base === current);
+  });
+}
+
+function applyStaticTranslations(){
+  updateNav();
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = TR[LANG][key];
+    if (typeof val === 'string') el.innerHTML = val;
+  });
+  document.getElementById('html-root').lang = LANG;
+  document.getElementById('lang-it').classList.toggle('active', LANG==='it');
+  document.getElementById('lang-en').classList.toggle('active', LANG==='en');
+}
+
+function setLang(lang){ LANG = lang; applyStaticTranslations(); }
+document.getElementById('lang-it').addEventListener('click', () => setLang('it'));
+document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+
+(function init(){
+  const params = new URLSearchParams(window.location.search);
+  const initLang = params.get('lang');
+  if (initLang === 'en' || initLang === 'it') LANG = initLang;
+  applyStaticTranslations();
+})();
+</script>
+</body>
+</html>

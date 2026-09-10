@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="it" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUREA — Lazy Portfolio e allocazione dinamica</title>
+<style>
+  :root{
+    --bg: #10141b; --panel: #161c26; --panel-2: #1c2330; --line: #2a3242;
+    --ink: #e8e6df; --ink-dim: #9aa3b2; --ink-faint: #6c7686;
+    --gold: #c9a24b; --gold-dim: #8a7238; --bond: #6f8fae; --stock: #6fa88a;
+    --serif: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  body{ margin:0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height:1.6; padding: 40px 20px 90px; }
+  .wrap{ max-width: 780px; margin: 0 auto; }
+  .topbar{ flex-wrap:wrap; gap:12px; display:flex; justify-content: space-between; align-items:center; margin-bottom: 22px; }
+  .pagenav{ display:flex; gap:16px; flex-wrap:wrap; }
+  .pagenav a{ color: var(--ink-dim); font-size:13px; text-decoration:none; padding-bottom:2px; border-bottom:1px solid transparent; white-space:nowrap; }
+  .pagenav a:hover{ color: var(--ink); }
+  .pagenav a.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .topbar-right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .donate-btn{ font-size:12px; color:#231a06; background: var(--gold); padding:6px 12px; border-radius:3px; text-decoration:none; font-family: var(--sans); white-space:nowrap; }
+  .donate-btn:hover{ background:#d9b45f; }
+  .langtoggle{ display:flex; gap: 6px; }
+  .langtoggle button{ background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-dim); font-size: 12px; padding: 5px 10px; border-radius: 3px; cursor:pointer; font-family: var(--sans); }
+  .langtoggle button.active{ color: var(--gold); border-color: var(--gold-dim); }
+
+  header{ margin-bottom: 30px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
+  header .kicker{ font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; }
+  header h1{ font-family: var(--serif); font-weight: 400; font-size: 28px; margin: 0 0 10px; }
+  header p{ color: var(--ink-dim); margin:0; font-size: 14px; max-width: 640px; }
+
+  section{ margin-bottom: 30px; }
+  section h2{ font-family: var(--serif); font-weight: 400; font-size: 19px; margin: 0 0 6px; color: var(--gold); }
+  section .subtitle{ font-size: 12.5px; color: var(--ink-faint); margin: 0 0 14px; font-style: italic; }
+  section p{ font-size: 14px; color: var(--ink); margin: 0 0 12px; }
+  section p.dim{ color: var(--ink-dim); font-size: 13.5px; }
+
+  .examples{ display:flex; flex-wrap:wrap; gap: 8px; margin: 12px 0; }
+  .examples span{ background: var(--panel-2); border: 1px solid var(--line); border-radius: 3px; padding: 5px 10px; font-size: 12.5px; color: var(--ink-dim); }
+
+  .compare{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 640px){ .compare{ grid-template-columns: 1fr; } }
+  .compare .col{ background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 16px 18px; }
+  .compare .col h3{ font-family: var(--serif); font-weight: 400; font-size: 15px; margin: 0 0 10px; }
+  .compare .col.lazy h3{ color: var(--bond); }
+  .compare .col.dyn h3{ color: var(--gold); }
+  .compare ul{ margin: 0; padding-left: 18px; font-size: 13px; color: var(--ink-dim); }
+  .compare li{ margin-bottom: 6px; }
+
+  .callout{ font-size: 13px; color: var(--ink-dim); margin: 16px 0; padding: 14px 16px; background: rgba(201,162,75,0.06); border: 1px solid var(--gold-dim); border-radius: 4px; line-height:1.6; }
+  .callout.cool{ background: rgba(111,143,174,0.06); border-color: #4f6a85; }
+
+  footer{ margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-faint); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <nav class="pagenav">
+      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">Calcolatore</a>
+      <a href="metodologia.html" class="navitem" data-file="metodologia.html" data-i18n="nav.method">Metodologia</a>
+      <a href="lazy-portfolio.html" class="navitem" data-file="lazy-portfolio.html" data-i18n="nav.lazy">Lazy Portfolio</a>
+      <a href="bibliografia.html" class="navitem" data-file="bibliografia.html" data-i18n="nav.biblio">Bibliografia</a>
+      <a href="disclaimer.html" class="navitem" data-file="disclaimer.html" data-i18n="nav.disclaimer">Disclaimer</a>
+    </nav>
+    <div class="topbar-right">
+      <a class="donate-btn" href="https://www.paypal.com/donate?business=spawnguz%40gmail.com&currency_code=EUR" target="_blank" rel="noopener" data-i18n="nav.donate">☕ Sostieni il progetto</a>
+      <div class="langtoggle">
+        <button id="lang-it" class="active">IT</button>
+        <button id="lang-en">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="kicker" data-i18n="kicker">Lazy portfolio vs allocazione dinamica</div>
+    <h1 data-i18n="title">Perché partire da un lazy portfolio — e perché poi farlo respirare col ciclo di vita</h1>
+    <p data-i18n="subtitle">I lazy portfolio restano probabilmente la scelta giusta per la maggior parte degli investitori. Questa pagina spiega perché, e perché AUREA aggiunge comunque un livello di dinamismo sopra quella base.</p>
+  </header>
+
+  <section>
+    <h2 data-i18n="s1.h">Cos'è un lazy portfolio</h2>
+    <p data-i18n="s1.p1">Un lazy portfolio ("portafoglio pigro") è un'allocazione statica e diversificata in ETF a basso costo, ribilanciata periodicamente, senza tentativi di battere il mercato o di prevedere i cicli economici. L'idea, resa popolare da Bogle e portata avanti in Italia in modo molto rigoroso da <a href="https://www.dedaloinvest.com/education/didattica-investimenti/lazy-portfolios" target="_blank" rel="noopener" style="color:var(--gold-dim)">Dedalo Invest</a>, è che i costi bassi, la disciplina e la rinuncia al market timing battano, nella maggior parte dei casi e nel lungo periodo, la gestione attiva.</p>
+    <div class="examples">
+      <span data-i18n="ex.1">Permanent Portfolio (25/50/25 azioni/bond/oro)</span>
+      <span data-i18n="ex.2">Dedalo Three / Four / Eleven</span>
+      <span data-i18n="ex.3">Golden Butterfly</span>
+      <span data-i18n="ex.4">All Weather</span>
+      <span data-i18n="ex.5">Core Four</span>
+      <span data-i18n="ex.6">Two Funds</span>
+    </div>
+    <p class="dim" data-i18n="s1.p2">Alcuni di questi nomi (Permanent, Golden Butterfly) usano già una piccola quota oro accanto ad azioni e obbligazioni — la stessa logica di diversificazione da cui è partito il tuo Merton_Gold_Overlay_Model.xlsx.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="s2.h">Perché funzionano</h2>
+    <p data-i18n="s2.p1">Tre motivi, in ordine di importanza empirica: <b data-i18n="s2.b1">costi bassi composti su decenni</b>, <b data-i18n="s2.b2">diversificazione tra classi di attivo non perfettamente correlate</b>, e <b data-i18n="s2.b3">rimozione del comportamento umano dall'equazione</b> — niente vendite in panico, niente inseguimento di trend, niente tentativi di indovinare il minimo o il massimo di mercato. La maggior parte dei gestori attivi non batte i propri benchmark su orizzonti lunghi, al netto dei costi: un lazy portfolio parte già da questo vantaggio strutturale.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="s3.h">Il limite: sono statici</h2>
+    <p data-i18n="s3.p1">Lo stesso Dedalo Invest, in una sua analisi delle critiche ricevute dai lazy portfolio, riconosce onestamente il punto centrale: un'allocazione statica non si adatta né al ciclo di vita dell'investitore né alle condizioni di mercato. Un 80/20 scelto a 30 anni resta 80/20 (salvo ribilanciamento verso lo stesso target) anche a 60 anni, anche con i tassi delle banche centrali a zero, anche nel mezzo di una crisi.</p>
+    <p data-i18n="s3.p2">Non è un difetto nascosto: è una scelta di design esplicita, e per molti investitori è anche il punto di forza — la semplicità è ciò che permette di restare disciplinati. Ma per chi vuole un'allocazione che rifletta esplicitamente due cose che cambiano nel tempo — quanto tempo hai ancora davanti (età, orizzonte, pensionamento) e il contesto macro in cui ti trovi (tassi, inflazione, fase del ciclo) — un lazy portfolio puro non basta da solo. Non a caso, lo stesso Dedalo Invest include nella sua lista anche varianti "dinamiche" (Dynamic 60/40 Income, Dynamic 40/60 Income): il bisogno di dinamismo è riconosciuto anche da chi costruisce lazy portfolio per mestiere.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="s4.h">Dove si inserisce AUREA</h2>
+    <p data-i18n="s4.p1">AUREA non sostituisce il principio del lazy portfolio — basso costo, ampia diversificazione, disciplina — lo estende con un livello di allocazione dinamica sopra quella base, guidato da parametri osservabili invece che da previsioni discrezionali:</p>
+    <div class="compare">
+      <div class="col lazy">
+        <h3 data-i18n="c1.h">Lazy Portfolio classico</h3>
+        <ul>
+          <li data-i18n="c1.i1">Allocazione fissa, scelta una volta</li>
+          <li data-i18n="c1.i2">Ribilanciamento verso lo stesso target</li>
+          <li data-i18n="c1.i3">Non reagisce ai tassi o all'inflazione</li>
+          <li data-i18n="c1.i4">Stesso rischio a 30 e a 65 anni</li>
+          <li data-i18n="c1.i5">Massima semplicità e disciplina</li>
+        </ul>
+      </div>
+      <div class="col dyn">
+        <h3 data-i18n="c2.h">Allocazione dinamica (AUREA)</h3>
+        <ul>
+          <li data-i18n="c2.i1">Target che si sposta con età e pensionamento (reverse glide path)</li>
+          <li data-i18n="c2.i2">ERP legato al tasso reale (TINA)</li>
+          <li data-i18n="c2.i3">Quota oro legata a inflazione, tassi, fase macro</li>
+          <li data-i18n="c2.i4">Rischio calibrato sul ciclo di vita, non fisso</li>
+          <li data-i18n="c2.i5">Più complessità, più gradi di libertà (anche di errore)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="s5.h">Il ciclo di vita è il motivo per cui la staticità ha un costo</h2>
+    <p data-i18n="s5.p1">Il rischio che puoi permetterti di correre non è costante: a 25 anni un crollo del 40% è un'occasione di acquisto con decenni per recuperare; a 66 anni, nel primo anno di pensionamento, lo stesso crollo — se sei costretto a vendere per vivere — può essere irreversibile (il rischio di sequenza dei rendimenti trattato nella pagina Metodologia). Allo stesso modo, il "prezzo" delle obbligazioni non è costante: con i tassi reali intorno al 3% offrono una vera alternativa a rischio più basso; con i tassi a zero, TINA, non la offrono. Un'allocazione statica tratta questi due contesti come identici; un'allocazione dinamica no.</p>
+  </section>
+
+  <section>
+    <div class="callout cool" data-i18n="callout1">
+      <b>Non è un aut-aut.</b> Puoi benissimo costruire il nucleo del tuo portafoglio con un lazy portfolio (basso costo, ampia diversificazione) e usare l'output di AUREA come riferimento per la ripartizione tra le tre macro-classi, ribilanciando una o due volte l'anno — non ogni settimana. Il dinamismo qui è nei pesi target, non nella frequenza di trading.
+    </div>
+    <div class="callout" data-i18n="callout2">
+      <b>L'altra faccia della medaglia.</b> Più gradi di libertà significano più possibilità di sbagliare la calibrazione, più tentazione di modificare i parametri per farli dire quello che vuoi sentirti dire, e più complessità da mantenere nel tempo. Se non sei disposto a rivedere periodicamente le ipotesi con onestà, un lazy portfolio statico e ben scelto resta probabilmente la scelta più robusta.
+    </div>
+  </section>
+
+  <footer data-i18n="footer">Per una spiegazione più a fondo dei singoli lazy portfolio citati, vedi il sito di Dedalo Invest, linkato in Bibliografia.</footer>
+
+</div>
+
+<script>
+let LANG = 'it';
+const TR = {
+  it: {
+    "nav.home": "Calcolatore", "nav.method": "Metodologia", "nav.lazy": "Lazy Portfolio", "nav.biblio": "Bibliografia", "nav.disclaimer": "Disclaimer",
+    "nav.donate": "\u2615 Sostieni il progetto",
+    "kicker": "Lazy portfolio vs allocazione dinamica",
+    "title": "Perché partire da un lazy portfolio — e perché poi farlo respirare col ciclo di vita",
+    "subtitle": "I lazy portfolio restano probabilmente la scelta giusta per la maggior parte degli investitori. Questa pagina spiega perché, e perché AUREA aggiunge comunque un livello di dinamismo sopra quella base.",
+    "s1.h": "Cos'è un lazy portfolio",
+    "s1.p1": "Un lazy portfolio (\u201cportafoglio pigro\u201d) è un'allocazione statica e diversificata in ETF a basso costo, ribilanciata periodicamente, senza tentativi di battere il mercato o di prevedere i cicli economici. L'idea, resa popolare da Bogle e portata avanti in Italia in modo molto rigoroso da Dedalo Invest, è che i costi bassi, la disciplina e la rinuncia al market timing battano, nella maggior parte dei casi e nel lungo periodo, la gestione attiva.",
+    "ex.1": "Permanent Portfolio (25/50/25 azioni/bond/oro)", "ex.2": "Dedalo Three / Four / Eleven", "ex.3": "Golden Butterfly", "ex.4": "All Weather", "ex.5": "Core Four", "ex.6": "Two Funds",
+    "s1.p2": "Alcuni di questi nomi (Permanent, Golden Butterfly) usano già una piccola quota oro accanto ad azioni e obbligazioni — la stessa logica di diversificazione da cui è partito il tuo Merton_Gold_Overlay_Model.xlsx.",
+    "s2.h": "Perché funzionano",
+    "s2.p1": "Tre motivi, in ordine di importanza empirica: <b>costi bassi composti su decenni</b>, <b>diversificazione tra classi di attivo non perfettamente correlate</b>, e <b>rimozione del comportamento umano dall'equazione</b> — niente vendite in panico, niente inseguimento di trend, niente tentativi di indovinare il minimo o il massimo di mercato. La maggior parte dei gestori attivi non batte i propri benchmark su orizzonti lunghi, al netto dei costi: un lazy portfolio parte già da questo vantaggio strutturale.",
+    "s3.h": "Il limite: sono statici",
+    "s3.p1": "Lo stesso Dedalo Invest, in una sua analisi delle critiche ricevute dai lazy portfolio, riconosce onestamente il punto centrale: un'allocazione statica non si adatta né al ciclo di vita dell'investitore né alle condizioni di mercato. Un 80/20 scelto a 30 anni resta 80/20 (salvo ribilanciamento verso lo stesso target) anche a 60 anni, anche con i tassi delle banche centrali a zero, anche nel mezzo di una crisi.",
+    "s3.p2": "Non è un difetto nascosto: è una scelta di design esplicita, e per molti investitori è anche il punto di forza — la semplicità è ciò che permette di restare disciplinati. Ma per chi vuole un'allocazione che rifletta esplicitamente due cose che cambiano nel tempo — quanto tempo hai ancora davanti (età, orizzonte, pensionamento) e il contesto macro in cui ti trovi (tassi, inflazione, fase del ciclo) — un lazy portfolio puro non basta da solo. Non a caso, lo stesso Dedalo Invest include nella sua lista anche varianti \u201cdinamiche\u201d (Dynamic 60/40 Income, Dynamic 40/60 Income): il bisogno di dinamismo è riconosciuto anche da chi costruisce lazy portfolio per mestiere.",
+    "s4.h": "Dove si inserisce AUREA",
+    "s4.p1": "AUREA non sostituisce il principio del lazy portfolio — basso costo, ampia diversificazione, disciplina — lo estende con un livello di allocazione dinamica sopra quella base, guidato da parametri osservabili invece che da previsioni discrezionali:",
+    "c1.h": "Lazy Portfolio classico",
+    "c1.i1": "Allocazione fissa, scelta una volta", "c1.i2": "Ribilanciamento verso lo stesso target", "c1.i3": "Non reagisce ai tassi o all'inflazione", "c1.i4": "Stesso rischio a 30 e a 65 anni", "c1.i5": "Massima semplicità e disciplina",
+    "c2.h": "Allocazione dinamica (AUREA)",
+    "c2.i1": "Target che si sposta con età e pensionamento (reverse glide path)", "c2.i2": "ERP legato al tasso reale (TINA)", "c2.i3": "Quota oro legata a inflazione, tassi, fase macro", "c2.i4": "Rischio calibrato sul ciclo di vita, non fisso", "c2.i5": "Più complessità, più gradi di libertà (anche di errore)",
+    "s5.h": "Il ciclo di vita è il motivo per cui la staticità ha un costo",
+    "s5.p1": "Il rischio che puoi permetterti di correre non è costante: a 25 anni un crollo del 40% è un'occasione di acquisto con decenni per recuperare; a 66 anni, nel primo anno di pensionamento, lo stesso crollo — se sei costretto a vendere per vivere — può essere irreversibile (il rischio di sequenza dei rendimenti trattato nella pagina Metodologia). Allo stesso modo, il \u201cprezzo\u201d delle obbligazioni non è costante: con i tassi reali intorno al 3% offrono una vera alternativa a rischio più basso; con i tassi a zero, TINA, non la offrono. Un'allocazione statica tratta questi due contesti come identici; un'allocazione dinamica no.",
+    "callout1": "<b>Non è un aut-aut.</b> Puoi benissimo costruire il nucleo del tuo portafoglio con un lazy portfolio (basso costo, ampia diversificazione) e usare l'output di AUREA come riferimento per la ripartizione tra le tre macro-classi, ribilanciando una o due volte l'anno — non ogni settimana. Il dinamismo qui è nei pesi target, non nella frequenza di trading.",
+    "callout2": "<b>L'altra faccia della medaglia.</b> Più gradi di libertà significano più possibilità di sbagliare la calibrazione, più tentazione di modificare i parametri per farli dire quello che vuoi sentirti dire, e più complessità da mantenere nel tempo. Se non sei disposto a rivedere periodicamente le ipotesi con onestà, un lazy portfolio statico e ben scelto resta probabilmente la scelta più robusta.",
+    "footer": "Per una spiegazione più a fondo dei singoli lazy portfolio citati, vedi il sito di Dedalo Invest, linkato in Bibliografia.",
+  },
+  en: {
+    "nav.home": "Calculator", "nav.method": "Methodology", "nav.lazy": "Lazy Portfolio", "nav.biblio": "Bibliography", "nav.disclaimer": "Disclaimer",
+    "nav.donate": "\u2615 Support this project",
+    "kicker": "Lazy portfolio vs. dynamic allocation",
+    "title": "Why start with a lazy portfolio — and why let it breathe with the life cycle",
+    "subtitle": "Lazy portfolios are probably still the right choice for most investors. This page explains why, and why AUREA still adds a layer of dynamism on top of that base.",
+    "s1.h": "What a lazy portfolio is",
+    "s1.p1": "A lazy portfolio is a static, diversified allocation in low-cost ETFs, rebalanced periodically, with no attempt to beat the market or forecast economic cycles. The idea, popularized by Bogle and carried forward in Italy very rigorously by Dedalo Invest, is that low costs, discipline, and giving up on market timing beat active management in most cases over the long run.",
+    "ex.1": "Permanent Portfolio (25/50/25 stocks/bonds/gold)", "ex.2": "Dedalo Three / Four / Eleven", "ex.3": "Golden Butterfly", "ex.4": "All Weather", "ex.5": "Core Four", "ex.6": "Two Funds",
+    "s1.p2": "Some of these (Permanent, Golden Butterfly) already carry a small gold allocation alongside stocks and bonds — the same diversification logic your Merton_Gold_Overlay_Model.xlsx started from.",
+    "s2.h": "Why they work",
+    "s2.p1": "Three reasons, in order of empirical importance: <b>low costs compounded over decades</b>, <b>diversification across not-perfectly-correlated asset classes</b>, and <b>removing human behavior from the equation</b> — no panic selling, no trend chasing, no attempts to time market bottoms or tops. Most active managers fail to beat their benchmarks net of fees over long horizons: a lazy portfolio starts from that structural advantage.",
+    "s3.h": "The limit: they're static",
+    "s3.p1": "Dedalo Invest itself, in an analysis of the criticisms lazy portfolios receive, honestly acknowledges the core point: a static allocation doesn't adapt to either the investor's life cycle or market conditions. An 80/20 chosen at 30 stays 80/20 (aside from rebalancing back to that same target) at 60, even with central bank rates at zero, even in the middle of a crisis.",
+    "s3.p2": "That's not a hidden flaw: it's an explicit design choice, and for many investors it's also the strength — simplicity is what keeps you disciplined. But for someone who wants an allocation that explicitly reflects two things that change over time — how much time you have left (age, horizon, retirement) and the macro context you're in (rates, inflation, cycle phase) — a pure lazy portfolio isn't enough on its own. Tellingly, Dedalo Invest itself lists \u201cdynamic\u201d variants too (Dynamic 60/40 Income, Dynamic 40/60 Income): the need for dynamism is acknowledged even by people who build lazy portfolios for a living.",
+    "s4.h": "Where AUREA fits in",
+    "s4.p1": "AUREA doesn't replace the lazy portfolio principle — low cost, broad diversification, discipline — it extends it with a layer of dynamic allocation on top, driven by observable parameters rather than discretionary forecasts:",
+    "c1.h": "Classic Lazy Portfolio",
+    "c1.i1": "Fixed allocation, chosen once", "c1.i2": "Rebalances back to the same target", "c1.i3": "Doesn't react to rates or inflation", "c1.i4": "Same risk at 30 and at 65", "c1.i5": "Maximum simplicity and discipline",
+    "c2.h": "Dynamic allocation (AUREA)",
+    "c2.i1": "Target shifts with age and retirement (reverse glide path)", "c2.i2": "ERP tied to the real rate (TINA)", "c2.i3": "Gold share tied to inflation, rates, macro phase", "c2.i4": "Risk calibrated to the life cycle, not fixed", "c2.i5": "More complexity, more degrees of freedom (also for error)",
+    "s5.h": "The life cycle is why staticness has a cost",
+    "s5.p1": "The risk you can afford to take isn't constant: at 25, a 40% crash is a buying opportunity with decades to recover; at 66, in your first year of retirement, the same crash — if you're forced to sell to live — can be irreversible (sequence-of-returns risk, covered on the Methodology page). Likewise, the \u201cprice\u201d of bonds isn't constant: at a 3% real rate they offer a genuine lower-risk alternative; at zero rates, TINA, they don't. A static allocation treats those two contexts as identical; a dynamic one doesn't.",
+    "callout1": "<b>It's not either/or.</b> You can absolutely build the core of your portfolio as a lazy portfolio (low cost, broad diversification) and use AUREA's output as a reference for the split across the three macro-classes, rebalancing once or twice a year — not weekly. The dynamism here is in the target weights, not the trading frequency.",
+    "callout2": "<b>The other side of the coin.</b> More degrees of freedom mean more ways to get the calibration wrong, more temptation to tweak parameters until they say what you want to hear, and more complexity to maintain over time. If you're not willing to periodically and honestly revisit the assumptions, a well-chosen static lazy portfolio is probably still the more robust choice.",
+    "footer": "For a deeper look at the individual lazy portfolios named here, see the Dedalo Invest site, linked in the Bibliography.",
+  }
+};
+
+function updateNav(){
+  const current = (window.location.pathname.split('/').pop() || 'index.html');
+  document.querySelectorAll('.navitem').forEach(a => {
+    const base = a.getAttribute('data-file');
+    a.href = base + '?lang=' + LANG;
+    a.classList.toggle('active', base === current);
+  });
+}
+
+function applyStaticTranslations(){
+  updateNav();
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = TR[LANG][key];
+    if (typeof val === 'string') el.innerHTML = val;
+  });
+  document.getElementById('html-root').lang = LANG;
+  document.getElementById('lang-it').classList.toggle('active', LANG==='it');
+  document.getElementById('lang-en').classList.toggle('active', LANG==='en');
+}
+
+function setLang(lang){ LANG = lang; applyStaticTranslations(); }
+document.getElementById('lang-it').addEventListener('click', () => setLang('it'));
+document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+
+(function init(){
+  const params = new URLSearchParams(window.location.search);
+  const initLang = params.get('lang');
+  if (initLang === 'en' || initLang === 'it') LANG = initLang;
+  applyStaticTranslations();
+})();
+</script>
+</body>
+</html>
