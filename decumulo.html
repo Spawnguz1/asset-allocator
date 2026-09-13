@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="it" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TTDWS — Two-Tier Dynamic Withdrawal Strategy</title>
+<style>
+  html, :root{
+    --bg: #10141b; --panel: #161c26; --panel-2: #1c2330; --line: #2a3242;
+    --ink: #e8e6df; --ink-dim: #9aa3b2; --ink-faint: #6c7686;
+    --gold: #c9a24b; --gold-dim: #8a7238; --bond: #3f6f9e; --stock: #7bb3d9;
+    --serif: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  html[data-theme="light"]{
+    --bg: #f7f5ee; --panel: #ffffff; --panel-2: #f0ede0; --line: #ddd5c0;
+    --ink: #1d2436; --ink-dim: #57627c; --ink-faint: #848faa;
+    --gold: #a4761f; --gold-dim: #8a6a2e; --bond: #2f5a86; --stock: #4f8fc0;
+  }
+  *{ box-sizing: border-box; }
+  body{ margin:0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height:1.5; padding: 40px 20px 90px; }
+  .wrap{ max-width: 1000px; margin: 0 auto; }
+  .topbar{ flex-wrap:wrap; gap:12px; display:flex; justify-content: space-between; align-items:center; margin-bottom: 22px; }
+  .pagenav{ display:flex; gap:14px; flex-wrap:wrap; }
+  .pagenav a{ color: var(--ink-dim); font-size:12.5px; text-decoration:none; padding-bottom:2px; border-bottom:1px solid transparent; white-space:nowrap; }
+  .pagenav a:hover{ color: var(--ink); }
+  .pagenav a.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .topbar-right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .donate-btn{ font-size:12px; color:#231a06; background: var(--gold); padding:6px 12px; border-radius:3px; text-decoration:none; font-family: var(--sans); white-space:nowrap; }
+  .donate-btn:hover{ background:#d9b45f; }
+  .langtoggle{ display:flex; gap: 6px; }
+  .langtoggle button{ background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-dim); font-size: 12px; padding: 5px 10px; border-radius: 3px; cursor:pointer; font-family: var(--sans); }
+  .langtoggle button.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .theme-switch{ display:flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; padding:0; font-family: var(--sans); }
+  .ts-track{ width:38px; height:21px; background: var(--panel-2); border:1px solid var(--line); border-radius:11px; position:relative; flex-shrink:0; transition: background 0.2s, border-color 0.2s; }
+  .ts-thumb{ position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background: var(--ink-dim); transition: transform 0.2s, background 0.2s; }
+  .theme-switch.on .ts-track{ background: rgba(201,162,75,0.18); border-color: var(--gold-dim); }
+  .theme-switch.on .ts-thumb{ transform: translateX(16px); background: var(--gold); }
+  .ts-label{ font-size:12px; color: var(--ink-dim); }
+
+  header{ margin-bottom: 30px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
+  header .kicker{ font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; }
+  header h1{ font-family: var(--serif); font-weight: 400; font-size: 28px; margin: 0 0 10px; }
+  header p{ color: var(--ink-dim); margin:0; font-size: 14px; max-width: 700px; }
+
+  .grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 800px){ .grid{ grid-template-columns: 1fr; } }
+  .panel{ background: var(--panel); border:1px solid var(--line); border-radius: 4px; padding: 22px 24px; margin-bottom: 22px; }
+  .panel h2{ font-family: var(--serif); font-weight:400; font-size: 17px; margin: 0 0 16px; }
+
+  .field{ margin-bottom: 18px; }
+  .field:last-child{ margin-bottom: 0; }
+  .field label{ display:flex; justify-content: space-between; font-size: 13px; color: var(--ink-dim); margin-bottom: 7px; }
+  .field label .val{ color: var(--ink); font-variant-numeric: tabular-nums; }
+  .hint{ margin: 6px 2px 0; font-size: 11.5px; color: var(--ink-faint); line-height:1.5; }
+  input[type=range]{ width:100%; -webkit-appearance:none; appearance:none; height: 3px; background: var(--line); border-radius: 2px; outline:none; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background: var(--gold); cursor:pointer; border: 2px solid var(--bg); }
+  input[type=range]::-moz-range-thumb{ width:15px; height:15px; border-radius:50%; background: var(--gold); border: 2px solid var(--bg); cursor:pointer; }
+  select, input[type=number]{ width:100%; background: var(--panel-2); border:1px solid var(--line); color: var(--ink); padding: 9px 10px; border-radius: 3px; font-size: 14px; font-family: var(--sans); }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+  /* fixed life-expectancy slide */
+  .lifeslide{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+  @media (max-width:700px){ .lifeslide{ grid-template-columns: 1fr; } }
+  .lifecard{ background: var(--panel); border: 1px solid var(--gold-dim); border-radius: 4px; padding: 16px 18px; text-align:center; }
+  .lifecard .label{ font-size: 11.5px; text-transform:uppercase; letter-spacing:0.5px; color: var(--ink-dim); margin-bottom: 8px; }
+  .lifecard .value{ font-family: var(--serif); font-size: 30px; color: var(--gold); }
+  .lifecard .sub{ font-size: 11.5px; color: var(--ink-faint); margin-top:4px; }
+
+  .methodcard{ background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 16px 18px; margin-bottom: 12px; }
+  .methodcard h3{ font-family: var(--serif); font-weight:400; font-size:15px; margin:0 0 6px; display:flex; justify-content:space-between; align-items:baseline; }
+  .methodcard h3 .amount{ color: var(--gold); font-size:19px; }
+  .methodcard p{ font-size:12.5px; color:var(--ink-dim); margin:0; line-height:1.5; }
+  .badge{ display:inline-block; font-size:11px; padding:2px 8px; border-radius:3px; margin-left:8px; font-family:var(--sans); }
+  .badge.ok{ background: rgba(123,179,217,0.15); color: var(--stock); }
+  .badge.warn{ background: rgba(201,111,111,0.15); color:#c96f6f; }
+  .badge.cut{ background: rgba(201,111,111,0.15); color:#c96f6f; }
+  .badge.raise{ background: rgba(123,179,217,0.15); color: var(--stock); }
+  .badge.hold{ background: rgba(160,160,160,0.15); color: var(--ink-dim); }
+
+  table{ width:100%; border-collapse: collapse; font-size:13px; margin-top:8px; }
+  th, td{ text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); }
+  th{ color:var(--ink-dim); font-weight:500; }
+  td.num, th.num{ text-align:right; font-variant-numeric: tabular-nums; }
+
+  .waterfall{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .waterfall span{ background: var(--panel-2); border:1px solid var(--line); border-radius:3px; padding:5px 10px; font-size:12px; color:var(--ink-dim); }
+  .waterfall span.active{ border-color: var(--gold-dim); color: var(--gold); }
+
+  .note{ font-size: 12px; color: var(--ink-faint); margin-top: 16px; line-height:1.6; }
+  details{ margin-top: 20px; border-top:1px solid var(--line); padding-top:14px; }
+  summary{ cursor:pointer; font-size:13px; color:var(--ink-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <nav class="pagenav">
+      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">ARCA</a>
+      <a href="decumulo.html" class="navitem" data-file="decumulo.html" data-i18n="nav.decumulo">TTDWS</a>
+      <a href="metodologia.html" class="navitem" data-file="metodologia.html" data-i18n="nav.method">Metodologia</a>
+      <a href="lazy-portfolio.html" class="navitem" data-file="lazy-portfolio.html" data-i18n="nav.lazy">Lazy Portfolio</a>
+      <a href="blog.html" class="navitem" data-file="blog.html" data-i18n="nav.blog">Blog</a>
+      <a href="bibliografia.html" class="navitem" data-file="bibliografia.html" data-i18n="nav.biblio">Bibliografia</a>
+      <a href="disclaimer.html" class="navitem" data-file="disclaimer.html" data-i18n="nav.disclaimer">Disclaimer</a>
+    </nav>
+    <div class="topbar-right">
+      <a class="donate-btn" href="https://www.paypal.com/donate?business=spawnguz%40gmail.com&currency_code=EUR" target="_blank" rel="noopener" data-i18n="nav.donate">☕ Sostieni il progetto</a>
+      <button class="theme-switch" id="theme-toggle" title="Chiaro / Scuro" type="button">
+        <span class="ts-track"><span class="ts-thumb"></span></span>
+        <span class="ts-label" id="ts-label">Scuro</span>
+      </button>
+      <div class="langtoggle">
+        <button id="lang-it" class="active">IT</button>
+        <button id="lang-en">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="kicker" data-i18n="kicker">Two-Tier Dynamic Withdrawal Strategy</div>
+    <h1 data-i18n="title">TTDWS — Calcolatore del Tasso di Prelievo Sicuro</h1>
+    <p data-i18n="subtitle">Confronta quattro modelli classici di prelievo — spesa reale fissa, percentuale costante, guardrail di Guyton-Klinger, ARVA attuariale — con la Two-Tier Dynamic Withdrawal Strategy (TTDWS): Bond Ladder quinquennale, +30.000€ Rule e Waterfall Decumulation.</p>
+  </header>
+
+  <div class="lifeslide">
+    <div class="lifecard">
+      <div class="label" data-i18n="life.age">Età attuale</div>
+      <div class="value" id="disp-age">65</div>
+    </div>
+    <div class="lifecard">
+      <div class="label" data-i18n="life.remaining">Vita residua stimata (ISTAT)</div>
+      <div class="value" id="disp-life">19,8</div>
+      <div class="sub" data-i18n="life.fixed">Dato fisso, non modificabile</div>
+    </div>
+    <div class="lifecard">
+      <div class="label" data-i18n="life.capital">Montante residuo</div>
+      <div class="value" id="disp-capital">€1.150.000</div>
+    </div>
+  </div>
+
+  <div class="panel" id="results-top">
+    <h2 data-i18n="panel.compare">Risultato — confronto rapido</h2>
+    <p class="hint" style="margin-bottom:10px;" data-i18n="results.top.note">Prelievo indicativo per il primo anno secondo i quattro metodi classici e TTDWS, in base ai parametri impostati qui sotto. I dettagli di ciascun metodo e la struttura TTDWS seguono più in basso.</p>
+    <table>
+      <tr><th data-i18n="cmp.method">Metodo</th><th class="num" data-i18n="cmp.amount">Prelievo anno 1</th><th class="num" data-i18n="cmp.rate">% sul montante</th></tr>
+      <tr><td data-i18n="m1.title.short">Spesa reale fissa</td><td class="num" id="c1-amount">—</td><td class="num" id="c1-rate">—</td></tr>
+      <tr><td data-i18n="m2.title.short">Percentuale costante</td><td class="num" id="c2-amount">—</td><td class="num" id="c2-rate">—</td></tr>
+      <tr><td data-i18n="m3.title.short">Guardrail</td><td class="num" id="c3-amount">—</td><td class="num" id="c3-rate">—</td></tr>
+      <tr><td data-i18n="m4.title.short">ARVA</td><td class="num" id="c4-amount">—</td><td class="num" id="c4-rate">—</td></tr>
+      <tr><td data-i18n="m5.title.short">TTDWS (spesa desiderata)</td><td class="num" id="c5-amount">—</td><td class="num" id="c5-rate">—</td></tr>
+    </table>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2 data-i18n="panel.params">Parametri</h2>
+
+      <div class="row2">
+        <div class="field">
+          <label><span data-i18n="lbl.age">Età attuale</span> <span class="val" id="v-age">65</span></label>
+          <input type="range" id="age" min="50" max="95" value="65" step="1">
+        </div>
+        <div class="field">
+          <label data-i18n="lbl.sex">Sesso (tavole ISTAT)</label>
+          <select id="sex">
+            <option value="M">Uomo</option>
+            <option value="F">Donna</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint" data-i18n="hint.life">La vita residua stimata sopra non è modificabile: deriva da un'interpolazione calibrata sui dati ISTAT più recenti (speranza di vita a 65 anni: uomini 19,8 anni, donne 22,6 anni — 2024). Non è la tavola ufficiale completa per singola età: vedi la nota in fondo alla pagina.</p>
+
+      <div class="field">
+        <label><span data-i18n="lbl.capital">Montante residuo (€)</span></label>
+        <input type="number" id="capital" value="1150000" step="10000">
+      </div>
+
+      <div class="row3">
+        <div class="field">
+          <label data-i18n="lbl.stock">Azionario %</label>
+          <input type="number" id="w-stock" value="70" min="0" max="100" step="5">
+        </div>
+        <div class="field">
+          <label data-i18n="lbl.bond">Obbligazionario %</label>
+          <input type="number" id="w-bond" value="20" min="0" max="100" step="5">
+        </div>
+        <div class="field">
+          <label data-i18n="lbl.gold">Oro %</label>
+          <input type="number" id="w-gold" value="10" min="0" max="100" step="5">
+        </div>
+      </div>
+      <p class="hint" id="weight-warning" style="color:#c96f6f; display:none;" data-i18n="hint.weightsum">I tre pesi dovrebbero sommare a 100%.</p>
+
+      <div class="field">
+        <label><span data-i18n="lbl.spend">Spesa annua desiderata (€)</span></label>
+        <input type="number" id="spend" value="30000" step="1000">
+      </div>
+
+      <div class="field">
+        <label><span data-i18n="lbl.realreturn">Rendimento reale atteso (ARVA)</span> <span class="val" id="v-realreturn">3.0%</span></label>
+        <input type="range" id="realreturn" min="0" max="6" value="3" step="0.1">
+      </div>
+
+      <div class="field">
+        <label><span data-i18n="lbl.guardrate">Tasso di prelievo iniziale (Guardrail)</span> <span class="val" id="v-guardrate">5.0%</span></label>
+        <input type="range" id="guardrate" min="3" max="7" value="5" step="0.1">
+        <p class="hint" data-i18n="hint.guardrate">Barriere fissate a ±20% (Guyton-Klinger): sopra la barriera alta si taglia la spesa del 10%, sotto la barriera bassa la si aumenta del 10%.</p>
+      </div>
+
+      <div class="field">
+        <label><span data-i18n="lbl.ladder">Bond Ladder — Tier 1 (€)</span></label>
+        <input type="number" id="ladder" value="150000" step="10000">
+        <p class="hint" data-i18n="hint.ladder">TTDWS: di norma 5 × la spesa annua desiderata, in titoli di stato a breve con scadenze scaglionate anno per anno.</p>
+      </div>
+
+      <div class="field">
+        <label><span data-i18n="lbl.gain">Guadagno del Motore di Crescita nell'ultimo anno (€)</span></label>
+        <input type="number" id="gain" value="0" step="1000">
+        <p class="hint" data-i18n="hint.gain">Usato per verificare la +30.000€ Rule: se il guadagno supera la soglia sotto, si vendono solo le plusvalenze e si reintegra il Bond Ladder.</p>
+      </div>
+
+      <div class="field">
+        <label><span data-i18n="lbl.threshold">Soglia della Rule (€)</span></label>
+        <input type="number" id="threshold" value="30000" step="1000">
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 data-i18n="panel.methods">I quattro metodi classici</h2>
+
+      <div class="methodcard">
+        <h3><span data-i18n="m1.title">1. Spesa reale fissa (4% Rule)</span><span class="amount" id="m1-amount">—</span></h3>
+        <p data-i18n="m1.desc">Preleva una quota fissa del capitale iniziale, poi la aggiorna solo per inflazione. Massima stabilità, ma pieno esposto al rischio di sequenza dei rendimenti.</p>
+      </div>
+
+      <div class="methodcard">
+        <h3><span data-i18n="m2.title">2. Percentuale costante</span><span class="amount" id="m2-amount">—</span></h3>
+        <p data-i18n="m2.desc">Preleva una quota fissa del capitale attuale ogni anno. Non esaurisce mai il capitale per costruzione, ma lo stile di vita oscilla con i mercati.</p>
+      </div>
+
+      <div class="methodcard">
+        <h3><span data-i18n="m3.title">3. Guardrail (Guyton-Klinger)</span><span class="amount" id="m3-amount">—</span> <span class="badge" id="m3-badge"></span></h3>
+        <p data-i18n="m3.desc">Tasso implicito attuale (spesa desiderata / montante) confrontato con le barriere ±20% intorno al tasso iniziale scelto.</p>
+        <p style="margin-top:6px;" id="m3-detail" class="dim"></p>
+      </div>
+
+      <div class="methodcard">
+        <h3><span data-i18n="m4.title">4. ARVA (rendita virtuale attuariale)</span><span class="amount" id="m4-amount">—</span></h3>
+        <p data-i18n="m4.desc">Capitale diviso per il fattore di rendita (PVFA), calcolato sulla vita residua ISTAT (fissa) e sul rendimento reale atteso. Si ricalcola ogni anno con capitale e orizzonte aggiornati.</p>
+        <p style="margin-top:6px;" id="m4-detail" class="dim"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 data-i18n="panel.ttdws">Two-Tier Dynamic Withdrawal Strategy (TTDWS)</h2>
+    <p class="hint" style="margin-bottom:14px;" data-i18n="ttdws.intro">Un Bond Ladder quinquennale (Tier 1) copre le spese correnti senza mai vendere il Motore di Crescita durante un ribasso; il Tier 2 (azionario/obbligazionario/oro) genera crescita a lungo termine; la +30.000€ Rule disciplina il reintegro del buffer.</p>
+
+    <table>
+      <tr><th data-i18n="tbl.tier">Livello</th><th class="num" data-i18n="tbl.value">Valore</th><th data-i18n="tbl.role">Funzione</th></tr>
+      <tr><td data-i18n="tbl.tier1">Tier 1 — Bond Ladder</td><td class="num" id="t-ladder">—</td><td data-i18n="tbl.tier1.role">Copre ~5 anni di spesa; una tranche matura ogni anno.</td></tr>
+      <tr><td data-i18n="tbl.tier2">Tier 2 — Motore di Crescita</td><td class="num" id="t-growth">—</td><td data-i18n="tbl.tier2.role">Azionario/Obbligazionario/Oro, orizzonte lungo.</td></tr>
+      <tr><td data-i18n="tbl.wr">Withdrawal Rate sul patrimonio totale</td><td class="num" id="t-wr">—</td><td></td></tr>
+    </table>
+
+    <div class="row3" style="margin-top:16px;">
+      <div class="methodcard" style="margin-bottom:0;"><h3 style="font-size:13px;" data-i18n="tbl.tier2.stock">Azionario</h3><div class="amount" id="t-stock" style="font-family:var(--serif); color:var(--stock); font-size:18px;">—</div></div>
+      <div class="methodcard" style="margin-bottom:0;"><h3 style="font-size:13px;" data-i18n="tbl.tier2.bond">Obbligazionario</h3><div class="amount" id="t-bond" style="font-family:var(--serif); color:var(--bond); font-size:18px;">—</div></div>
+      <div class="methodcard" style="margin-bottom:0;"><h3 style="font-size:13px;" data-i18n="tbl.tier2.gold">Oro</h3><div class="amount" id="t-gold" style="font-family:var(--serif); color:var(--gold); font-size:18px;">—</div></div>
+    </div>
+
+    <div class="methodcard" style="margin-top:16px;">
+      <h3><span data-i18n="rule.title">+30.000€ Rule — verifica annuale</span> <span class="badge" id="rule-badge"></span></h3>
+      <p id="rule-detail" class="dim"></p>
+    </div>
+
+    <p class="hint" data-i18n="waterfall.title" style="margin-top:14px; color:var(--ink-dim);">Waterfall Decumulation — ordine di vendita in un bear market oltre 5 anni:</p>
+    <div class="waterfall">
+      <span data-i18n="wf.1">1. Bond Ladder</span>
+      <span data-i18n="wf.2">2. Obbligazionario</span>
+      <span data-i18n="wf.3">3. Azionario</span>
+      <span data-i18n="wf.4">4. Oro (ultima riserva)</span>
+    </div>
+  </div>
+
+  <details>
+    <summary data-i18n="details.summary">Note metodologiche e limiti</summary>
+    <p class="note" data-i18n="note.long">
+      <b>Vita residua ISTAT.</b> Il valore mostrato in alto non è la tavola di mortalità ufficiale ISTAT per singola età: è una stima costruita per interpolazione, ancorata ai due dati ufficiali più recenti disponibili (speranza di vita alla nascita 2023: uomini 81,1 anni, donne 85,2; speranza di vita a 65 anni 2024: uomini 19,8 anni, donne 22,6). Per il dato ufficiale esatto alla tua età, consulta il database ISTAT su demo.istat.it (tavole di mortalità).<br><br>
+      <b>ARVA.</b> PVFA = (1 − (1+r)⁻ⁿ) / r, con n = vita residua ISTAT (fissa) e r = rendimento reale atteso che imposti. Il prelievo si ricalcola ogni anno con capitale e orizzonte aggiornati: non è un piano scolpito nella pietra, è una regola da riapplicare annualmente, come sottolineato in letteratura.<br><br>
+      <b>Guardrail.</b> Se il tasso di prelievo implicito (spesa desiderata / montante) supera la barriera alta, il modello segnala un taglio del 10% alla spesa; se scende sotto la barriera bassa, segnala un aumento del 10%; altrimenti nessun cambiamento oltre l'adeguamento inflattivo.<br><br>
+      <b>TTDWS.</b> Il Tier 1 (Bond Ladder) e il Tier 2 (Motore di Crescita) sono presi dal tuo white paper "Two-Tier Dynamic Withdrawal Strategy" (v1.0). La +30.000€ Rule qui è generalizzata con una soglia che puoi modificare. Il paper stesso segnala che l'efficacia quantitativa della strategia richiede simulazioni Monte Carlo rigorose e backtest storici, non ancora eseguiti in questa sede.<br><br>
+      <b>Fonti sui quattro metodi classici:</b> Bengen (1994) "Determining Withdrawal Rates Using Historical Data"; Trinity Study (Cooley, Hubbard & Walz, 1998); Guyton & Klinger (2006) "Decision Rules and Maximum Initial Withdrawal Rates"; Waring & Siegel (2015) "The Only Spending Rule Article You Will Ever Need" — tutti citati nel podcast <i>Too Big To Fail, ep. 110, "Vivere di Rendita e Decumulo"</i>, citato in Bibliografia.<br><br>
+      Nessuno di questi calcoli costituisce consulenza finanziaria, previdenziale o attuariale — vedi il Disclaimer.
+    </p>
+  </details>
+
+</div>
+
+<script>
+function clip(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
+function eur(v){ return '€' + Math.round(v).toLocaleString(LANG==='it' ? 'it-IT' : 'en-US'); }
+function pct(v){ return (v*100).toFixed(2) + '%'; }
+
+let LANG = 'it';
+let THEME = 'dark';
+
+// Tavola interpolata di speranza di vita residua, ancorata ai dati ISTAT
+// ufficiali più recenti (speranza di vita alla nascita 2023 e a 65 anni 2024).
+// Non è la tavola ufficiale completa per singola età: vedi nota in pagina.
+const LIFE_TABLE = {
+  M: {20:61.5,25:56.7,30:51.9,35:47.1,40:42.4,45:37.7,50:33.1,55:28.7,60:24.4,65:19.8,70:16.2,75:12.8,80:9.6,85:6.9,90:4.8,95:3.2,100:2.1},
+  F: {20:65.9,25:61.0,30:56.2,35:51.4,40:46.6,45:41.9,50:37.2,55:32.6,60:28.0,65:22.6,70:18.9,75:15.2,80:11.7,85:8.5,90:5.8,95:3.8,100:2.4}
+};
+function lifeExpectancy(age, sex){
+  const table = LIFE_TABLE[sex];
+  const ages = Object.keys(table).map(Number).sort((a,b)=>a-b);
+  if (age <= ages[0]) return table[ages[0]] + (ages[0]-age); // extrapolate below 20 roughly 1:1
+  if (age >= ages[ages.length-1]) return Math.max(1, table[ages[ages.length-1]] - (age-ages[ages.length-1])*0.3);
+  for (let i=0;i<ages.length-1;i++){
+    if (age >= ages[i] && age <= ages[i+1]){
+      const t = (age-ages[i])/(ages[i+1]-ages[i]);
+      return table[ages[i]] + t*(table[ages[i+1]]-table[ages[i]]);
+    }
+  }
+  return table[65];
+}
+
+const els = {};
+['age','sex','capital','w-stock','w-bond','w-gold','spend','realreturn','guardrate','ladder','gain','threshold'].forEach(id => els[id] = document.getElementById(id));
+
+const TR = {
+  it: {
+    "nav.home":"ARCA","nav.method":"Metodologia","nav.lazy":"Lazy Portfolio","nav.decumulo":"TTDWS","nav.blog":"Blog","nav.biblio":"Bibliografia","nav.disclaimer":"Disclaimer",
+    "nav.donate": "\u2615 Sostieni il progetto", "theme.dark": "Scuro", "theme.light": "Chiaro",
+    "kicker": "Two-Tier Dynamic Withdrawal Strategy",
+    "title": "TTDWS — Calcolatore del Tasso di Prelievo Sicuro",
+    "subtitle": "Confronta quattro modelli classici di prelievo — spesa reale fissa, percentuale costante, guardrail di Guyton-Klinger, ARVA attuariale — con la Two-Tier Dynamic Withdrawal Strategy (TTDWS): Bond Ladder quinquennale, +30.000€ Rule e Waterfall Decumulation.",
+    "life.age": "Età attuale", "life.remaining": "Vita residua stimata (ISTAT)", "life.fixed": "Dato fisso, non modificabile", "life.capital": "Montante residuo",
+    "panel.params": "Parametri",
+    "lbl.age": "Età attuale", "lbl.sex": "Sesso (tavole ISTAT)",
+    "hint.life": "La vita residua stimata sopra non è modificabile: deriva da un'interpolazione calibrata sui dati ISTAT più recenti (speranza di vita a 65 anni: uomini 19,8 anni, donne 22,6 anni — 2024). Non è la tavola ufficiale completa per singola età: vedi la nota in fondo alla pagina.",
+    "lbl.capital": "Montante residuo (€)",
+    "lbl.stock": "Azionario %", "lbl.bond": "Obbligazionario %", "lbl.gold": "Oro %",
+    "hint.weightsum": "I tre pesi dovrebbero sommare a 100%.",
+    "lbl.spend": "Spesa annua desiderata (€)",
+    "lbl.realreturn": "Rendimento reale atteso (ARVA)",
+    "lbl.guardrate": "Tasso di prelievo iniziale (Guardrail)",
+    "hint.guardrate": "Barriere fissate a ±20% (Guyton-Klinger): sopra la barriera alta si taglia la spesa del 10%, sotto la barriera bassa la si aumenta del 10%.",
+    "lbl.ladder": "Bond Ladder — Tier 1 (€)",
+    "hint.ladder": "TTDWS: di norma 5 × la spesa annua desiderata, in titoli di stato a breve con scadenze scaglionate anno per anno.",
+    "lbl.gain": "Guadagno del Motore di Crescita nell'ultimo anno (€)",
+    "hint.gain": "Usato per verificare la +30.000€ Rule: se il guadagno supera la soglia sotto, si vendono solo le plusvalenze e si reintegra il Bond Ladder.",
+    "lbl.threshold": "Soglia della Rule (€)",
+    "panel.methods": "I quattro metodi classici",
+    "m1.title": "1. Spesa reale fissa (4% Rule)", "m1.title.short": "Spesa reale fissa",
+    "m1.desc": "Preleva una quota fissa del capitale iniziale, poi la aggiorna solo per inflazione. Massima stabilità, ma pieno esposto al rischio di sequenza dei rendimenti.",
+    "m2.title": "2. Percentuale costante", "m2.title.short": "Percentuale costante",
+    "m2.desc": "Preleva una quota fissa del capitale attuale ogni anno. Non esaurisce mai il capitale per costruzione, ma lo stile di vita oscilla con i mercati.",
+    "m3.title": "3. Guardrail (Guyton-Klinger)", "m3.title.short": "Guardrail",
+    "m3.desc": "Tasso implicito attuale (spesa desiderata / montante) confrontato con le barriere ±20% intorno al tasso iniziale scelto.",
+    "m4.title": "4. ARVA (rendita virtuale attuariale)", "m4.title.short": "ARVA",
+    "m4.desc": "Capitale diviso per il fattore di rendita (PVFA), calcolato sulla vita residua ISTAT (fissa) e sul rendimento reale atteso. Si ricalcola ogni anno con capitale e orizzonte aggiornati.",
+    "m5.title.short": "TTDWS (spesa desiderata)",
+    "panel.ttdws": "Two-Tier Dynamic Withdrawal Strategy (TTDWS)",
+    "ttdws.intro": "Un Bond Ladder quinquennale (Tier 1) copre le spese correnti senza mai vendere il Motore di Crescita durante un ribasso; il Tier 2 (azionario/obbligazionario/oro) genera crescita a lungo termine; la +30.000€ Rule disciplina il reintegro del buffer.",
+    "tbl.tier": "Livello", "tbl.value": "Valore", "tbl.role": "Funzione",
+    "tbl.tier1": "Tier 1 — Bond Ladder", "tbl.tier1.role": "Copre ~5 anni di spesa; una tranche matura ogni anno.",
+    "tbl.tier2": "Tier 2 — Motore di Crescita", "tbl.tier2.role": "Azionario/Obbligazionario/Oro, orizzonte lungo.",
+    "tbl.wr": "Withdrawal Rate sul patrimonio totale",
+    "tbl.tier2.stock": "Azionario", "tbl.tier2.bond": "Obbligazionario", "tbl.tier2.gold": "Oro",
+    "rule.title": "+30.000€ Rule — verifica annuale",
+    "waterfall.title": "Waterfall Decumulation — ordine di vendita in un bear market oltre 5 anni:",
+    "wf.1": "1. Bond Ladder", "wf.2": "2. Obbligazionario", "wf.3": "3. Azionario", "wf.4": "4. Oro (ultima riserva)",
+    "panel.compare": "Confronto rapido",
+    "results.top.note": "Prelievo indicativo per il primo anno secondo i quattro metodi classici e TTDWS, in base ai parametri impostati qui sotto. I dettagli di ciascun metodo e la struttura TTDWS seguono più in basso.",
+    "cmp.method": "Metodo", "cmp.amount": "Prelievo anno 1", "cmp.rate": "% sul montante",
+    "details.summary": "Note metodologiche e limiti",
+    "note.long": "<b>Vita residua ISTAT.</b> Il valore mostrato in alto non è la tavola di mortalità ufficiale ISTAT per singola età: è una stima costruita per interpolazione, ancorata ai due dati ufficiali più recenti disponibili (speranza di vita alla nascita 2023: uomini 81,1 anni, donne 85,2; speranza di vita a 65 anni 2024: uomini 19,8 anni, donne 22,6). Per il dato ufficiale esatto alla tua età, consulta il database ISTAT su demo.istat.it (tavole di mortalità).<br><br><b>ARVA.</b> PVFA = (1 − (1+r)⁻ⁿ) / r, con n = vita residua ISTAT (fissa) e r = rendimento reale atteso che imposti. Il prelievo si ricalcola ogni anno con capitale e orizzonte aggiornati: non è un piano scolpito nella pietra, è una regola da riapplicare annualmente, come sottolineato in letteratura.<br><br><b>Guardrail.</b> Se il tasso di prelievo implicito (spesa desiderata / montante) supera la barriera alta, il modello segnala un taglio del 10% alla spesa; se scende sotto la barriera bassa, segnala un aumento del 10%; altrimenti nessun cambiamento oltre l'adeguamento inflattivo.<br><br><b>TTDWS.</b> Il Tier 1 (Bond Ladder) e il Tier 2 (Motore di Crescita) seguono la struttura descritta nella pagina Metodologia. La soglia della +30.000€ Rule è configurabile. La verifica quantitativa della strategia (probabilità di successo su orizzonti pluridecennali) richiede simulazioni Monte Carlo dedicate, distinte dalla stima puntuale mostrata in questa pagina.<br><br><b>Fonti sui quattro metodi classici:</b> Bengen (1994) \u201cDetermining Withdrawal Rates Using Historical Data\u201d; Trinity Study (Cooley, Hubbard & Walz, 1998); Guyton & Klinger (2006) \u201cDecision Rules and Maximum Initial Withdrawal Rates\u201d; Waring & Siegel (2015) \u201cThe Only Spending Rule Article You Will Ever Need\u201d — tutti citati nel podcast <i>Too Big To Fail, ep. 110, \u201cVivere di Rendita e Decumulo\u201d</i>, citato in Bibliografia.<br><br>Nessuno di questi calcoli costituisce consulenza finanziaria, previdenziale o attuariale — vedi il Disclaimer.",
+    "badge.within": "dentro le barriere", "badge.above": "sopra la barriera alta — taglio 10%", "badge.below": "sotto la barriera bassa — aumento 10%",
+    "badge.harvest": "Regola attivata: harvest + reintegro", "badge.hold": "Regola non attivata: nessuna vendita",
+    "rule.detail.harvest": (gain,thr) => `Il guadagno (${gain}) supera la soglia (${thr}): si vendono le plusvalenze e il Bond Ladder torna al suo livello target.`,
+    "rule.detail.hold": (gain,thr) => `Il guadagno (${gain}) non supera la soglia (${thr}): nessuna vendita, si attende il recupero dei mercati.`,
+    "m3.detail": (rate,low,high) => `Tasso implicito: ${rate}. Barriere: ${low} – ${high}.`,
+    "m4.detail": (pvfa,years) => `Fattore di rendita (PVFA) ≈ ${pvfa} su un orizzonte di ${years} anni.`,
+  },
+  en: {
+    "nav.home":"ARCA","nav.method":"Methodology","nav.lazy":"Lazy Portfolio","nav.decumulo":"TTDWS","nav.blog":"Blog","nav.biblio":"Bibliography","nav.disclaimer":"Disclaimer",
+    "nav.donate": "\u2615 Support this project", "theme.dark": "Dark", "theme.light": "Light",
+    "kicker": "Two-Tier Dynamic Withdrawal Strategy",
+    "title": "TTDWS — Safe Withdrawal Rate Calculator",
+    "subtitle": "Compares four classic withdrawal models — fixed real spending, constant percentage, Guyton-Klinger guardrails, actuarial ARVA — with the Two-Tier Dynamic Withdrawal Strategy (TTDWS): a five-year Bond Ladder, the +€30,000 Rule, and Waterfall Decumulation.",
+    "life.age": "Current age", "life.remaining": "Estimated remaining life (ISTAT)", "life.fixed": "Fixed value, not editable", "life.capital": "Remaining capital",
+    "panel.params": "Parameters",
+    "lbl.age": "Current age", "lbl.sex": "Sex (ISTAT tables)",
+    "hint.life": "The remaining-life estimate above isn't editable: it's an interpolation calibrated on the latest official ISTAT figures (life expectancy at 65: men 19.8 years, women 22.6 years — 2024). It is not the full official single-age table: see the note at the bottom of the page.",
+    "lbl.capital": "Remaining capital (€)",
+    "lbl.stock": "Stocks %", "lbl.bond": "Bonds %", "lbl.gold": "Gold %",
+    "hint.weightsum": "The three weights should add up to 100%.",
+    "lbl.spend": "Desired annual spending (€)",
+    "lbl.realreturn": "Expected real return (ARVA)",
+    "lbl.guardrate": "Initial withdrawal rate (Guardrail)",
+    "hint.guardrate": "Guardrails fixed at ±20% (Guyton-Klinger): above the upper rail spending is cut 10%, below the lower rail it's raised 10%.",
+    "lbl.ladder": "Bond Ladder — Tier 1 (€)",
+    "hint.ladder": "TTDWS: typically 5 × desired annual spending, in short-term government bonds with staggered yearly maturities.",
+    "lbl.gain": "Growth Engine gain in the last year (€)",
+    "hint.gain": "Used to check the +€30,000 Rule: if the gain exceeds the threshold below, only capital gains are sold and the Bond Ladder is refilled.",
+    "lbl.threshold": "Rule threshold (€)",
+    "panel.methods": "The four classic methods",
+    "m1.title": "1. Fixed real spending (4% Rule)", "m1.title.short": "Fixed real spending",
+    "m1.desc": "Withdraws a fixed share of the starting capital, then updates it only for inflation. Maximum stability, but fully exposed to sequence-of-returns risk.",
+    "m2.title": "2. Constant percentage", "m2.title.short": "Constant percentage",
+    "m2.desc": "Withdraws a fixed share of the current portfolio each year. Never runs out of money by construction, but lifestyle swings with the markets.",
+    "m3.title": "3. Guardrails (Guyton-Klinger)", "m3.title.short": "Guardrails",
+    "m3.desc": "Current implied rate (desired spending / capital) compared against ±20% guardrails around the chosen initial rate.",
+    "m4.title": "4. ARVA (actuarial virtual annuity)", "m4.title.short": "ARVA",
+    "m4.desc": "Capital divided by the annuity factor (PVFA), calculated on the fixed ISTAT remaining life expectancy and your expected real return. Recalculated every year with updated capital and horizon.",
+    "m5.title.short": "TTDWS (desired spending)",
+    "panel.ttdws": "Two-Tier Dynamic Withdrawal Strategy (TTDWS)",
+    "ttdws.intro": "A five-year Bond Ladder (Tier 1) covers current spending without ever selling the Growth Engine during a downturn; Tier 2 (stocks/bonds/gold) drives long-term growth; the +€30,000 Rule disciplines refilling the buffer.",
+    "tbl.tier": "Tier", "tbl.value": "Value", "tbl.role": "Role",
+    "tbl.tier1": "Tier 1 — Bond Ladder", "tbl.tier1.role": "Covers ~5 years of spending; one tranche matures each year.",
+    "tbl.tier2": "Tier 2 — Growth Engine", "tbl.tier2.role": "Stocks/Bonds/Gold, long horizon.",
+    "tbl.wr": "Withdrawal rate on total wealth",
+    "tbl.tier2.stock": "Stocks", "tbl.tier2.bond": "Bonds", "tbl.tier2.gold": "Gold",
+    "rule.title": "+€30,000 Rule — annual check",
+    "waterfall.title": "Waterfall Decumulation — sell order in a bear market beyond 5 years:",
+    "wf.1": "1. Bond Ladder", "wf.2": "2. Bonds", "wf.3": "3. Stocks", "wf.4": "4. Gold (last reserve)",
+    "panel.compare": "Quick comparison",
+    "results.top.note": "Indicative year-1 withdrawal under the four classic methods and TTDWS, based on the parameters set below. Details for each method and the TTDWS structure follow further down.",
+    "cmp.method": "Method", "cmp.amount": "Year-1 withdrawal", "cmp.rate": "% of capital",
+    "details.summary": "Methodological notes and limits",
+    "note.long": "<b>ISTAT remaining life.</b> The figure shown above is not the official ISTAT mortality table for a single age: it's an interpolated estimate anchored to the two latest official figures available (life expectancy at birth, 2023: men 81.1 years, women 85.2; life expectancy at 65, 2024: men 19.8 years, women 22.6). For the exact official figure at your age, check the ISTAT database at demo.istat.it (mortality tables).<br><br><b>ARVA.</b> PVFA = (1 − (1+r)⁻ⁿ) / r, with n = fixed ISTAT remaining life and r = the expected real return you set. The withdrawal is recalculated every year with updated capital and horizon: it's not a plan carved in stone, it's a rule to reapply annually, as the underlying literature stresses.<br><br><b>Guardrails.</b> If the implied withdrawal rate (desired spending / capital) exceeds the upper rail, the model flags a 10% spending cut; if it falls below the lower rail, it flags a 10% raise; otherwise no change beyond the inflation adjustment.<br><br><b>TTDWS.</b> Tier 1 (Bond Ladder) and Tier 2 (Growth Engine) follow the structure described on the Methodology page. The +€30,000 Rule threshold is configurable. Quantitative validation of the strategy (success probability over multi-decade horizons) requires dedicated Monte Carlo simulation, distinct from the point-in-time estimate shown on this page.<br><br><b>Sources on the four classic methods:</b> Bengen (1994) \u201cDetermining Withdrawal Rates Using Historical Data\u201d; Trinity Study (Cooley, Hubbard & Walz, 1998); Guyton & Klinger (2006) \u201cDecision Rules and Maximum Initial Withdrawal Rates\u201d; Waring & Siegel (2015) \u201cThe Only Spending Rule Article You Will Ever Need\u201d — all cited in the podcast <i>Too Big To Fail, ep. 110, \u201cVivere di Rendita e Decumulo\u201d</i>, cited in the Bibliography.<br><br>None of these calculations constitute financial, pension, or actuarial advice — see the Disclaimer.",
+    "badge.within": "within guardrails", "badge.above": "above upper rail — cut 10%", "badge.below": "below lower rail — raise 10%",
+    "badge.harvest": "Rule triggered: harvest + refill", "badge.hold": "Rule not triggered: no sale",
+    "rule.detail.harvest": (gain,thr) => `The gain (${gain}) exceeds the threshold (${thr}): capital gains are sold and the Bond Ladder returns to its target level.`,
+    "rule.detail.hold": (gain,thr) => `The gain (${gain}) does not exceed the threshold (${thr}): no sale, waiting for markets to recover.`,
+    "m3.detail": (rate,low,high) => `Implied rate: ${rate}. Guardrails: ${low} – ${high}.`,
+    "m4.detail": (pvfa,years) => `Annuity factor (PVFA) ≈ ${pvfa} over a ${years}-year horizon.`,
+  }
+};
+function L(key){ return TR[LANG][key]; }
+
+function updateNav(){
+  const current = (window.location.pathname.split('/').pop() || 'index.html');
+  document.querySelectorAll('.navitem').forEach(a => {
+    const base = a.getAttribute('data-file');
+    a.href = base + '?lang=' + LANG + '&theme=' + THEME;
+    a.classList.toggle('active', base === current);
+  });
+}
+function applyStaticTranslations(){
+  updateNav();
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = TR[LANG][key];
+    if (typeof val === 'string') el.innerHTML = val;
+  });
+  document.getElementById('html-root').lang = LANG;
+  document.getElementById('lang-it').classList.toggle('active', LANG==='it');
+  document.getElementById('lang-en').classList.toggle('active', LANG==='en');
+  compute();
+}
+function setLang(lang){ LANG = lang; applyStaticTranslations(); }
+document.getElementById('lang-it').addEventListener('click', () => setLang('it'));
+document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+
+function applyTheme(){
+  document.getElementById('html-root').setAttribute('data-theme', THEME);
+  document.getElementById('theme-toggle').classList.toggle('on', THEME==='light');
+  document.getElementById('ts-label').textContent = THEME==='light' ? (TR[LANG]['theme.light']||'Chiaro') : (TR[LANG]['theme.dark']||'Scuro');
+  updateNav();
+}
+function setTheme(t){ THEME = t; applyTheme(); }
+document.getElementById('theme-toggle').addEventListener('click', () => setTheme(THEME==='dark' ? 'light' : 'dark'));
+
+function compute(){
+  const age = +els['age'].value;
+  const sex = els['sex'].value;
+  const capital = +els['capital'].value;
+  const wStock = +els['w-stock'].value;
+  const wBond = +els['w-bond'].value;
+  const wGold = +els['w-gold'].value;
+  const spend = +els['spend'].value;
+  const realReturn = +els['realreturn'].value / 100;
+  const guardRate = +els['guardrate'].value / 100;
+  const ladder = +els['ladder'].value;
+  const gain = +els['gain'].value;
+  const threshold = +els['threshold'].value;
+
+  document.getElementById('v-age').textContent = age;
+  document.getElementById('v-realreturn').textContent = (realReturn*100).toFixed(1)+'%';
+  document.getElementById('v-guardrate').textContent = (guardRate*100).toFixed(1)+'%';
+
+  const life = lifeExpectancy(age, sex);
+  document.getElementById('disp-age').textContent = age;
+  document.getElementById('disp-life').textContent = life.toFixed(1);
+  document.getElementById('disp-capital').textContent = eur(capital);
+
+  const weightSum = wStock + wBond + wGold;
+  document.getElementById('weight-warning').style.display = Math.abs(weightSum-100) > 0.5 ? 'block' : 'none';
+
+  // Method 1: fixed real 4%
+  const m1 = capital * 0.04;
+  // Method 2: constant percentage (reuse guardRate's base 5%? use a fixed reasonable 5% distinct slider not present -> use guardRate as proxy is confusing;
+  // use a separate constant rate: 5% is common comparison; keep simple with 5% fixed reference distinct from guardrail).
+  const CONST_PCT = 0.05;
+  const m2 = capital * CONST_PCT;
+
+  // Method 3: Guyton-Klinger guardrail
+  const impliedRate = capital > 0 ? spend / capital : 0;
+  const lowRail = guardRate * 0.8;
+  const highRail = guardRate * 1.2;
+  let m3 = spend, badge3 = 'within', badgeClass3 = 'ok';
+  if (impliedRate > highRail){ m3 = spend * 0.9; badge3 = 'above'; badgeClass3 = 'cut'; }
+  else if (impliedRate < lowRail){ m3 = spend * 1.1; badge3 = 'below'; badgeClass3 = 'raise'; }
+
+  // Method 4: ARVA
+  const n = life;
+  const r = realReturn;
+  const pvfa = r > 0.0001 ? (1 - Math.pow(1+r, -n)) / r : n;
+  const m4 = capital / pvfa;
+
+  // TTDWS
+  const growthCapital = Math.max(0, capital - ladder);
+  const wr = capital > 0 ? spend / capital : 0;
+  const harvestTriggered = gain > threshold;
+
+  // --- render methods ---
+  document.getElementById('m1-amount').textContent = eur(m1);
+  document.getElementById('m2-amount').textContent = eur(m2);
+  document.getElementById('m3-amount').textContent = eur(m3);
+  document.getElementById('m3-badge').textContent = L('badge.'+badge3);
+  document.getElementById('m3-badge').className = 'badge ' + badgeClass3;
+  document.getElementById('m3-detail').textContent = L('m3.detail')(pct(impliedRate), pct(lowRail), pct(highRail));
+  document.getElementById('m4-amount').textContent = eur(m4);
+  document.getElementById('m4-detail').textContent = L('m4.detail')(pvfa.toFixed(2), n.toFixed(1));
+
+  // --- TTDWS ---
+  document.getElementById('t-ladder').textContent = eur(ladder);
+  document.getElementById('t-growth').textContent = eur(growthCapital);
+  document.getElementById('t-wr').textContent = pct(wr);
+  document.getElementById('t-stock').textContent = eur(growthCapital * wStock/100);
+  document.getElementById('t-bond').textContent = eur(growthCapital * wBond/100);
+  document.getElementById('t-gold').textContent = eur(growthCapital * wGold/100);
+
+  document.getElementById('rule-badge').textContent = harvestTriggered ? L('badge.harvest') : L('badge.hold');
+  document.getElementById('rule-badge').className = 'badge ' + (harvestTriggered ? 'ok' : 'hold');
+  document.getElementById('rule-detail').textContent = harvestTriggered
+    ? L('rule.detail.harvest')(eur(gain), eur(threshold))
+    : L('rule.detail.hold')(eur(gain), eur(threshold));
+
+  // --- comparison table ---
+  document.getElementById('c1-amount').textContent = eur(m1);
+  document.getElementById('c1-rate').textContent = pct(capital>0? m1/capital:0);
+  document.getElementById('c2-amount').textContent = eur(m2);
+  document.getElementById('c2-rate').textContent = pct(capital>0? m2/capital:0);
+  document.getElementById('c3-amount').textContent = eur(m3);
+  document.getElementById('c3-rate').textContent = pct(capital>0? m3/capital:0);
+  document.getElementById('c4-amount').textContent = eur(m4);
+  document.getElementById('c4-rate').textContent = pct(capital>0? m4/capital:0);
+  document.getElementById('c5-amount').textContent = eur(spend);
+  document.getElementById('c5-rate').textContent = pct(wr);
+}
+
+Object.values(els).forEach(el => el.addEventListener('input', compute));
+
+(function init(){
+  const params = new URLSearchParams(window.location.search);
+  const initLang = params.get('lang');
+  if (initLang === 'en' || initLang === 'it') LANG = initLang;
+  const initTheme = params.get('theme');
+  if (initTheme === 'light' || initTheme === 'dark') THEME = initTheme;
+  applyTheme();
+  applyStaticTranslations();
+})();
+</script>
+</body>
+</html>

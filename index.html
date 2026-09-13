@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUREA — La Bussola per Bond, Stock & Oro</title>
+<title>ARCA — Age-Responsive Capital Allocation</title>
 <style>
   html, :root{
     --bg: #10141b;
@@ -58,6 +58,7 @@
     margin: 0 0 10px; color: var(--ink); letter-spacing: 0.2px;
   }
   header p{ color: var(--ink-dim); margin:0; font-size: 14.5px; max-width: 640px; }
+  header p.tagline{ font-family: var(--serif); font-style: italic; color: var(--gold-dim); font-size: 15px; margin: 0 0 10px; }
 
   .grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 22px; }
   @media (max-width: 760px){ .grid{ grid-template-columns: 1fr; } }
@@ -156,9 +157,12 @@
   .donate-btn{ font-size:12px; color:#231a06; background: var(--gold); padding:6px 12px; border-radius:3px; text-decoration:none; font-family: var(--sans); white-space:nowrap; }
   .donate-btn:hover{ background:#d9b45f; }
 
-  .themetoggle{ display:flex; gap: 6px; }
-  .themetoggle button{ background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-dim); font-size: 12px; padding: 5px 9px; border-radius: 3px; cursor:pointer; font-family: var(--sans); line-height:1; }
-  .themetoggle button.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .theme-switch{ display:flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; padding:0; font-family: var(--sans); }
+  .ts-track{ width:38px; height:21px; background: var(--panel-2); border:1px solid var(--line); border-radius:11px; position:relative; flex-shrink:0; transition: background 0.2s, border-color 0.2s; }
+  .ts-thumb{ position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background: var(--ink-dim); transition: transform 0.2s, background 0.2s; }
+  .theme-switch.on .ts-track{ background: rgba(201,162,75,0.18); border-color: var(--gold-dim); }
+  .theme-switch.on .ts-thumb{ transform: translateX(16px); background: var(--gold); }
+  .ts-label{ font-size:12px; color: var(--ink-dim); }
 
   html, :root{ --hero-sky-top:#1a2436; --hero-sky-bottom:#0f1420; --hero-sun-core:#f3d78a; --hero-sun-edge:#c9a24b; --hero-field-far:#1c3350; --hero-field-near:#101a28; --hero-horizon:#c9a24b; --hero-bird:#e8e6df; }
   html[data-theme="light"]{ --hero-sky-top:#eaf1f7; --hero-sky-bottom:#f7f5ee; --hero-sun-core:#fff3d6; --hero-sun-edge:#c9a24b; --hero-field-far:#bcd4e6; --hero-field-near:#8fb8d6; --hero-horizon:#a4761f; --hero-bird:#1d2436; }
@@ -199,7 +203,8 @@
 
   <div class="topbar">
     <nav class="pagenav">
-      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">Calcolatore</a>
+      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">ARCA</a>
+      <a href="decumulo.html" class="navitem" data-file="decumulo.html" data-i18n="nav.decumulo">TTDWS</a>
       <a href="metodologia.html" class="navitem" data-file="metodologia.html" data-i18n="nav.method">Metodologia</a>
       <a href="lazy-portfolio.html" class="navitem" data-file="lazy-portfolio.html" data-i18n="nav.lazy">Lazy Portfolio</a>
       <a href="blog.html" class="navitem" data-file="blog.html" data-i18n="nav.blog">Blog</a>
@@ -208,10 +213,10 @@
     </nav>
     <div class="topbar-right">
       <a class="donate-btn" href="https://www.paypal.com/donate?business=spawnguz%40gmail.com&currency_code=EUR" target="_blank" rel="noopener" data-i18n="nav.donate">☕ Sostieni il progetto</a>
-      <div class="themetoggle">
-        <button id="theme-dark" title="Tema scuro">🌙</button>
-        <button id="theme-light" title="Tema chiaro">☀️</button>
-      </div>
+      <button class="theme-switch" id="theme-toggle" title="Chiaro / Scuro" type="button">
+        <span class="ts-track"><span class="ts-thumb"></span></span>
+        <span class="ts-label" id="ts-label">Scuro</span>
+      </button>
       <div class="langtoggle">
         <button id="lang-it" class="active">IT</button>
         <button id="lang-en">EN</button>
@@ -220,9 +225,10 @@
   </div>
 
   <header>
-    <div class="kicker" data-i18n="kicker">Un modello quantitativo per l'allocazione patrimoniale lungo il ciclo di vita</div>
-    <h1 data-i18n="title">AUREA — La Bussola per Bond, Stock & Oro</h1>
-    <p data-i18n="subtitle">AUREA stima una ripartizione di riferimento tra Obbligazioni, Azioni e Oro a partire dalla tua età, dal contesto dei tassi d'interesse (BCE e FED) e dalla fase del ciclo macroeconomico. Combina la regola di allocazione di Merton (1969) con un percorso di rischio calibrato sul ciclo di vita (reverse glide path), una correzione per l'assenza di alternative reali alle azioni quando i tassi sono compressi (TINA) e un modello a sei fattori per la quota di oro. Muovi i parametri qui sotto per vedere come cambia l'allocazione suggerita.</p>
+    <div class="kicker" data-i18n="kicker">Age-Responsive Capital Allocation</div>
+    <h1 data-i18n="title">ARCA — La Bussola per Bond, Stock & Oro</h1>
+    <p class="tagline" data-i18n="tagline">Il tuo portafoglio, allineato alla tua fase di vita.</p>
+    <p data-i18n="subtitle">ARCA stima una ripartizione di riferimento tra Obbligazioni, Azioni e Oro a partire dalla tua età, dal contesto dei tassi d'interesse (BCE e FED) e dalla fase del ciclo macroeconomico. Combina la regola di allocazione di Merton (1969) con un percorso di rischio calibrato sul ciclo di vita (reverse glide path), una correzione per l'assenza di alternative reali alle azioni quando i tassi sono compressi (TINA) e un modello a sei fattori per la quota di oro. Muovi i parametri qui sotto per vedere come cambia l'allocazione suggerita.</p>
   </header>
 
   <div class="grid">
@@ -263,13 +269,27 @@
         <div class="field">
           <label><span data-i18n="lbl.bce">Tasso BCE</span> <span class="val" id="v-bce">2.00%</span></label>
           <input type="range" id="bce" min="0" max="8" value="2.0" step="0.1">
-          <p class="hint" data-i18n="hint.bce">Contribuisce al tasso nominale medio usato per stimare il tasso reale.</p>
+          <p class="hint" data-i18n="hint.bce">Peso 75% nel tasso nominale di riferimento (investitore europeo).</p>
         </div>
         <div class="field">
           <label><span data-i18n="lbl.fed">Tasso FED</span> <span class="val" id="v-fed">4.00%</span></label>
           <input type="range" id="fed" min="0" max="8" value="4.0" step="0.1">
-          <p class="hint" data-i18n="hint.fed">Come sopra, per la parte USA — la media BCE/FED è il tasso nominale di riferimento.</p>
+          <p class="hint" data-i18n="hint.fed">Peso 25% nel tasso nominale di riferimento — disattivabile con l'interruttore sotto.</p>
         </div>
+      </div>
+
+      <div class="field">
+        <label class="switch-row" data-i18n="lbl.usefed">Includi il tasso FED (25%) nel calcolo</label>
+        <label class="switch">
+          <input type="checkbox" id="usefed" checked>
+          <span class="switch-track"><span class="switch-thumb"></span></span>
+          <span class="switch-text" id="v-usefed">On</span>
+        </label>
+        <p class="hint" data-i18n="hint.usefed">Spento: il tasso nominale di riferimento usa solo il tasso BCE (100%), ignorando il FED — utile se vuoi isolare l'effetto della sola politica monetaria europea.</p>
+      </div>
+
+      <div class="callout" style="background:rgba(201,162,75,0.06); border:1px solid var(--gold-dim); border-radius:4px; padding:12px 14px; margin-top:14px; font-size:12px; color:var(--ink-dim); line-height:1.6;" data-i18n="eu.note">
+        <b>Nota per l'investitore europeo.</b> Il calcolatore pesa il tasso BCE al 75% e il tasso FED al 25% perché è pensato per un investitore che vive e spende in euro. Per coerenza, la quota obbligazionaria dovrebbe essere allocata in titoli di stato dell'area euro e, per la parte estera, in titoli di stato esteri con copertura del cambio (hedged) — per non aggiungere un rischio valutario non voluto alla componente "sicura" del portafoglio.
       </div>
 
       <div class="field">
@@ -391,7 +411,7 @@
     </p>
   </details>
 
-  <p class="note" style="margin-top:28px;" data-i18n="footer.disclaimer">Strumento a scopo informativo ed educativo. Non costituisce consulenza finanziaria personalizzata.</p>
+  <p class="note" style="margin-top:28px;" data-i18n="footer.disclaimer">Strumento a scopo informativo ed educativo, costruito sulle ipotesi che hai definito nei tuoi modelli. Non costituisce consulenza finanziaria personalizzata.</p>
 
 </div>
 
@@ -407,6 +427,7 @@ const els = {
   tolerance: document.getElementById('tolerance'),
   bce: document.getElementById('bce'),
   fed: document.getElementById('fed'),
+  usefed: document.getElementById('usefed'),
   infl: document.getElementById('infl'),
   phase: document.getElementById('phase'),
   goldprice: document.getElementById('goldprice'),
@@ -436,19 +457,21 @@ const GOLD_AVG_REAL = 1397;
 const GOLD_STD_REAL = 900;
 
 let LANG = 'it';
+let THEME = 'dark';
 
 const TR = {
   it: {
-    "nav.home": "Calcolatore",
+    "nav.home": "ARCA",
     "nav.method": "Metodologia",
-    "nav.lazy": "Lazy Portfolio",
+    "nav.lazy": "Lazy Portfolio", "nav.decumulo": "TTDWS",
     "nav.biblio": "Bibliografia",
     "nav.disclaimer": "Disclaimer",
-    "nav.donate": "☕ Sostieni il progetto",
+    "nav.donate": "☕ Sostieni il progetto", "theme.dark": "Scuro", "theme.light": "Chiaro",
     "nav.methodology": "Come funziona il modello →",
-    "kicker": "Un modello quantitativo per l'allocazione patrimoniale lungo il ciclo di vita",
-    "title": "AUREA — La Bussola per Bond, Stock & Oro",
-    "subtitle": "AUREA stima una ripartizione di riferimento tra Obbligazioni, Azioni e Oro a partire dalla tua età, dal contesto dei tassi d'interesse (BCE e FED) e dalla fase del ciclo macroeconomico. Combina la regola di allocazione di Merton (1969) con un percorso di rischio calibrato sul ciclo di vita (reverse glide path), una correzione per l'assenza di alternative reali alle azioni quando i tassi sono compressi (TINA) e un modello a sei fattori per la quota di oro. Muovi i parametri qui sotto per vedere come cambia l'allocazione suggerita.",
+    "kicker": "Age-Responsive Capital Allocation",
+    "tagline": "Il tuo portafoglio, allineato alla tua fase di vita.",
+    "title": "ARCA — La Bussola per Bond, Stock & Oro",
+    "subtitle": "ARCA stima una ripartizione di riferimento tra Obbligazioni, Azioni e Oro a partire dalla tua età, dal contesto dei tassi d'interesse (BCE e FED) e dalla fase del ciclo macroeconomico. Combina la regola di allocazione di Merton (1969) con un percorso di rischio calibrato sul ciclo di vita (reverse glide path), una correzione per l'assenza di alternative reali alle azioni quando i tassi sono compressi (TINA) e un modello a sei fattori per la quota di oro. Muovi i parametri qui sotto per vedere come cambia l'allocazione suggerita.",
     "hero.caption": "Il rischio che puoi permetterti di correre cambia nel tempo — la tua allocazione dovrebbe farlo con te.",
     "panel.params": "Parametri",
     "lbl.age": "Età",
@@ -465,9 +488,12 @@ const TR = {
     "opt.tol.high": "Alta", "opt.tol.med": "Media", "opt.tol.low": "Bassa",
     "hint.tolerance": "Moltiplica γ: più bassa la tolleranza, più prudente l'allocazione risultante.",
     "lbl.bce": "Tasso BCE",
-    "hint.bce": "Contribuisce al tasso nominale medio usato per stimare il tasso reale.",
+    "hint.bce": "Peso 75% nel tasso nominale di riferimento (investitore europeo).",
     "lbl.fed": "Tasso FED",
-    "hint.fed": "Come sopra, per la parte USA — la media BCE/FED è il tasso nominale di riferimento.",
+    "hint.fed": "Peso 25% nel tasso nominale di riferimento — disattivabile con l'interruttore sotto.",
+    "lbl.usefed": "Includi il tasso FED (25%) nel calcolo",
+    "hint.usefed": "Spento: il tasso nominale di riferimento usa solo il tasso BCE (100%), ignorando il FED — utile se vuoi isolare l'effetto della sola politica monetaria europea.",
+    "eu.note": "<b>Nota per l'investitore europeo.</b> Il calcolatore pesa il tasso BCE al 75% e il tasso FED al 25% perché è pensato per un investitore che vive e spende in euro. Per coerenza, la quota obbligazionaria dovrebbe essere allocata in titoli di stato dell'area euro e, per la parte estera, in titoli di stato esteri con copertura del cambio (hedged) — per non aggiungere un rischio valutario non voluto alla componente \u201csicura\u201d del portafoglio.",
     "lbl.infl": "Inflazione attesa (media EUR/USD)",
     "hint.infl": "Tasso nominale meno inflazione = tasso reale, il perno di TINA e del costo-opportunità dell'oro.",
     "lbl.phase": "Fase del ciclo macro",
@@ -522,16 +548,17 @@ const TR = {
     "yearsSuffix": " anni",
   },
   en: {
-    "nav.home": "Calculator",
+    "nav.home": "ARCA",
     "nav.method": "Methodology",
-    "nav.lazy": "Lazy Portfolio",
+    "nav.lazy": "Lazy Portfolio", "nav.decumulo": "TTDWS",
     "nav.biblio": "Bibliography",
     "nav.disclaimer": "Disclaimer",
-    "nav.donate": "☕ Support this project",
+    "nav.donate": "☕ Support this project", "theme.dark": "Dark", "theme.light": "Light",
     "nav.methodology": "How the model works →",
-    "kicker": "A quantitative model for lifecycle asset allocation",
-    "title": "AUREA — Your Compass for Bonds, Stocks & Gold",
-    "subtitle": "AUREA estimates a reference split across Bonds, Stocks, and Gold based on your age, the interest-rate environment (ECB and Fed), and the macroeconomic cycle phase. It combines Merton's (1969) allocation rule with a lifecycle-calibrated risk path (reverse glide path), a correction for the absence of a real alternative to equities when rates are compressed (TINA), and a 6-factor model for the gold share. Move the parameters below to see how the suggested allocation changes.",
+    "kicker": "Age-Responsive Capital Allocation",
+    "tagline": "Your portfolio, aligned with your life stage.",
+    "title": "ARCA — Your Compass for Bonds, Stocks & Gold",
+    "subtitle": "ARCA estimates a reference split across Bonds, Stocks, and Gold based on your age, the interest-rate environment (ECB and Fed), and the macroeconomic cycle phase. It combines Merton's (1969) allocation rule with a lifecycle-calibrated risk path (reverse glide path), a correction for the absence of a real alternative to equities when rates are compressed (TINA), and a 6-factor model for the gold share. Move the parameters below to see how the suggested allocation changes.",
     "hero.caption": "The risk you can afford to take changes over time — your allocation should too.",
     "panel.params": "Parameters",
     "lbl.age": "Age",
@@ -548,9 +575,12 @@ const TR = {
     "opt.tol.high": "High", "opt.tol.med": "Medium", "opt.tol.low": "Low",
     "hint.tolerance": "Multiplies γ: lower tolerance means a more conservative resulting allocation.",
     "lbl.bce": "ECB rate",
-    "hint.bce": "Feeds into the average nominal rate used to estimate the real rate.",
+    "hint.bce": "Weighted 75% into the reference nominal rate (European investor).",
     "lbl.fed": "Fed rate",
-    "hint.fed": "Same as above for the US side — the BCE/FED average is the reference nominal rate.",
+    "hint.fed": "Weighted 25% into the reference nominal rate — can be switched off below.",
+    "lbl.usefed": "Include the Fed rate (25%) in the calculation",
+    "hint.usefed": "Off: the reference nominal rate uses only the ECB rate (100%), ignoring the Fed — useful if you want to isolate the effect of European monetary policy alone.",
+    "eu.note": "<b>Note for European investors.</b> The calculator weights the ECB rate at 75% and the Fed rate at 25% because it's built for an investor who lives and spends in euros. For consistency, the bond allocation should sit in euro-area government bonds and, for the foreign portion, in currency-hedged foreign government bonds — so as not to add unwanted currency risk to the \u201csafe\u201d part of the portfolio.",
     "lbl.infl": "Expected inflation (EUR/USD average)",
     "hint.infl": "Nominal rate minus inflation = real rate, the pivot for TINA and gold's opportunity cost.",
     "lbl.phase": "Macro cycle phase",
@@ -613,7 +643,7 @@ function updateNav(){
   const current = (window.location.pathname.split('/').pop() || 'index.html');
   document.querySelectorAll('.navitem').forEach(a => {
     const base = a.getAttribute('data-file');
-    a.href = base + '?lang=' + LANG;
+    a.href = base + '?lang=' + LANG + '&theme=' + THEME;
     a.classList.toggle('active', base === current);
   });
 }
@@ -639,6 +669,15 @@ function setLang(lang){
 document.getElementById('lang-it').addEventListener('click', () => setLang('it'));
 document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
 
+function applyTheme(){
+  document.getElementById('html-root').setAttribute('data-theme', THEME);
+  document.getElementById('theme-toggle').classList.toggle('on', THEME==='light');
+  document.getElementById('ts-label').textContent = THEME==='light' ? (TR[LANG]['theme.light']||'Chiaro') : (TR[LANG]['theme.dark']||'Scuro');
+  updateNav();
+}
+function setTheme(t){ THEME = t; applyTheme(); }
+document.getElementById('theme-toggle').addEventListener('click', () => setTheme(THEME==='dark' ? 'light' : 'dark'));
+
 function compute(){
   const age = +els.age.value;
   const retAge = +els.retage.value;
@@ -661,7 +700,11 @@ function compute(){
   document.getElementById('v-infl').textContent = infl.toFixed(2) + '%';
 
   // --- Merton rule ---
-  const nominalRate = (bce + fed) / 2 / 100;
+  const useFed = els.usefed.checked;
+  els.fed.disabled = !useFed;
+  els.fed.style.opacity = useFed ? '1' : '0.35';
+  document.getElementById('v-usefed').textContent = useFed ? L('buffett.on') : L('buffett.off');
+  const nominalRate = useFed ? (0.75*bce + 0.25*fed) / 100 : bce / 100;
   const realRate = nominalRate - infl / 100;
 
   const RATE_REF = 0.01;
@@ -772,6 +815,9 @@ Object.values(els).forEach(el => el.addEventListener('input', compute));
   const params = new URLSearchParams(window.location.search);
   const initLang = params.get('lang');
   if (initLang === 'en' || initLang === 'it') LANG = initLang;
+  const initTheme = params.get('theme');
+  if (initTheme === 'light' || initTheme === 'dark') THEME = initTheme;
+  applyTheme();
   applyStaticTranslations();
   compute();
 })();

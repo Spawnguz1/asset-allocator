@@ -73,9 +73,12 @@
   .note{ font-size: 12.5px; color: var(--ink-faint); margin-top: 10px; line-height: 1.6; }
   footer{ margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-faint); }
 
-  .themetoggle{ display:flex; gap: 6px; }
-  .themetoggle button{ background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-dim); font-size: 12px; padding: 5px 9px; border-radius: 3px; cursor:pointer; font-family: var(--sans); line-height:1; }
-  .themetoggle button.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .theme-switch{ display:flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; padding:0; font-family: var(--sans); }
+  .ts-track{ width:38px; height:21px; background: var(--panel-2); border:1px solid var(--line); border-radius:11px; position:relative; flex-shrink:0; transition: background 0.2s, border-color 0.2s; }
+  .ts-thumb{ position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background: var(--ink-dim); transition: transform 0.2s, background 0.2s; }
+  .theme-switch.on .ts-track{ background: rgba(201,162,75,0.18); border-color: var(--gold-dim); }
+  .theme-switch.on .ts-thumb{ transform: translateX(16px); background: var(--gold); }
+  .ts-label{ font-size:12px; color: var(--ink-dim); }
 </style>
 </head>
 <body>
@@ -83,7 +86,8 @@
 
   <div class="topbar">
     <nav class="pagenav">
-      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">Calcolatore</a>
+      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">ARCA</a>
+      <a href="decumulo.html" class="navitem" data-file="decumulo.html" data-i18n="nav.decumulo">TTDWS</a>
       <a href="metodologia.html" class="navitem" data-file="metodologia.html" data-i18n="nav.method">Metodologia</a>
       <a href="lazy-portfolio.html" class="navitem" data-file="lazy-portfolio.html" data-i18n="nav.lazy">Lazy Portfolio</a>
       <a href="blog.html" class="navitem" data-file="blog.html" data-i18n="nav.blog">Blog</a>
@@ -92,10 +96,10 @@
     </nav>
     <div class="topbar-right">
       <a class="donate-btn" href="https://www.paypal.com/donate?business=spawnguz%40gmail.com&currency_code=EUR" target="_blank" rel="noopener" data-i18n="nav.donate">☕ Sostieni il progetto</a>
-      <div class="themetoggle">
-        <button id="theme-dark" title="Tema scuro">🌙</button>
-        <button id="theme-light" title="Tema chiaro">☀️</button>
-      </div>
+      <button class="theme-switch" id="theme-toggle" title="Chiaro / Scuro" type="button">
+        <span class="ts-track"><span class="ts-thumb"></span></span>
+        <span class="ts-label" id="ts-label">Scuro</span>
+      </button>
       <div class="langtoggle">
         <button id="lang-it" class="active">IT</button>
         <button id="lang-en">EN</button>
@@ -142,6 +146,27 @@
       <li><b>Dedalo Invest.</b> "Lazy Portfolios: un'analisi approfondita." <a href="https://www.dedaloinvest.com/education/didattica-investimenti/lazy-portfolios" target="_blank" rel="noopener">dedaloinvest.com</a>
         <span class="used" data-i18n="s3.r1">Riferimento per la pagina "Lazy Portfolio" di questo sito.</span>
       </li>
+      <li><b>Bengen, W. (1994).</b> "Determining Withdrawal Rates Using Historical Data." <i>Journal of Financial Planning.</i>
+        <span class="used" data-i18n="s3.r2">Origine della "4% Rule", primo dei 4 metodi confrontati nella pagina Decumulo.</span>
+      </li>
+      <li><b>Cooley, Hubbard & Walz (1998).</b> "Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable" (Trinity Study).
+        <span class="used" data-i18n="s3.r3">Citato nella pagina Decumulo come base storica del metodo a spesa reale fissa.</span>
+      </li>
+      <li><b>Guyton, J. & Klinger, W. (2006).</b> "Decision Rules and Maximum Initial Withdrawal Rates." <i>Journal of Financial Planning.</i>
+        <span class="used" data-i18n="s3.r4">Usato per: il metodo Guardrail nella pagina Decumulo.</span>
+      </li>
+      <li><b>Waring, B. & Siegel, L. (2015).</b> "The Only Spending Rule Article You Will Ever Need." <i>Financial Analysts Journal.</i>
+        <span class="used" data-i18n="s3.r5">Usato per: il metodo ARVA (rendita virtuale attuariale ricalcolata) nella pagina Decumulo.</span>
+      </li>
+      <li><b>Too Big To Fail (podcast).</b> "Vivere di Rendita e Decumulo: 4 Metodi per Ritirare gli Investimenti Senza Finire i Soldi" (ep. 110, 2026). <a href="https://www.toobigtofail.it/vivere-di-rendita-e-decumulo-4-metodi-per-ritirare-gli-investimenti-senza-finire-i-soldi-ep-110/" target="_blank" rel="noopener">toobigtofail.it</a>
+        <span class="used" data-i18n="s3.r6">Ha ispirato la struttura a 4 metodi della pagina Decumulo.</span>
+      </li>
+      <li><b>Guzman, J. (2026).</b> "Two-Tier Dynamic Withdrawal Strategy (TTDWS)" — white paper.
+        <span class="used" data-i18n="s3.r7">Fonte del Bond Ladder, della +30.000€ Rule e della Waterfall Decumulation nella pagina Decumulo.</span>
+      </li>
+      <li><b>ISTAT.</b> Tavole di mortalità della popolazione residente; Indicatori demografici. <a href="https://demo.istat.it/app/?i=TVM" target="_blank" rel="noopener">demo.istat.it</a>
+        <span class="used" data-i18n="s3.r8">Fonte per la speranza di vita residua stimata nella pagina Decumulo (interpolazione, non tavola ufficiale completa — vedi nota nella pagina).</span>
+      </li>
     </ul>
   </section>
 
@@ -154,9 +179,9 @@ let LANG = 'it';
 let THEME = 'dark';
 const TR = {
   it: {
-    "nav.home": "Calcolatore", "nav.method": "Metodologia", "nav.lazy": "Lazy Portfolio",
+    "nav.home": "ARCA", "nav.method": "Metodologia", "nav.lazy": "Lazy Portfolio", "nav.decumulo": "TTDWS",
     "nav.blog": "Blog", "nav.biblio": "Bibliografia", "nav.disclaimer": "Disclaimer",
-    "nav.donate": "\u2615 Sostieni il progetto",
+    "nav.donate": "\u2615 Sostieni il progetto", "theme.dark": "Scuro", "theme.light": "Chiaro",
     "kicker": "Fonti e riferimenti",
     "title": "Bibliografia",
     "subtitle": "Tutte le fonti accademiche ed empiriche usate per costruire AUREA, più i documenti SSRN caricati nel progetto originale.",
@@ -176,12 +201,19 @@ const TR = {
     "s2.note": "I file PDF originali caricati nel progetto non sono testo estraibile in modo affidabile (pagine renderizzate come immagini), quindi non è stato possibile confermare titolo e autori degli altri 8 documenti senza rischiare attribuzioni errate. I link SSRN sopra permettono di verificarli direttamente.",
     "s3.h": "Letture di contesto (non citate direttamente nel modello)",
     "s3.r1": "Riferimento per la pagina \u201cLazy Portfolio\u201d di questo sito.",
+    "s3.r2": "Origine della \u201c4% Rule\u201d, primo dei 4 metodi confrontati nella pagina Decumulo.",
+    "s3.r3": "Citato nella pagina Decumulo come base storica del metodo a spesa reale fissa.",
+    "s3.r4": "Usato per: il metodo Guardrail nella pagina Decumulo.",
+    "s3.r5": "Usato per: il metodo ARVA (rendita virtuale attuariale ricalcolata) nella pagina Decumulo.",
+    "s3.r6": "Ha ispirato la struttura a 4 metodi della pagina Decumulo.",
+    "s3.r7": "Fonte del Bond Ladder, della +30.000€ Rule e della Waterfall Decumulation nella pagina Decumulo.",
+    "s3.r8": "Fonte per la speranza di vita residua stimata nella pagina Decumulo (interpolazione, non tavola ufficiale completa — vedi nota nella pagina).",
     "footer": "Se trovi un'attribuzione imprecisa o un link non funzionante, segnalalo: la bibliografia verrà corretta.",
   },
   en: {
-    "nav.home": "Calculator", "nav.method": "Methodology", "nav.lazy": "Lazy Portfolio",
+    "nav.home": "ARCA", "nav.method": "Methodology", "nav.lazy": "Lazy Portfolio", "nav.decumulo": "TTDWS",
     "nav.blog": "Blog", "nav.biblio": "Bibliography", "nav.disclaimer": "Disclaimer",
-    "nav.donate": "\u2615 Support this project",
+    "nav.donate": "\u2615 Support this project", "theme.dark": "Dark", "theme.light": "Light",
     "kicker": "Sources and references",
     "title": "Bibliography",
     "subtitle": "Every academic and empirical source used to build AUREA, plus the SSRN documents uploaded to the original project.",
@@ -201,6 +233,13 @@ const TR = {
     "s2.note": "The original PDF files uploaded to the project don't reliably extract as text (pages rendered as images), so title and authors for the other 8 documents couldn't be confirmed without risking a wrong attribution. The SSRN links above let you verify them directly.",
     "s3.h": "Background reading (not cited directly in the model)",
     "s3.r1": "Reference for this site's \u201cLazy Portfolio\u201d page.",
+    "s3.r2": "Origin of the \u201c4% Rule\u201d, the first of the 4 methods compared on the Decumulation page.",
+    "s3.r3": "Cited on the Decumulation page as the historical basis for the fixed real spending method.",
+    "s3.r4": "Used for: the Guardrail method on the Decumulation page.",
+    "s3.r5": "Used for: the ARVA method (recalculated actuarial virtual annuity) on the Decumulation page.",
+    "s3.r6": "Inspired the 4-method structure of the Decumulation page.",
+    "s3.r7": "Source for the Bond Ladder, the +\u20ac30,000 Rule, and Waterfall Decumulation on the Decumulation page.",
+    "s3.r8": "Source for the estimated remaining life expectancy on the Decumulation page (interpolation, not the full official table — see the note on that page).",
     "footer": "If you spot an inaccurate attribution or a broken link, flag it — the bibliography will be corrected.",
   }
 };
@@ -232,13 +271,12 @@ document.getElementById('lang-en').addEventListener('click', () => setLang('en')
 
 function applyTheme(){
   document.getElementById('html-root').setAttribute('data-theme', THEME);
-  document.getElementById('theme-dark').classList.toggle('active', THEME==='dark');
-  document.getElementById('theme-light').classList.toggle('active', THEME==='light');
+  document.getElementById('theme-toggle').classList.toggle('on', THEME==='light');
+  document.getElementById('ts-label').textContent = THEME==='light' ? (TR[LANG]['theme.light']||'Chiaro') : (TR[LANG]['theme.dark']||'Scuro');
   updateNav();
 }
 function setTheme(t){ THEME = t; applyTheme(); }
-document.getElementById('theme-dark').addEventListener('click', () => setTheme('dark'));
-document.getElementById('theme-light').addEventListener('click', () => setTheme('light'));
+document.getElementById('theme-toggle').addEventListener('click', () => setTheme(THEME==='dark' ? 'light' : 'dark'));
 
 (function init(){
   const params = new URLSearchParams(window.location.search);

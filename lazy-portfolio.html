@@ -76,9 +76,12 @@
 
   footer{ margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-faint); }
 
-  .themetoggle{ display:flex; gap: 6px; }
-  .themetoggle button{ background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-dim); font-size: 12px; padding: 5px 9px; border-radius: 3px; cursor:pointer; font-family: var(--sans); line-height:1; }
-  .themetoggle button.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .theme-switch{ display:flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; padding:0; font-family: var(--sans); }
+  .ts-track{ width:38px; height:21px; background: var(--panel-2); border:1px solid var(--line); border-radius:11px; position:relative; flex-shrink:0; transition: background 0.2s, border-color 0.2s; }
+  .ts-thumb{ position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background: var(--ink-dim); transition: transform 0.2s, background 0.2s; }
+  .theme-switch.on .ts-track{ background: rgba(201,162,75,0.18); border-color: var(--gold-dim); }
+  .theme-switch.on .ts-thumb{ transform: translateX(16px); background: var(--gold); }
+  .ts-label{ font-size:12px; color: var(--ink-dim); }
 </style>
 </head>
 <body>
@@ -86,7 +89,8 @@
 
   <div class="topbar">
     <nav class="pagenav">
-      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">Calcolatore</a>
+      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">ARCA</a>
+      <a href="decumulo.html" class="navitem" data-file="decumulo.html" data-i18n="nav.decumulo">TTDWS</a>
       <a href="metodologia.html" class="navitem" data-file="metodologia.html" data-i18n="nav.method">Metodologia</a>
       <a href="lazy-portfolio.html" class="navitem" data-file="lazy-portfolio.html" data-i18n="nav.lazy">Lazy Portfolio</a>
       <a href="blog.html" class="navitem" data-file="blog.html" data-i18n="nav.blog">Blog</a>
@@ -95,10 +99,10 @@
     </nav>
     <div class="topbar-right">
       <a class="donate-btn" href="https://www.paypal.com/donate?business=spawnguz%40gmail.com&currency_code=EUR" target="_blank" rel="noopener" data-i18n="nav.donate">☕ Sostieni il progetto</a>
-      <div class="themetoggle">
-        <button id="theme-dark" title="Tema scuro">🌙</button>
-        <button id="theme-light" title="Tema chiaro">☀️</button>
-      </div>
+      <button class="theme-switch" id="theme-toggle" title="Chiaro / Scuro" type="button">
+        <span class="ts-track"><span class="ts-thumb"></span></span>
+        <span class="ts-label" id="ts-label">Scuro</span>
+      </button>
       <div class="langtoggle">
         <button id="lang-it" class="active">IT</button>
         <button id="lang-en">EN</button>
@@ -125,7 +129,7 @@
       <span data-i18n="ex.5">Core Four</span>
       <span data-i18n="ex.6">Two Funds</span>
     </div>
-    <p class="dim" data-i18n="s1.p2">Alcuni di questi nomi (Permanent, Golden Butterfly) usano già una piccola quota oro accanto ad azioni e obbligazioni — la stessa logica di diversificazione da cui è partito il tuo Merton_Gold_Overlay_Model.xlsx.</p>
+    <p class="dim" data-i18n="s1.p2">Alcuni di questi nomi (Permanent, Golden Butterfly) usano già una piccola quota oro accanto ad azioni e obbligazioni — la stessa logica di diversificazione che informa il modello Merton-Gold Overlay di ARCA.</p>
     <div class="callout cool" style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;">
       <span data-i18n="dedalo.cta">Per l'analisi completa, i backtest e la composizione esatta di ogni lazy portfolio citato qui, la fonte di riferimento resta Dedalo Invest.</span>
       <a href="https://www.dedaloinvest.com/education/didattica-investimenti/lazy-portfolios" target="_blank" rel="noopener" class="donate-btn" style="white-space:nowrap;" data-i18n="dedalo.link">Vai a Dedalo Invest →</a>
@@ -193,16 +197,16 @@ let LANG = 'it';
 let THEME = 'dark';
 const TR = {
   it: {
-    "nav.home": "Calcolatore", "nav.method": "Metodologia", "nav.lazy": "Lazy Portfolio",
+    "nav.home": "ARCA", "nav.method": "Metodologia", "nav.lazy": "Lazy Portfolio", "nav.decumulo": "TTDWS",
     "nav.blog": "Blog", "nav.biblio": "Bibliografia", "nav.disclaimer": "Disclaimer",
-    "nav.donate": "\u2615 Sostieni il progetto",
+    "nav.donate": "\u2615 Sostieni il progetto", "theme.dark": "Scuro", "theme.light": "Chiaro",
     "kicker": "Lazy portfolio vs allocazione dinamica",
     "title": "Perché partire da un lazy portfolio — e perché poi farlo respirare col ciclo di vita",
     "subtitle": "I lazy portfolio restano probabilmente la scelta giusta per la maggior parte degli investitori. Questa pagina spiega perché, e perché AUREA aggiunge comunque un livello di dinamismo sopra quella base.",
     "s1.h": "Cos'è un lazy portfolio",
     "s1.p1": "Un lazy portfolio (\u201cportafoglio pigro\u201d) è un'allocazione statica e diversificata in ETF a basso costo, ribilanciata periodicamente, senza tentativi di battere il mercato o di prevedere i cicli economici. L'idea, resa popolare da Bogle e portata avanti in Italia in modo molto rigoroso da Dedalo Invest, è che i costi bassi, la disciplina e la rinuncia al market timing battano, nella maggior parte dei casi e nel lungo periodo, la gestione attiva.",
     "ex.1": "Permanent Portfolio (25/50/25 azioni/bond/oro)", "ex.2": "Dedalo Three / Four / Eleven", "ex.3": "Golden Butterfly", "ex.4": "All Weather", "ex.5": "Core Four", "ex.6": "Two Funds",
-    "s1.p2": "Alcuni di questi nomi (Permanent, Golden Butterfly) usano già una piccola quota oro accanto ad azioni e obbligazioni — la stessa logica di diversificazione da cui è partito il tuo Merton_Gold_Overlay_Model.xlsx.",
+    "s1.p2": "Alcuni di questi nomi (Permanent, Golden Butterfly) usano già una piccola quota oro accanto ad azioni e obbligazioni — la stessa logica di diversificazione che informa il modello Merton-Gold Overlay di ARCA.",
     "dedalo.cta": "Per l'analisi completa, i backtest e la composizione esatta di ogni lazy portfolio citato qui, la fonte di riferimento resta Dedalo Invest.",
     "dedalo.link": "Vai a Dedalo Invest →",
     "s2.h": "Perché funzionano",
@@ -223,16 +227,16 @@ const TR = {
     "footer": "Per una spiegazione più a fondo dei singoli lazy portfolio citati, vedi il sito di Dedalo Invest, linkato in Bibliografia.",
   },
   en: {
-    "nav.home": "Calculator", "nav.method": "Methodology", "nav.lazy": "Lazy Portfolio",
+    "nav.home": "ARCA", "nav.method": "Methodology", "nav.lazy": "Lazy Portfolio", "nav.decumulo": "TTDWS",
     "nav.blog": "Blog", "nav.biblio": "Bibliography", "nav.disclaimer": "Disclaimer",
-    "nav.donate": "\u2615 Support this project",
+    "nav.donate": "\u2615 Support this project", "theme.dark": "Dark", "theme.light": "Light",
     "kicker": "Lazy portfolio vs. dynamic allocation",
     "title": "Why start with a lazy portfolio — and why let it breathe with the life cycle",
     "subtitle": "Lazy portfolios are probably still the right choice for most investors. This page explains why, and why AUREA still adds a layer of dynamism on top of that base.",
     "s1.h": "What a lazy portfolio is",
     "s1.p1": "A lazy portfolio is a static, diversified allocation in low-cost ETFs, rebalanced periodically, with no attempt to beat the market or forecast economic cycles. The idea, popularized by Bogle and carried forward in Italy very rigorously by Dedalo Invest, is that low costs, discipline, and giving up on market timing beat active management in most cases over the long run.",
     "ex.1": "Permanent Portfolio (25/50/25 stocks/bonds/gold)", "ex.2": "Dedalo Three / Four / Eleven", "ex.3": "Golden Butterfly", "ex.4": "All Weather", "ex.5": "Core Four", "ex.6": "Two Funds",
-    "s1.p2": "Some of these (Permanent, Golden Butterfly) already carry a small gold allocation alongside stocks and bonds — the same diversification logic your Merton_Gold_Overlay_Model.xlsx started from.",
+    "s1.p2": "Some of these (Permanent, Golden Butterfly) already carry a small gold allocation alongside stocks and bonds — the same diversification logic behind ARCA's Merton-Gold Overlay model.",
     "dedalo.cta": "For the full analysis, backtests, and exact composition of every lazy portfolio named here, Dedalo Invest remains the go-to source.",
     "dedalo.link": "Visit Dedalo Invest →",
     "s2.h": "Why they work",
@@ -281,13 +285,12 @@ document.getElementById('lang-en').addEventListener('click', () => setLang('en')
 
 function applyTheme(){
   document.getElementById('html-root').setAttribute('data-theme', THEME);
-  document.getElementById('theme-dark').classList.toggle('active', THEME==='dark');
-  document.getElementById('theme-light').classList.toggle('active', THEME==='light');
+  document.getElementById('theme-toggle').classList.toggle('on', THEME==='light');
+  document.getElementById('ts-label').textContent = THEME==='light' ? (TR[LANG]['theme.light']||'Chiaro') : (TR[LANG]['theme.dark']||'Scuro');
   updateNav();
 }
 function setTheme(t){ THEME = t; applyTheme(); }
-document.getElementById('theme-dark').addEventListener('click', () => setTheme('dark'));
-document.getElementById('theme-light').addEventListener('click', () => setTheme('light'));
+document.getElementById('theme-toggle').addEventListener('click', () => setTheme(THEME==='dark' ? 'light' : 'dark'));
 
 (function init(){
   const params = new URLSearchParams(window.location.search);
