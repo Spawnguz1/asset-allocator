@@ -114,8 +114,8 @@
 
   <header>
     <div class="kicker" data-i18n="kicker">Metodologia</div>
-    <h1 data-i18n="title">Come funzionano ARCA e TTDWS</h1>
-    <p data-i18n="subtitle">Documentazione tecnica dei due modelli quantitativi di CapitalFlow: ARCA per l'allocazione patrimoniale nella fase di accumulo, TTDWS per il tasso di prelievo nella fase di decumulo.</p>
+    <h1 data-i18n="title">Come funzionano ARCA e CapitalFlow</h1>
+    <p data-i18n="subtitle">Documentazione tecnica dei due modelli quantitativi del progetto: ARCA per l'allocazione patrimoniale nella fase di accumulo, CapitalFlow per il tasso di prelievo nella fase di decumulo.</p>
   </header>
 
   <div class="partlabel">
@@ -211,12 +211,12 @@
     <h3 data-i18n="s10.h">4. ARVA — rendita virtuale attuariale</h3>
     <p data-i18n="s10.p1">Waring & Siegel (2015) propongono di ricalcolare il prelievo ogni anno come una rendita attuariale, dividendo il capitale residuo per un fattore di rendita (PVFA) basato sull'orizzonte temporale residuo e sul rendimento reale atteso:</p>
     <div class="formula">PVFA = (1 − (1+r)⁻ⁿ) / r</div>
-    <p class="dim" data-i18n="s10.p2">n è l'orizzonte residuo (nella pagina Decumulo, derivato dalle tavole di mortalità ISTAT), r il rendimento reale atteso. Il prelievo si ricalcola ogni anno con capitale e orizzonte aggiornati: non è un piano fisso stabilito una sola volta, ma una regola da riapplicare periodicamente.</p>
+    <p class="dim" data-i18n="s10.p2">n è l'orizzonte residuo (nella pagina CapitalFlow, derivato dalle tavole di mortalità ISTAT), r il rendimento reale atteso. Il prelievo si ricalcola ogni anno con capitale e orizzonte aggiornati: non è un piano fisso stabilito una sola volta, ma una regola da riapplicare periodicamente.</p>
   </section>
 
   <section>
     <h3 data-i18n="s11.h">Verifica quantitativa</h3>
-    <p data-i18n="s11.p1">Il confronto tra le quattro strategie mostrato nella pagina Decumulo fornisce una stima puntuale per l'anno corrente. Una valutazione completa della sostenibilità nel lungo periodo — probabilità di successo, distribuzione del patrimonio finale, comportamento in scenari di mercato avversi — richiederebbe simulazioni Monte Carlo su un ampio numero di traiettorie storiche e sintetiche, non incluse in questo strumento.</p>
+    <p data-i18n="s11.p1">Il confronto tra le quattro strategie mostrato nella pagina CapitalFlow fornisce una stima puntuale per l'anno corrente. Una valutazione completa della sostenibilità nel lungo periodo — probabilità di successo, distribuzione del patrimonio finale, comportamento in scenari di mercato avversi — richiederebbe simulazioni Monte Carlo su un ampio numero di traiettorie storiche e sintetiche, non incluse in questo strumento.</p>
   </section>
 
   <footer data-i18n="footer">Strumento a scopo informativo ed educativo. Non costituisce consulenza finanziaria personalizzata. Per l'elenco completo delle fonti, vedi la pagina Bibliografia.</footer>
@@ -231,8 +231,8 @@ const TR = {
     "nav.home": "ARCA", "nav.method": "Metodologia", "nav.lazy": "Lazy Portfolio", "nav.decumulo": "CapitalFlow", "nav.blog": "Blog", "nav.biblio": "Bibliografia", "nav.disclaimer": "Disclaimer",
     "nav.donate": "☕ Sostieni il progetto", "theme.dark": "Scuro", "theme.light": "Chiaro",
     "kicker": "Metodologia",
-    "title": "Come funzionano ARCA e TTDWS",
-    "subtitle": "Documentazione tecnica dei due modelli quantitativi di CapitalFlow: ARCA per l'allocazione patrimoniale nella fase di accumulo, TTDWS per il tasso di prelievo nella fase di decumulo.",
+    "title": "Come funzionano ARCA e CapitalFlow",
+    "subtitle": "Documentazione tecnica dei due modelli quantitativi del progetto: ARCA per l'allocazione patrimoniale nella fase di accumulo, CapitalFlow per il tasso di prelievo nella fase di decumulo.",
     "p1.h": "ARCA — Age-Responsive Capital Allocation", "p1.sub": "Allocazione dinamica tra Obbligazioni, Azioni e Oro",
     "s1.h": "La regola di Merton (1969)",
     "s1.p1": "La quota ottimale da destinare all'attivo rischioso rispetto a quello sicuro segue la regola del portafoglio di Merton:",
@@ -269,17 +269,17 @@ const TR = {
     "s9.p1": "Guyton & Klinger (2006) propongono un tasso di prelievo iniziale con due barriere percentuali (di norma ±20%): se il tasso implicito attuale (spesa desiderata / capitale) supera la barriera superiore, la spesa viene tagliata (tipicamente del 10%); se scende sotto la barriera inferiore, viene aumentata. Il meccanismo introduce una correzione dinamica ma discreta, evitando sia la rigidità della spesa fissa sia l'eccessiva volatilità della percentuale costante.",
     "s10.h": "4. ARVA — rendita virtuale attuariale",
     "s10.p1": "Waring & Siegel (2015) propongono di ricalcolare il prelievo ogni anno come una rendita attuariale, dividendo il capitale residuo per un fattore di rendita (PVFA) basato sull'orizzonte temporale residuo e sul rendimento reale atteso:",
-    "s10.p2": "n è l'orizzonte residuo (nella pagina Decumulo, derivato dalle tavole di mortalità ISTAT), r il rendimento reale atteso. Il prelievo si ricalcola ogni anno con capitale e orizzonte aggiornati: non è un piano fisso stabilito una sola volta, ma una regola da riapplicare periodicamente.",
+    "s10.p2": "n è l'orizzonte residuo (nella pagina CapitalFlow, derivato dalle tavole di mortalità ISTAT), r il rendimento reale atteso. Il prelievo si ricalcola ogni anno con capitale e orizzonte aggiornati: non è un piano fisso stabilito una sola volta, ma una regola da riapplicare periodicamente.",
     "s11.h": "Verifica quantitativa",
-    "s11.p1": "Il confronto tra le quattro strategie mostrato nella pagina Decumulo fornisce una stima puntuale per l'anno corrente. Una valutazione completa della sostenibilità nel lungo periodo — probabilità di successo, distribuzione del patrimonio finale, comportamento in scenari di mercato avversi — richiederebbe simulazioni Monte Carlo su un ampio numero di traiettorie storiche e sintetiche, non incluse in questo strumento.",
+    "s11.p1": "Il confronto tra le quattro strategie mostrato nella pagina CapitalFlow fornisce una stima puntuale per l'anno corrente. Una valutazione completa della sostenibilità nel lungo periodo — probabilità di successo, distribuzione del patrimonio finale, comportamento in scenari di mercato avversi — richiederebbe simulazioni Monte Carlo su un ampio numero di traiettorie storiche e sintetiche, non incluse in questo strumento.",
     "footer": "Strumento a scopo informativo ed educativo. Non costituisce consulenza finanziaria personalizzata. Per l'elenco completo delle fonti, vedi la pagina Bibliografia.",
   },
   en: {
     "nav.home": "ARCA", "nav.method": "Methodology", "nav.lazy": "Lazy Portfolio", "nav.decumulo": "CapitalFlow", "nav.blog": "Blog", "nav.biblio": "Bibliography", "nav.disclaimer": "Disclaimer",
     "nav.donate": "☕ Support this project", "theme.dark": "Dark", "theme.light": "Light",
     "kicker": "Methodology",
-    "title": "How ARCA and TTDWS work",
-    "subtitle": "Technical documentation for CapitalFlow's two quantitative models: ARCA for asset allocation during accumulation, TTDWS for the withdrawal rate during decumulation.",
+    "title": "How ARCA and CapitalFlow work",
+    "subtitle": "Technical documentation for the project's two quantitative models: ARCA for asset allocation during accumulation, CapitalFlow for the withdrawal rate during decumulation.",
     "p1.h": "ARCA — Age-Responsive Capital Allocation", "p1.sub": "Dynamic allocation across Bonds, Stocks and Gold",
     "s1.h": "The Merton rule (1969)",
     "s1.p1": "The optimal share allocated to the risky asset versus the safe one follows Merton's portfolio rule:",
@@ -316,9 +316,9 @@ const TR = {
     "s9.p1": "Guyton & Klinger (2006) propose an initial withdrawal rate with two percentage guardrails (typically \u00b120%): if the current implied rate (desired spending / capital) exceeds the upper rail, spending is cut (typically by 10%); if it falls below the lower rail, it's raised. The mechanism introduces a dynamic but discrete correction, avoiding both the rigidity of fixed spending and the excessive volatility of the constant-percentage method.",
     "s10.h": "4. ARVA — actuarial virtual annuity",
     "s10.p1": "Waring & Siegel (2015) propose recalculating the withdrawal each year as an actuarial annuity, dividing remaining capital by an annuity factor (PVFA) based on the remaining time horizon and expected real return:",
-    "s10.p2": "n is the remaining horizon (on the Decumulation page, derived from ISTAT mortality tables), r the expected real return. The withdrawal is recalculated every year with updated capital and horizon: it's not a plan fixed once and for all, but a rule to reapply periodically.",
+    "s10.p2": "n is the remaining horizon (on the CapitalFlow page, derived from ISTAT mortality tables), r the expected real return. The withdrawal is recalculated every year with updated capital and horizon: it's not a plan fixed once and for all, but a rule to reapply periodically.",
     "s11.h": "Quantitative validation",
-    "s11.p1": "The four-strategy comparison shown on the Decumulation page provides a point-in-time estimate for the current year. A full assessment of long-run sustainability — probability of success, distribution of final wealth, behavior under adverse market scenarios — would require Monte Carlo simulation across a large number of historical and synthetic paths, not included in this tool.",
+    "s11.p1": "The four-strategy comparison shown on the CapitalFlow page provides a point-in-time estimate for the current year. A full assessment of long-run sustainability — probability of success, distribution of final wealth, behavior under adverse market scenarios — would require Monte Carlo simulation across a large number of historical and synthetic paths, not included in this tool.",
     "footer": "An informational and educational tool. Not personalized financial advice. See the Bibliography page for the full list of sources.",
   }
 };
@@ -367,5 +367,6 @@ document.getElementById('theme-toggle').addEventListener('click', () => setTheme
   applyStaticTranslations();
 })();
 </script>
+<script src="cookie-consent.js" defer></script>
 </body>
 </html>
