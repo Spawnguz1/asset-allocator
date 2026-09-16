@@ -228,17 +228,17 @@ But before all of that, you need to understand how the system works.
 
 And the first step is exactly this: open and understand your investment account.`,
   },  {
-    id: "perch-nato-aurea-un-modo-diverso-di-decidere-quanto-oro-tene",
+    id: "perch-nato-ARCA-un-modo-diverso-di-decidere-quanto-oro-tene",
     date: "2026-09-16",
-    title_it: `Perché è nato AUREA: un modo diverso di decidere quanto oro tenere in portafoglio`,
-    title_en: `Why AUREA Was Created: A Different Way to Decide How Much Gold to Hold`,
+    title_it: `Perché è nato ARCA: un modo diverso di decidere quanto oro tenere in portafoglio`,
+    title_en: `Why ARCA Was Created: A Different Way to Decide How Much Gold to Hold`,
     body_it: `Quando si parla di investimenti, una delle domande più frequenti è: quanto oro dovrei avere nel mio portafoglio?
 
 Il problema è che, nonostante l’oro venga spesso considerato uno strumento utile per proteggere il patrimonio, non esiste una regola condivisa e semplice che dica quale sia la percentuale giusta da mantenere nel tempo.
 
 C’è chi suggerisce il 5%, chi il 10%, chi il 15%. Ma perché proprio quella percentuale? E soprattutto: dovrebbe essere sempre la stessa, indipendentemente dall’inflazione, dai tassi di interesse, dalle crisi geopolitiche o dall’andamento dei mercati?
 
-Da questa domanda nasce AUREA.
+Da questa domanda nasce ARCA.
 
 Un problema apparentemente semplice
 
@@ -249,7 +249,7 @@ Obbligazioni, per offrire maggiore stabilità.
 
 L’oro viene spesso aggiunto come elemento di diversificazione, ma generalmente con una percentuale fissa.
 
-AUREA nasce da un’idea diversa: la quota di oro non dovrebbe necessariamente essere sempre uguale.
+ARCA nasce da un’idea diversa: la quota di oro non dovrebbe necessariamente essere sempre uguale.
 
 Il suo ruolo può cambiare in base al contesto economico e finanziario. Se aumentano alcuni rischi, l’oro può diventare più interessante; in altri periodi, una quota inferiore può essere più coerente con le condizioni del mercato.
 
@@ -257,7 +257,7 @@ Il vero problema, quindi, non è semplicemente decidere se possedere oro, ma cap
 
 Da una percentuale fissa a un algoritmo
 
-AUREA è un algoritmo che analizza sei fattori e li combina per stimare quale potrebbe essere una quota appropriata di oro all’interno di un portafoglio.
+ARCA è un algoritmo che analizza sei fattori e li combina per stimare quale potrebbe essere una quota appropriata di oro all’interno di un portafoglio.
 
 I sei elementi considerati sono:
 
@@ -274,7 +274,7 @@ Il risultato non è una previsione del prezzo dell’oro. È qualcosa di più co
 
 Non solo oro: anche azioni e obbligazioni
 
-Un altro aspetto importante è che AUREA non si limita a dire “compra più oro”.
+Un altro aspetto importante è che ARCA non si limita a dire “compra più oro”.
 
 L’algoritmo cerca di costruire una distribuzione complessiva tra:
 
@@ -315,7 +315,7 @@ Non significa che l’oro salirà sicuramente. Significa che, secondo le regole 
 
 L’obiettivo non è prevedere il futuro
 
-AUREA non nasce per indovinare quale asset salirà domani.
+ARCA non nasce per indovinare quale asset salirà domani.
 
 Nasce per rispondere a una domanda molto più utile:
 
@@ -327,7 +327,7 @@ quanta parte del portafoglio destinare ad azioni, obbligazioni e oro.
 
 Una bussola, non una profezia
 
-Il nome AUREA richiama l’idea di equilibrio e proporzione.
+Il nome ARCA richiama l’idea di equilibrio e proporzione.
 
 Il progetto non pretende di trovare la percentuale “perfetta” di oro, perché una percentuale perfetta non esiste.
 
@@ -337,13 +337,13 @@ Invece di chiedersi:
 
 “Devo avere sempre il 10% di oro?”
 
-AUREA propone una domanda diversa:
+ARCA propone una domanda diversa:
 
 “Considerando il contesto attuale, quale ruolo dovrebbe avere l’oro nel mio portafoglio?”
 
 È da questa esigenza che nasce il progetto: trasformare una scelta spesso basata su opinioni e percentuali arbitrarie in un processo più strutturato, comprensibile e replicabile.
 
-Nota: AUREA è uno strumento informativo ed educativo. Non costituisce consulenza finanziaria personalizzata.`,
+Nota: ARCA è uno strumento informativo ed educativo. Non costituisce consulenza finanziaria personalizzata.`,
     body_en: `When people talk about investing, one question comes up again and again:
 
 How much gold should I hold in my portfolio?
@@ -354,7 +354,7 @@ Some people suggest 5%. Others recommend 10% or 15%.
 
 But why exactly those numbers? And should the percentage really remain the same regardless of inflation, interest rates, geopolitical tensions or market conditions?
 
-That question is where AUREA began.
+That question is where ARCA began.
 
 A Simple Question with No Simple Answer
 
@@ -365,7 +365,7 @@ Bonds, which generally provide greater stability.
 
 Gold is often added as a diversification tool, usually with a fixed allocation.
 
-AUREA starts from a different idea:
+ARCA starts from a different idea:
 
 The role of gold does not necessarily have to remain constant.
 
@@ -377,7 +377,7 @@ How much gold should a portfolio hold, under which conditions, and for what reas
 
 From a Fixed Percentage to an Algorithm
 
-AUREA is an algorithm that evaluates six different factors and combines them to estimate a potentially appropriate gold allocation within a portfolio.
+ARCA is an algorithm that evaluates six different factors and combines them to estimate a potentially appropriate gold allocation within a portfolio.
 
 The six factors are:
 
@@ -398,7 +398,7 @@ an indication of how much weight gold might deserve relative to stocks and bonds
 
 Not Just Gold: Stocks and Bonds Matter Too
 
-AUREA does not simply tell investors to “buy more gold.”
+ARCA does not simply tell investors to “buy more gold.”
 
 The algorithm aims to determine an overall allocation between:
 
@@ -443,7 +443,7 @@ It means that, according to the model’s rules, gold may deserve a more signifi
 
 The Goal Is Not to Predict the Future
 
-AUREA was not created to guess which asset will rise tomorrow.
+ARCA was not created to guess which asset will rise tomorrow.
 
 It was created to answer a much more useful question:
 
@@ -455,7 +455,7 @@ How much should be allocated to stocks, bonds and gold?
 
 A Compass, Not a Prophecy
 
-The name AUREA reflects the idea of balance and proportion.
+The name ARCA reflects the idea of balance and proportion.
 
 The project does not claim to identify the “perfect” gold allocation, because no such universal percentage exists.
 
@@ -465,12 +465,12 @@ Instead of asking:
 
 “Should I always hold 10% in gold?”
 
-AUREA asks a different question:
+ARCA asks a different question:
 
 “Given the current environment, what role should gold play in my portfolio?”
 
 That is the idea behind the project: turning a decision often based on opinions and arbitrary percentages into a more structured, understandable and repeatable process.
 
-Note: AUREA is an informational and educational tool. It does not constitute personalized financial advice.`,
+Note: ARCA is an informational and educational tool. It does not constitute personalized financial advice.`,
   },
 ];
