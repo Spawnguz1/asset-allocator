@@ -227,5 +227,250 @@ How much should you invest? How much risk should you take? Which investments sho
 But before all of that, you need to understand how the system works.
 
 And the first step is exactly this: open and understand your investment account.`,
+  },  {
+    id: "perch-nato-aurea-un-modo-diverso-di-decidere-quanto-oro-tene",
+    date: "2026-09-16",
+    title_it: `Perché è nato AUREA: un modo diverso di decidere quanto oro tenere in portafoglio`,
+    title_en: `Why AUREA Was Created: A Different Way to Decide How Much Gold to Hold`,
+    body_it: `Quando si parla di investimenti, una delle domande più frequenti è: quanto oro dovrei avere nel mio portafoglio?
+
+Il problema è che, nonostante l’oro venga spesso considerato uno strumento utile per proteggere il patrimonio, non esiste una regola condivisa e semplice che dica quale sia la percentuale giusta da mantenere nel tempo.
+
+C’è chi suggerisce il 5%, chi il 10%, chi il 15%. Ma perché proprio quella percentuale? E soprattutto: dovrebbe essere sempre la stessa, indipendentemente dall’inflazione, dai tassi di interesse, dalle crisi geopolitiche o dall’andamento dei mercati?
+
+Da questa domanda nasce AUREA.
+
+Un problema apparentemente semplice
+
+Un portafoglio tradizionale è spesso costruito utilizzando principalmente due componenti:
+
+Azioni, per cercare crescita nel lungo periodo;
+Obbligazioni, per offrire maggiore stabilità.
+
+L’oro viene spesso aggiunto come elemento di diversificazione, ma generalmente con una percentuale fissa.
+
+AUREA nasce da un’idea diversa: la quota di oro non dovrebbe necessariamente essere sempre uguale.
+
+Il suo ruolo può cambiare in base al contesto economico e finanziario. Se aumentano alcuni rischi, l’oro può diventare più interessante; in altri periodi, una quota inferiore può essere più coerente con le condizioni del mercato.
+
+Il vero problema, quindi, non è semplicemente decidere se possedere oro, ma capire quanto oro, in quale momento e perché.
+
+Da una percentuale fissa a un algoritmo
+
+AUREA è un algoritmo che analizza sei fattori e li combina per stimare quale potrebbe essere una quota appropriata di oro all’interno di un portafoglio.
+
+I sei elementi considerati sono:
+
+Valutazione dell’oro rispetto ai suoi livelli storici;
+Rischio geopolitico;
+Regime macroeconomico, come inflazione e fase del ciclo economico;
+Volatilità dei mercati;
+Correlazione tra oro, azioni e obbligazioni;
+Costo opportunità dell’oro, cioè quanto è conveniente detenere oro rispetto ad attività che producono interessi.
+
+Questi fattori non vengono osservati separatamente, ma combinati in un unico indicatore: il Gold Score.
+
+Il risultato non è una previsione del prezzo dell’oro. È qualcosa di più concreto per chi costruisce un portafoglio: un’indicazione su quale peso assegnare all’oro rispetto alle altre componenti.
+
+Non solo oro: anche azioni e obbligazioni
+
+Un altro aspetto importante è che AUREA non si limita a dire “compra più oro”.
+
+L’algoritmo cerca di costruire una distribuzione complessiva tra:
+
+Azioni
+Obbligazioni
+Oro
+
+La quota azionaria e obbligazionaria viene influenzata anche da altri elementi, come:
+
+l’età dell’investitore;
+l’età prevista per il pensionamento;
+la tolleranza al rischio;
+i tassi di interesse;
+l’inflazione;
+la fase del ciclo economico.
+
+Per la parte azionaria e obbligazionaria, il sistema utilizza come riferimento la logica della regola di Merton, adattata attraverso un meccanismo chiamato reverse glide path. In parole semplici, l’idea è che il rapporto tra rischio e orizzonte temporale non debba essere necessariamente una linea sempre decrescente con l’età.
+
+Il portafoglio, quindi, non viene costruito partendo da una percentuale prestabilita, ma cercando di adattarsi alle condizioni dell’investitore e dell’economia.
+
+Un esempio semplice
+
+Immaginiamo due situazioni.
+
+Scenario A: economia stabile
+
+L’inflazione è contenuta, i mercati sono relativamente tranquilli e le obbligazioni offrono rendimenti reali interessanti.
+
+In questo caso, il sistema potrebbe indicare una quota di oro più contenuta, lasciando maggiore spazio ad azioni e obbligazioni.
+
+Scenario B: forte incertezza
+
+L’inflazione aumenta, cresce il rischio geopolitico, i mercati diventano più instabili e il rendimento reale delle obbligazioni diminuisce.
+
+In questo contesto, diversi fattori possono contribuire a un Gold Score più elevato e quindi a una maggiore allocazione verso l’oro.
+
+Non significa che l’oro salirà sicuramente. Significa che, secondo le regole del modello, il suo ruolo all’interno del portafoglio potrebbe meritare più spazio.
+
+L’obiettivo non è prevedere il futuro
+
+AUREA non nasce per indovinare quale asset salirà domani.
+
+Nasce per rispondere a una domanda molto più utile:
+
+Come posso costruire un portafoglio coerente con il contesto economico, invece di mantenere sempre le stesse percentuali per abitudine?
+
+Il sistema cerca di trasformare informazioni spesso difficili da interpretare — tassi, inflazione, rischio geopolitico, volatilità e correlazioni — in una decisione semplice da comprendere:
+
+quanta parte del portafoglio destinare ad azioni, obbligazioni e oro.
+
+Una bussola, non una profezia
+
+Il nome AUREA richiama l’idea di equilibrio e proporzione.
+
+Il progetto non pretende di trovare la percentuale “perfetta” di oro, perché una percentuale perfetta non esiste.
+
+L’obiettivo è costruire una bussola quantitativa, capace di modificare gradualmente l’allocazione in base a sei fattori osservabili e a un insieme di regole trasparenti.
+
+Invece di chiedersi:
+
+“Devo avere sempre il 10% di oro?”
+
+AUREA propone una domanda diversa:
+
+“Considerando il contesto attuale, quale ruolo dovrebbe avere l’oro nel mio portafoglio?”
+
+È da questa esigenza che nasce il progetto: trasformare una scelta spesso basata su opinioni e percentuali arbitrarie in un processo più strutturato, comprensibile e replicabile.
+
+Nota: AUREA è uno strumento informativo ed educativo. Non costituisce consulenza finanziaria personalizzata.`,
+    body_en: `When people talk about investing, one question comes up again and again:
+
+How much gold should I hold in my portfolio?
+
+The problem is that, although gold is often considered a useful way to diversify and protect wealth, there is no universally accepted rule that tells investors what percentage they should hold over time.
+
+Some people suggest 5%. Others recommend 10% or 15%.
+
+But why exactly those numbers? And should the percentage really remain the same regardless of inflation, interest rates, geopolitical tensions or market conditions?
+
+That question is where AUREA began.
+
+A Simple Question with No Simple Answer
+
+A traditional investment portfolio is often built around two main components:
+
+Stocks, which aim to generate long-term growth;
+Bonds, which generally provide greater stability.
+
+Gold is often added as a diversification tool, usually with a fixed allocation.
+
+AUREA starts from a different idea:
+
+The role of gold does not necessarily have to remain constant.
+
+Its usefulness may change depending on the economic and financial environment. In some periods, certain risks may justify a larger allocation to gold. In others, a smaller allocation may be more consistent with market conditions.
+
+The real question is therefore not simply whether to own gold, but:
+
+How much gold should a portfolio hold, under which conditions, and for what reason?
+
+From a Fixed Percentage to an Algorithm
+
+AUREA is an algorithm that evaluates six different factors and combines them to estimate a potentially appropriate gold allocation within a portfolio.
+
+The six factors are:
+
+Gold valuation compared with historical levels;
+Geopolitical risk;
+Macroeconomic conditions, including inflation and the economic cycle;
+Market volatility;
+The correlation between gold, stocks and bonds;
+Gold’s opportunity cost, meaning how attractive it is to hold gold compared with assets that generate interest.
+
+These factors are not considered in isolation. They are combined into a single indicator called the Gold Score.
+
+The result is not a prediction of where the price of gold will go.
+
+Instead, it provides something more practical for portfolio construction:
+
+an indication of how much weight gold might deserve relative to stocks and bonds.
+
+Not Just Gold: Stocks and Bonds Matter Too
+
+AUREA does not simply tell investors to “buy more gold.”
+
+The algorithm aims to determine an overall allocation between:
+
+Stocks
+Bonds
+Gold
+
+The stock and bond allocation is also influenced by factors such as:
+
+the investor’s age;
+expected retirement age;
+risk tolerance;
+interest rates;
+inflation;
+the current stage of the economic cycle.
+
+For the stock and bond component, the system uses the logic of the Merton portfolio rule, combined with an age- and retirement-based mechanism known as a reverse glide path.
+
+In simple terms, the idea is that the relationship between risk and time horizon does not necessarily have to move in one straight, predictable direction throughout an investor’s life.
+
+The portfolio is therefore not built from a fixed percentage chosen in advance. It is designed to respond to both the investor and the economic environment.
+
+A Simple Example
+
+Imagine two different situations.
+
+Scenario A: A Stable Economy
+
+Inflation is moderate, markets are relatively calm and bonds offer attractive real returns.
+
+In this environment, the algorithm may indicate a more limited gold allocation, leaving more room for stocks and bonds.
+
+Scenario B: High Uncertainty
+
+Inflation rises, geopolitical risks increase, markets become more volatile and real bond returns decline.
+
+In this situation, several factors may contribute to a higher Gold Score and therefore to a larger gold allocation.
+
+This does not mean gold will definitely rise.
+
+It means that, according to the model’s rules, gold may deserve a more significant role within the portfolio.
+
+The Goal Is Not to Predict the Future
+
+AUREA was not created to guess which asset will rise tomorrow.
+
+It was created to answer a much more useful question:
+
+How can I build a portfolio that reflects the economic environment instead of keeping the same allocations simply out of habit?
+
+The system attempts to translate information that is often difficult to interpret — interest rates, inflation, geopolitical risk, volatility and correlations — into a simple and understandable decision:
+
+How much should be allocated to stocks, bonds and gold?
+
+A Compass, Not a Prophecy
+
+The name AUREA reflects the idea of balance and proportion.
+
+The project does not claim to identify the “perfect” gold allocation, because no such universal percentage exists.
+
+Its goal is to provide a quantitative compass capable of gradually adjusting portfolio allocation according to six observable factors and a transparent set of rules.
+
+Instead of asking:
+
+“Should I always hold 10% in gold?”
+
+AUREA asks a different question:
+
+“Given the current environment, what role should gold play in my portfolio?”
+
+That is the idea behind the project: turning a decision often based on opinions and arbitrary percentages into a more structured, understandable and repeatable process.
+
+Note: AUREA is an informational and educational tool. It does not constitute personalized financial advice.`,
   },
 ];
