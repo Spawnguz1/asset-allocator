@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="it" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CapitalFlow — Calcolatore del Tasso di Prelievo Sicuro</title>
+<style>
+  html, :root{
+    --bg: #10141b; --panel: #161c26; --panel-2: #1c2330; --line: #2a3242;
+    --ink: #e8e6df; --ink-dim: #9aa3b2; --ink-faint: #6c7686;
+    --gold: #c9a24b; --gold-dim: #8a7238; --bond: #3f6f9e; --stock: #7bb3d9;
+    --serif: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  html[data-theme="light"]{
+    --bg: #f7f5ee; --panel: #ffffff; --panel-2: #f0ede0; --line: #ddd5c0;
+    --ink: #1d2436; --ink-dim: #57627c; --ink-faint: #848faa;
+    --gold: #a4761f; --gold-dim: #8a6a2e; --bond: #2f5a86; --stock: #4f8fc0;
+  }
+  *{ box-sizing: border-box; }
+  body{ margin:0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height:1.5; padding: 40px 20px 90px; }
+  .wrap{ max-width: 1000px; margin: 0 auto; }
+  .topbar{ flex-wrap:wrap; gap:12px; display:flex; justify-content: space-between; align-items:center; margin-bottom: 22px; }
+  .pagenav{ display:flex; gap:14px; flex-wrap:wrap; }
+  .pagenav a{ color: var(--ink-dim); font-size:12.5px; text-decoration:none; padding-bottom:2px; border-bottom:1px solid transparent; white-space:nowrap; }
+  .pagenav a:hover{ color: var(--ink); }
+  .pagenav a.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .topbar-right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .donate-btn{ font-size:12px; color:#231a06; background: var(--gold); padding:6px 12px; border-radius:3px; text-decoration:none; font-family: var(--sans); white-space:nowrap; }
+  .donate-btn:hover{ background:#d9b45f; }
+  .langtoggle{ display:flex; gap: 6px; }
+  .langtoggle button{ background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-dim); font-size: 12px; padding: 5px 10px; border-radius: 3px; cursor:pointer; font-family: var(--sans); }
+  .langtoggle button.active{ color: var(--gold); border-color: var(--gold-dim); }
+  .theme-switch{ display:flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; padding:0; font-family: var(--sans); }
+  .ts-track{ width:38px; height:21px; background: var(--panel-2); border:1px solid var(--line); border-radius:11px; position:relative; flex-shrink:0; transition: background 0.2s, border-color 0.2s; }
+  .ts-thumb{ position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background: var(--ink-dim); transition: transform 0.2s, background 0.2s; }
+  .theme-switch.on .ts-track{ background: rgba(201,162,75,0.18); border-color: var(--gold-dim); }
+  .theme-switch.on .ts-thumb{ transform: translateX(16px); background: var(--gold); }
+  .ts-label{ font-size:12px; color: var(--ink-dim); }
+
+  header{ margin-bottom: 22px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
+  header .kicker{ font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; }
+  header h1{ font-family: var(--serif); font-weight: 400; font-size: 28px; margin: 0 0 10px; }
+  header p{ color: var(--ink-dim); margin:0; font-size: 14px; max-width: 700px; }
+
+  .intro-callout{ font-size: 13px; color: var(--ink-dim); margin: 0 0 26px; padding: 16px 18px; background: rgba(201,162,75,0.06); border: 1px solid var(--gold-dim); border-radius: 4px; line-height:1.65; }
+  .intro-callout b{ color: var(--ink); }
+  .intro-callout ul{ margin: 8px 0 0; padding-left: 18px; }
+  .intro-callout li{ margin-bottom: 4px; }
+
+  .panel{ background: var(--panel); border:1px solid var(--line); border-radius: 4px; padding: 22px 24px; margin-bottom: 22px; }
+  .panel h2{ font-family: var(--serif); font-weight:400; font-size: 17px; margin: 0 0 16px; }
+
+  .field{ margin-bottom: 18px; }
+  .field:last-child{ margin-bottom: 0; }
+  .field label{ display:flex; justify-content: space-between; font-size: 13px; color: var(--ink-dim); margin-bottom: 7px; }
+  .field label .val{ color: var(--ink); font-variant-numeric: tabular-nums; }
+  .hint{ margin: 6px 2px 0; font-size: 11.5px; color: var(--ink-faint); line-height:1.5; }
+  input[type=range]{ width:100%; -webkit-appearance:none; appearance:none; height: 3px; background: var(--line); border-radius: 2px; outline:none; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background: var(--gold); cursor:pointer; border: 2px solid var(--bg); }
+  input[type=range]::-moz-range-thumb{ width:15px; height:15px; border-radius:50%; background: var(--gold); border: 2px solid var(--bg); cursor:pointer; }
+  select, input[type=number]{ width:100%; background: var(--panel-2); border:1px solid var(--line); color: var(--ink); padding: 9px 10px; border-radius: 3px; font-size: 14px; font-family: var(--sans); }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .lifeslide{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 18px 0; }
+  @media (max-width:700px){ .lifeslide{ grid-template-columns: 1fr; } }
+  .lifecard{ background: var(--panel); border: 1px solid var(--gold-dim); border-radius: 4px; padding: 16px 18px; text-align:center; }
+  .lifecard .label{ font-size: 11.5px; text-transform:uppercase; letter-spacing:0.5px; color: var(--ink-dim); margin-bottom: 8px; }
+  .lifecard .value{ font-family: var(--serif); font-size: 30px; color: var(--gold); }
+  .lifecard .sub{ font-size: 11.5px; color: var(--ink-faint); margin-top:4px; }
+
+  .methodcard{ background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 16px 18px; margin-bottom: 12px; }
+  .methodcard h3{ font-family: var(--serif); font-weight:400; font-size:15px; margin:0 0 6px; display:flex; justify-content:space-between; align-items:baseline; }
+  .methodcard h3 .amount{ color: var(--gold); font-size:19px; }
+  .methodcard p{ font-size:12.5px; color:var(--ink-dim); margin:0; line-height:1.5; }
+  .badge{ display:inline-block; font-size:11px; padding:2px 8px; border-radius:3px; margin-left:8px; font-family:var(--sans); }
+  .badge.ok{ background: rgba(123,179,217,0.15); color: var(--stock); }
+  .badge.cut{ background: rgba(201,111,111,0.15); color:#c96f6f; }
+  .badge.raise{ background: rgba(123,179,217,0.15); color: var(--stock); }
+
+  table{ width:100%; border-collapse: collapse; font-size:13px; margin-top:8px; }
+  th, td{ text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); }
+  th{ color:var(--ink-dim); font-weight:500; }
+  td.num, th.num{ text-align:right; font-variant-numeric: tabular-nums; }
+
+  .note{ font-size: 12px; color: var(--ink-faint); margin-top: 16px; line-height:1.6; }
+  details{ margin-top: 20px; border-top:1px solid var(--line); padding-top:14px; }
+  summary{ cursor:pointer; font-size:13px; color:var(--ink-dim); }
+
+  .site-hero{ margin: -40px -20px 26px; border-bottom: 1px solid var(--line); overflow:hidden; }
+  .site-hero img{ width:100%; height: 170px; object-fit: cover; display:block; }
+  @media (max-width:640px){ .site-hero img{ height: 120px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="site-hero"><img src="hero-mountains.jpg" alt="Vista di montagna, Dolomiti"></div>
+
+
+  <div class="topbar">
+    <nav class="pagenav">
+      <a href="index.html" class="navitem" data-file="index.html" data-i18n="nav.home">ARCA</a>
+      <a href="decumulo.html" class="navitem" data-file="decumulo.html" data-i18n="nav.decumulo">CapitalFlow</a>
+      <a href="metodologia.html" class="navitem" data-file="metodologia.html" data-i18n="nav.method">Metodologia</a>
+      <a href="lazy-portfolio.html" class="navitem" data-file="lazy-portfolio.html" data-i18n="nav.lazy">Lazy Portfolio</a>
+      <a href="blog.html" class="navitem" data-file="blog.html" data-i18n="nav.blog">Blog</a>
+      <a href="bibliografia.html" class="navitem" data-file="bibliografia.html" data-i18n="nav.biblio">Bibliografia</a>
+      <a href="disclaimer.html" class="navitem" data-file="disclaimer.html" data-i18n="nav.disclaimer">Disclaimer</a>
+    </nav>
+    <div class="topbar-right">
+      <a class="donate-btn" href="https://www.paypal.com/donate?business=spawnguz%40gmail.com&currency_code=EUR" target="_blank" rel="noopener" data-i18n="nav.donate">☕ Sostieni il progetto</a>
+      <button class="theme-switch" id="theme-toggle" title="Chiaro / Scuro" type="button">
+        <span class="ts-track"><span class="ts-thumb"></span></span>
+        <span class="ts-label" id="ts-label">Scuro</span>
+      </button>
+      <div class="langtoggle">
+        <button id="lang-it" class="active">IT</button>
+        <button id="lang-en">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="kicker" data-i18n="kicker">CapitalFlow</div>
+    <h1 data-i18n="title">CapitalFlow — Calcolatore del Tasso di Prelievo Sicuro</h1>
+    <p data-i18n="subtitle">Confronta quattro strategie di prelievo per la fase di decumulo del portafoglio.</p>
+  </header>
+
+  <div class="intro-callout" data-i18n="intro.callout">
+    <b>Le quattro strategie in breve.</b> Il confronto qui sotto riprende le quattro strategie di prelievo discusse dal podcast <i>Too Big To Fail</i> (episodio "Vivere di Rendita e Decumulo: 4 Metodi per Ritirare gli Investimenti Senza Finire i Soldi"):
+    <ul>
+      <li><b>Spesa reale fissa (4% Rule):</b> preleva ogni anno il 4% del capitale iniziale, poi aggiorna solo per inflazione — la strategia di riferimento, nata dallo studio di Bengen (1994).</li>
+      <li><b>Percentuale costante:</b> preleva una quota fissa del capitale attuale ogni anno — non esaurisce mai il capitale per costruzione, ma il prelievo oscilla con i mercati.</li>
+      <li><b>Guardrail (Guyton-Klinger):</b> il tasso di prelievo viene tagliato o aumentato del 10% quando esce da barriere prefissate rispetto al tasso iniziale.</li>
+      <li><b>ARVA (rendita virtuale attuariale):</b> il capitale viene ricalcolato ogni anno come una rendita, dividendolo per un fattore attuariale basato sull'orizzonte residuo e sul rendimento reale atteso (Waring & Siegel, 2015).</li>
+    </ul>
+  </div>
+
+  <div class="panel" id="results-top">
+    <h2 data-i18n="panel.results">Risultati</h2>
+    <p class="hint" style="margin-bottom:10px;" data-i18n="results.top.note">Prelievo indicativo per il primo anno secondo le quattro strategie, in base ai parametri impostati in "Impostazioni" qui sotto.</p>
+    <table>
+      <tr><th data-i18n="cmp.method">Strategia</th><th class="num" data-i18n="cmp.amount">Prelievo anno 1</th><th class="num" data-i18n="cmp.rate">% sul montante</th><th data-i18n="cmp.indicator">Indicatore</th></tr>
+      <tr><td data-i18n="m1.title.short">1. Spesa reale fissa</td><td class="num" id="c1-amount">—</td><td class="num" id="c1-rate">—</td><td id="c1-indicator" class="dim"></td></tr>
+      <tr><td data-i18n="m2.title.short">2. Percentuale costante</td><td class="num" id="c2-amount">—</td><td class="num" id="c2-rate">—</td><td id="c2-indicator" class="dim"></td></tr>
+      <tr><td data-i18n="m3.title.short">3. Guardrail</td><td class="num" id="c3-amount">—</td><td class="num" id="c3-rate">—</td><td id="c3-indicator"><span class="badge" id="c3-badge"></span></td></tr>
+      <tr><td data-i18n="m4.title.short">4. ARVA</td><td class="num" id="c4-amount">—</td><td class="num" id="c4-rate">—</td><td id="c4-indicator" class="dim"></td></tr>
+    </table>
+    <p class="hint" style="margin-top:12px;" data-i18n="results.top.caveat">Capitale finale e probabilità di successo su orizzonti pluriennali richiedono una simulazione Monte Carlo dedicata (vedi Metodologia) — non ancora disponibile in questo calcolatore puntuale.</p>
+  </div>
+
+  <div class="panel" style="margin-top:18px;">
+    <h2 data-i18n="settings.summary">Impostazioni</h2>
+
+    <div class="lifeslide">
+      <div class="lifecard">
+        <div class="label" data-i18n="life.age">Età attuale</div>
+        <div class="value" id="disp-age">65</div>
+      </div>
+      <div class="lifecard">
+        <div class="label" data-i18n="life.remaining">Vita residua stimata (ISTAT)</div>
+        <div class="value" id="disp-life">19,8</div>
+        <div class="sub" data-i18n="life.fixed">Dato fisso, non modificabile</div>
+      </div>
+      <div class="lifecard">
+        <div class="label" data-i18n="life.capital">Montante residuo</div>
+        <div class="value" id="disp-capital">€1.150.000</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label><span data-i18n="lbl.age">Età attuale</span> <span class="val" id="v-age">65</span></label>
+        <input type="range" id="age" min="50" max="95" value="65" step="1">
+      </div>
+      <div class="field">
+        <label data-i18n="lbl.sex">Sesso (tavole ISTAT)</label>
+        <select id="sex">
+          <option value="M">Uomo</option>
+          <option value="F">Donna</option>
+        </select>
+      </div>
+    </div>
+    <p class="hint" data-i18n="hint.life">La vita residua stimata sopra non è modificabile: deriva da un'interpolazione calibrata sui dati ISTAT più recenti (speranza di vita a 65 anni: uomini 19,8 anni, donne 22,6 anni — 2024). Non è la tavola ufficiale completa per singola età: vedi la nota in fondo alla pagina.</p>
+
+    <div class="field">
+      <label><span data-i18n="lbl.capital">Montante residuo (€)</span></label>
+      <input type="number" id="capital" value="1150000" step="10000">
+    </div>
+
+    <div class="field">
+      <label><span data-i18n="lbl.spend">Spesa annua desiderata (€)</span></label>
+      <input type="number" id="spend" value="30000" step="1000">
+      <p class="hint" data-i18n="hint.spend">Usata dalla Strategia 3 (Guardrail) come prelievo di riferimento da confrontare con le barriere.</p>
+    </div>
+
+    <div class="field">
+      <label><span data-i18n="lbl.realreturn">Rendimento reale atteso (ARVA)</span> <span class="val" id="v-realreturn">3.0%</span></label>
+      <input type="range" id="realreturn" min="0" max="6" value="3" step="0.1">
+    </div>
+
+    <div class="field">
+      <label><span data-i18n="lbl.guardrate">Tasso di prelievo iniziale (Guardrail)</span> <span class="val" id="v-guardrate">5.0%</span></label>
+      <input type="range" id="guardrate" min="3" max="7" value="5" step="0.1">
+      <p class="hint" data-i18n="hint.guardrate">Barriere fissate a ±20% (Guyton-Klinger): sopra la barriera alta si taglia la spesa del 10%, sotto la barriera bassa la si aumenta del 10%.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 data-i18n="panel.methods">Le quattro strategie</h2>
+
+    <div class="methodcard">
+      <h3><span data-i18n="m1.title">1. Spesa reale fissa (4% Rule)</span><span class="amount" id="m1-amount">—</span></h3>
+      <p data-i18n="m1.desc">Preleva una quota fissa del capitale iniziale, poi la aggiorna solo per inflazione. Massima stabilità, ma piena esposizione al rischio di sequenza dei rendimenti.</p>
+    </div>
+
+    <div class="methodcard">
+      <h3><span data-i18n="m2.title">2. Percentuale costante</span><span class="amount" id="m2-amount">—</span></h3>
+      <p data-i18n="m2.desc">Preleva una quota fissa del capitale attuale ogni anno. Non esaurisce mai il capitale per costruzione, ma lo stile di vita oscilla con i mercati.</p>
+    </div>
+
+    <div class="methodcard">
+      <h3><span data-i18n="m3.title">3. Guardrail (Guyton-Klinger)</span><span class="amount" id="m3-amount">—</span> <span class="badge" id="m3-badge"></span></h3>
+      <p data-i18n="m3.desc">Tasso implicito attuale (spesa desiderata / montante) confrontato con le barriere ±20% intorno al tasso iniziale scelto.</p>
+      <p style="margin-top:6px;" id="m3-detail" class="dim"></p>
+    </div>
+
+    <div class="methodcard">
+      <h3><span data-i18n="m4.title">4. ARVA (rendita virtuale attuariale)</span><span class="amount" id="m4-amount">—</span></h3>
+      <p data-i18n="m4.desc">Capitale diviso per il fattore di rendita (PVFA), calcolato sulla vita residua ISTAT (fissa) e sul rendimento reale atteso. Si ricalcola ogni anno con capitale e orizzonte aggiornati.</p>
+      <p style="margin-top:6px;" id="m4-detail" class="dim"></p>
+    </div>
+  </div>
+
+  <details>
+    <summary data-i18n="details.summary">Note metodologiche e limiti</summary>
+    <p class="note" data-i18n="note.long">
+      <b>Vita residua ISTAT.</b> Il valore mostrato non è la tavola di mortalità ufficiale ISTAT per singola età: è una stima costruita per interpolazione, ancorata ai due dati ufficiali più recenti disponibili (speranza di vita alla nascita 2023: uomini 81,1 anni, donne 85,2; speranza di vita a 65 anni 2024: uomini 19,8 anni, donne 22,6). Per il dato ufficiale esatto alla tua età, consulta il database ISTAT su demo.istat.it (tavole di mortalità).<br><br>
+      <b>ARVA.</b> PVFA = (1 − (1+r)⁻ⁿ) / r, con n = vita residua ISTAT (fissa) e r = rendimento reale atteso che imposti. Il prelievo si ricalcola ogni anno con capitale e orizzonte aggiornati: non è un piano scolpito nella pietra, è una regola da riapplicare periodicamente.<br><br>
+      <b>Guardrail.</b> Se il tasso di prelievo implicito (spesa desiderata / montante) supera la barriera alta, il modello segnala un taglio del 10% alla spesa; se scende sotto la barriera bassa, segnala un aumento del 10%; altrimenti nessun cambiamento oltre l'adeguamento inflattivo.<br><br>
+      <b>Fonti:</b> Bengen (1994) "Determining Withdrawal Rates Using Historical Data"; Trinity Study (Cooley, Hubbard & Walz, 1998); Guyton & Klinger (2006) "Decision Rules and Maximum Initial Withdrawal Rates"; Waring & Siegel (2015) "The Only Spending Rule Article You Will Ever Need" — tutti discussi nel podcast <i>Too Big To Fail</i>, citato in Bibliografia.<br><br>
+      Nessuno di questi calcoli costituisce consulenza finanziaria, previdenziale o attuariale — vedi il Disclaimer.
+    </p>
+  </details>
+
+</div>
+
+<script>
+function clip(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
+function eur(v){ return '€' + Math.round(v).toLocaleString(LANG==='it' ? 'it-IT' : 'en-US'); }
+function pct(v){ return (v*100).toFixed(2) + '%'; }
+
+let LANG = 'it';
+let THEME = 'dark';
+
+const LIFE_TABLE = {
+  M: {20:61.5,25:56.7,30:51.9,35:47.1,40:42.4,45:37.7,50:33.1,55:28.7,60:24.4,65:19.8,70:16.2,75:12.8,80:9.6,85:6.9,90:4.8,95:3.2,100:2.1},
+  F: {20:65.9,25:61.0,30:56.2,35:51.4,40:46.6,45:41.9,50:37.2,55:32.6,60:28.0,65:22.6,70:18.9,75:15.2,80:11.7,85:8.5,90:5.8,95:3.8,100:2.4}
+};
+function lifeExpectancy(age, sex){
+  const table = LIFE_TABLE[sex];
+  const ages = Object.keys(table).map(Number).sort((a,b)=>a-b);
+  if (age <= ages[0]) return table[ages[0]] + (ages[0]-age);
+  if (age >= ages[ages.length-1]) return Math.max(1, table[ages[ages.length-1]] - (age-ages[ages.length-1])*0.3);
+  for (let i=0;i<ages.length-1;i++){
+    if (age >= ages[i] && age <= ages[i+1]){
+      const t = (age-ages[i])/(ages[i+1]-ages[i]);
+      return table[ages[i]] + t*(table[ages[i+1]]-table[ages[i]]);
+    }
+  }
+  return table[65];
+}
+
+const els = {};
+['age','sex','capital','spend','realreturn','guardrate'].forEach(id => els[id] = document.getElementById(id));
+
+const TR = {
+  it: {
+    "nav.home":"ARCA","nav.method":"Metodologia","nav.lazy":"Lazy Portfolio","nav.decumulo":"CapitalFlow","nav.blog":"Blog","nav.biblio":"Bibliografia","nav.disclaimer":"Disclaimer",
+    "nav.donate": "☕ Sostieni il progetto", "theme.dark": "Scuro", "theme.light": "Chiaro",
+    "kicker": "Fase di decumulo",
+    "title": "Calcolatore del Tasso di Prelievo Sicuro",
+    "subtitle": "Confronta quattro strategie di prelievo per la fase di decumulo del portafoglio.",
+    "intro.callout": "<b>Le quattro strategie in breve.</b> Il confronto qui sotto riprende le quattro strategie di prelievo discusse dal podcast <i>Too Big To Fail</i> (episodio \u201cVivere di Rendita e Decumulo: 4 Metodi per Ritirare gli Investimenti Senza Finire i Soldi\u201d):<ul><li><b>Spesa reale fissa (4% Rule):</b> preleva ogni anno il 4% del capitale iniziale, poi aggiorna solo per inflazione — la strategia di riferimento, nata dallo studio di Bengen (1994).</li><li><b>Percentuale costante:</b> preleva una quota fissa del capitale attuale ogni anno — non esaurisce mai il capitale per costruzione, ma il prelievo oscilla con i mercati.</li><li><b>Guardrail (Guyton-Klinger):</b> il tasso di prelievo viene tagliato o aumentato del 10% quando esce da barriere prefissate rispetto al tasso iniziale.</li><li><b>ARVA (rendita virtuale attuariale):</b> il capitale viene ricalcolato ogni anno come una rendita, dividendolo per un fattore attuariale basato sull'orizzonte residuo e sul rendimento reale atteso (Waring & Siegel, 2015).</li></ul>",
+    "panel.results": "Risultati",
+    "results.top.note": "Prelievo indicativo per il primo anno secondo le quattro strategie, in base ai parametri impostati in \u201cImpostazioni\u201d qui sotto.",
+    "results.top.caveat": "Capitale finale e probabilità di successo su orizzonti pluriennali richiedono una simulazione Monte Carlo dedicata (vedi Metodologia) — non ancora disponibile in questo calcolatore puntuale.",
+    "cmp.method": "Strategia", "cmp.amount": "Prelievo anno 1", "cmp.rate": "% sul montante", "cmp.indicator": "Indicatore",
+    "settings.summary": "Impostazioni",
+    "life.age": "Età attuale", "life.remaining": "Vita residua stimata (ISTAT)", "life.fixed": "Dato fisso, non modificabile", "life.capital": "Montante residuo",
+    "panel.params": "Parametri",
+    "lbl.age": "Età attuale", "lbl.sex": "Sesso (tavole ISTAT)",
+    "hint.life": "La vita residua stimata sopra non è modificabile: deriva da un'interpolazione calibrata sui dati ISTAT più recenti (speranza di vita a 65 anni: uomini 19,8 anni, donne 22,6 anni — 2024). Non è la tavola ufficiale completa per singola età: vedi la nota in fondo alla pagina.",
+    "lbl.capital": "Montante residuo (€)",
+    "lbl.spend": "Spesa annua desiderata (€)",
+    "hint.spend": "Usata dalla Strategia 3 (Guardrail) come prelievo di riferimento da confrontare con le barriere.",
+    "lbl.realreturn": "Rendimento reale atteso (ARVA)",
+    "lbl.guardrate": "Tasso di prelievo iniziale (Guardrail)",
+    "hint.guardrate": "Barriere fissate a ±20% (Guyton-Klinger): sopra la barriera alta si taglia la spesa del 10%, sotto la barriera bassa la si aumenta del 10%.",
+    "panel.methods": "Le quattro strategie",
+    "m1.title": "1. Spesa reale fissa (4% Rule)", "m1.title.short": "1. Spesa reale fissa",
+    "m1.desc": "Preleva una quota fissa del capitale iniziale, poi la aggiorna solo per inflazione. Massima stabilità, ma piena esposizione al rischio di sequenza dei rendimenti.",
+    "m2.title": "2. Percentuale costante", "m2.title.short": "2. Percentuale costante",
+    "m2.desc": "Preleva una quota fissa del capitale attuale ogni anno. Non esaurisce mai il capitale per costruzione, ma lo stile di vita oscilla con i mercati.",
+    "m3.title": "3. Guardrail (Guyton-Klinger)", "m3.title.short": "3. Guardrail",
+    "m3.desc": "Tasso implicito attuale (spesa desiderata / montante) confrontato con le barriere ±20% intorno al tasso iniziale scelto.",
+    "m4.title": "4. ARVA (rendita virtuale attuariale)", "m4.title.short": "4. ARVA",
+    "m4.desc": "Capitale diviso per il fattore di rendita (PVFA), calcolato sulla vita residua ISTAT (fissa) e sul rendimento reale atteso. Si ricalcola ogni anno con capitale e orizzonte aggiornati.",
+    "details.summary": "Note metodologiche e limiti",
+    "note.long": "<b>Vita residua ISTAT.</b> Il valore mostrato non è la tavola di mortalità ufficiale ISTAT per singola età: è una stima costruita per interpolazione, ancorata ai due dati ufficiali più recenti disponibili (speranza di vita alla nascita 2023: uomini 81,1 anni, donne 85,2; speranza di vita a 65 anni 2024: uomini 19,8 anni, donne 22,6). Per il dato ufficiale esatto alla tua età, consulta il database ISTAT su demo.istat.it (tavole di mortalità).<br><br><b>ARVA.</b> PVFA = (1 − (1+r)⁻ⁿ) / r, con n = vita residua ISTAT (fissa) e r = rendimento reale atteso che imposti. Il prelievo si ricalcola ogni anno con capitale e orizzonte aggiornati: non è un piano scolpito nella pietra, è una regola da riapplicare periodicamente.<br><br><b>Guardrail.</b> Se il tasso di prelievo implicito (spesa desiderata / montante) supera la barriera alta, il modello segnala un taglio del 10% alla spesa; se scende sotto la barriera bassa, segnala un aumento del 10%; altrimenti nessun cambiamento oltre l'adeguamento inflattivo.<br><br><b>Fonti:</b> Bengen (1994) \u201cDetermining Withdrawal Rates Using Historical Data\u201d; Trinity Study (Cooley, Hubbard & Walz, 1998); Guyton & Klinger (2006) \u201cDecision Rules and Maximum Initial Withdrawal Rates\u201d; Waring & Siegel (2015) \u201cThe Only Spending Rule Article You Will Ever Need\u201d — tutti discussi nel podcast <i>Too Big To Fail</i>, citato in Bibliografia.<br><br>Nessuno di questi calcoli costituisce consulenza finanziaria, previdenziale o attuariale — vedi il Disclaimer.",
+    "badge.within": "dentro le barriere", "badge.above": "sopra la barriera alta — taglio 10%", "badge.below": "sotto la barriera bassa — aumento 10%",
+    "m3.detail": (rate,low,high) => `Tasso implicito: ${rate}. Barriere: ${low} – ${high}.`,
+    "m4.detail": (pvfa,years) => `Fattore di rendita (PVFA) ≈ ${pvfa} su un orizzonte di ${years} anni.`,
+    "cmp.ind.base": "Strategia di riferimento",
+  },
+  en: {
+    "nav.home":"ARCA","nav.method":"Methodology","nav.lazy":"Lazy Portfolio","nav.decumulo":"CapitalFlow","nav.blog":"Blog","nav.biblio":"Bibliography","nav.disclaimer":"Disclaimer",
+    "nav.donate": "☕ Support this project", "theme.dark": "Dark", "theme.light": "Light",
+    "kicker": "Decumulation phase",
+    "title": "Safe Withdrawal Rate Calculator",
+    "subtitle": "Compares four withdrawal strategies for the portfolio decumulation phase.",
+    "intro.callout": "<b>The four strategies at a glance.</b> The comparison below draws on the four withdrawal strategies discussed in the <i>Too Big To Fail</i> podcast (episode \u201cLiving Off Your Portfolio and Decumulation: 4 Methods to Withdraw Your Investments Without Running Out of Money\u201d):<ul><li><b>Fixed real spending (4% Rule):</b> withdraws 4% of the starting capital each year, then updates only for inflation — the reference strategy, originating from Bengen's (1994) study.</li><li><b>Constant percentage:</b> withdraws a fixed share of the current portfolio each year — never runs out of money by construction, but the withdrawal swings with the markets.</li><li><b>Guardrails (Guyton-Klinger):</b> the withdrawal rate is cut or raised by 10% when it moves outside preset rails around the initial rate.</li><li><b>ARVA (actuarial virtual annuity):</b> capital is recalculated each year as an annuity, divided by an actuarial factor based on the remaining horizon and expected real return (Waring & Siegel, 2015).</li></ul>",
+    "panel.results": "Results",
+    "results.top.note": "Indicative year-1 withdrawal under the four strategies, based on the parameters set in \u201cSettings\u201d below.",
+    "results.top.caveat": "Final capital and success probability over multi-year horizons require dedicated Monte Carlo simulation (see Methodology) — not yet available in this point-in-time calculator.",
+    "cmp.method": "Strategy", "cmp.amount": "Year-1 withdrawal", "cmp.rate": "% of capital", "cmp.indicator": "Indicator",
+    "settings.summary": "Settings",
+    "life.age": "Current age", "life.remaining": "Estimated remaining life (ISTAT)", "life.fixed": "Fixed value, not editable", "life.capital": "Remaining capital",
+    "panel.params": "Parameters",
+    "lbl.age": "Current age", "lbl.sex": "Sex (ISTAT tables)",
+    "hint.life": "The remaining-life estimate above isn't editable: it's an interpolation calibrated on the latest official ISTAT figures (life expectancy at 65: men 19.8 years, women 22.6 years — 2024). It is not the full official single-age table: see the note at the bottom of the page.",
+    "lbl.capital": "Remaining capital (€)",
+    "lbl.spend": "Desired annual spending (€)",
+    "hint.spend": "Used by Strategy 3 (Guardrails) as the reference withdrawal compared against the rails.",
+    "lbl.realreturn": "Expected real return (ARVA)",
+    "lbl.guardrate": "Initial withdrawal rate (Guardrail)",
+    "hint.guardrate": "Guardrails fixed at ±20% (Guyton-Klinger): above the upper rail spending is cut 10%, below the lower rail it's raised 10%.",
+    "panel.methods": "The four strategies",
+    "m1.title": "1. Fixed real spending (4% Rule)", "m1.title.short": "1. Fixed real spending",
+    "m1.desc": "Withdraws a fixed share of the starting capital, then updates it only for inflation. Maximum stability, but fully exposed to sequence-of-returns risk.",
+    "m2.title": "2. Constant percentage", "m2.title.short": "2. Constant percentage",
+    "m2.desc": "Withdraws a fixed share of the current portfolio each year. Never runs out of money by construction, but lifestyle swings with the markets.",
+    "m3.title": "3. Guardrails (Guyton-Klinger)", "m3.title.short": "3. Guardrails",
+    "m3.desc": "Current implied rate (desired spending / capital) compared against ±20% guardrails around the chosen initial rate.",
+    "m4.title": "4. ARVA (actuarial virtual annuity)", "m4.title.short": "4. ARVA",
+    "m4.desc": "Capital divided by the annuity factor (PVFA), calculated on the fixed ISTAT remaining life expectancy and your expected real return. Recalculated every year with updated capital and horizon.",
+    "details.summary": "Methodological notes and limits",
+    "note.long": "<b>ISTAT remaining life.</b> The figure shown is not the official ISTAT mortality table for a single age: it's an interpolated estimate anchored to the two latest official figures available (life expectancy at birth, 2023: men 81.1 years, women 85.2; life expectancy at 65, 2024: men 19.8 years, women 22.6). For the exact official figure at your age, check the ISTAT database at demo.istat.it (mortality tables).<br><br><b>ARVA.</b> PVFA = (1 − (1+r)⁻ⁿ) / r, with n = fixed ISTAT remaining life and r = the expected real return you set. The withdrawal is recalculated every year with updated capital and horizon: it's not a plan carved in stone, it's a rule to reapply periodically.<br><br><b>Guardrails.</b> If the implied withdrawal rate (desired spending / capital) exceeds the upper rail, the model flags a 10% spending cut; if it falls below the lower rail, it flags a 10% raise; otherwise no change beyond the inflation adjustment.<br><br><b>Sources:</b> Bengen (1994) \u201cDetermining Withdrawal Rates Using Historical Data\u201d; Trinity Study (Cooley, Hubbard & Walz, 1998); Guyton & Klinger (2006) \u201cDecision Rules and Maximum Initial Withdrawal Rates\u201d; Waring & Siegel (2015) \u201cThe Only Spending Rule Article You Will Ever Need\u201d — all discussed in the <i>Too Big To Fail</i> podcast, cited in the Bibliography.<br><br>None of these calculations constitute financial, pension, or actuarial advice — see the Disclaimer.",
+    "badge.within": "within guardrails", "badge.above": "above upper rail — cut 10%", "badge.below": "below lower rail — raise 10%",
+    "m3.detail": (rate,low,high) => `Implied rate: ${rate}. Guardrails: ${low} – ${high}.`,
+    "m4.detail": (pvfa,years) => `Annuity factor (PVFA) \u2248 ${pvfa} over a ${years}-year horizon.`,
+    "cmp.ind.base": "Reference strategy",
+  }
+};
+function L(key){ return TR[LANG][key]; }
+
+function updateNav(){
+  const current = (window.location.pathname.split('/').pop() || 'index.html');
+  document.querySelectorAll('.navitem').forEach(a => {
+    const base = a.getAttribute('data-file');
+    a.href = base + '?lang=' + LANG + '&theme=' + THEME;
+    a.classList.toggle('active', base === current);
+  });
+}
+function applyStaticTranslations(){
+  updateNav();
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = TR[LANG][key];
+    if (typeof val === 'string') el.innerHTML = val;
+  });
+  document.getElementById('html-root').lang = LANG;
+  document.getElementById('lang-it').classList.toggle('active', LANG==='it');
+  document.getElementById('lang-en').classList.toggle('active', LANG==='en');
+  compute();
+}
+function setLang(lang){ LANG = lang; applyStaticTranslations(); }
+document.getElementById('lang-it').addEventListener('click', () => setLang('it'));
+document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+
+function applyTheme(){
+  document.getElementById('html-root').setAttribute('data-theme', THEME);
+  document.getElementById('theme-toggle').classList.toggle('on', THEME==='light');
+  document.getElementById('ts-label').textContent = THEME==='light' ? (TR[LANG]['theme.light']||'Chiaro') : (TR[LANG]['theme.dark']||'Scuro');
+  updateNav();
+}
+function setTheme(t){ THEME = t; applyTheme(); }
+document.getElementById('theme-toggle').addEventListener('click', () => setTheme(THEME==='dark' ? 'light' : 'dark'));
+
+function compute(){
+  const age = +els['age'].value;
+  const sex = els['sex'].value;
+  const capital = +els['capital'].value;
+  const spend = +els['spend'].value;
+  const realReturn = +els['realreturn'].value / 100;
+  const guardRate = +els['guardrate'].value / 100;
+
+  document.getElementById('v-age').textContent = age;
+  document.getElementById('v-realreturn').textContent = (realReturn*100).toFixed(1)+'%';
+  document.getElementById('v-guardrate').textContent = (guardRate*100).toFixed(1)+'%';
+
+  const life = lifeExpectancy(age, sex);
+  document.getElementById('disp-age').textContent = age;
+  document.getElementById('disp-life').textContent = life.toFixed(1);
+  document.getElementById('disp-capital').textContent = eur(capital);
+
+  // Strategia 1: Spesa reale fissa (4% Rule)
+  const m1 = capital * 0.04;
+
+  // Strategia 2: Percentuale costante
+  const CONST_PCT = 0.05;
+  const m2 = capital * CONST_PCT;
+
+  // Strategia 3: Guardrail (Guyton-Klinger)
+  const impliedRate = capital > 0 ? spend / capital : 0;
+  const lowRail = guardRate * 0.8;
+  const highRail = guardRate * 1.2;
+  let m3 = spend, badge3 = 'within', badgeClass3 = 'ok';
+  if (impliedRate > highRail){ m3 = spend * 0.9; badge3 = 'above'; badgeClass3 = 'cut'; }
+  else if (impliedRate < lowRail){ m3 = spend * 1.1; badge3 = 'below'; badgeClass3 = 'raise'; }
+
+  // Strategia 4: ARVA
+  const n = life;
+  const r = realReturn;
+  const pvfa = r > 0.0001 ? (1 - Math.pow(1+r, -n)) / r : n;
+  const m4 = capital / pvfa;
+
+  // --- metodi dettagliati ---
+  document.getElementById('m1-amount').textContent = eur(m1);
+  document.getElementById('m2-amount').textContent = eur(m2);
+  document.getElementById('m3-amount').textContent = eur(m3);
+  document.getElementById('m3-badge').textContent = L('badge.'+badge3);
+  document.getElementById('m3-badge').className = 'badge ' + badgeClass3;
+  document.getElementById('m3-detail').textContent = L('m3.detail')(pct(impliedRate), pct(lowRail), pct(highRail));
+  document.getElementById('m4-amount').textContent = eur(m4);
+  document.getElementById('m4-detail').textContent = L('m4.detail')(pvfa.toFixed(2), n.toFixed(1));
+
+  // --- tabella risultati in alto ---
+  document.getElementById('c1-amount').textContent = eur(m1);
+  document.getElementById('c1-rate').textContent = pct(capital>0? m1/capital:0);
+  document.getElementById('c1-indicator').textContent = L('cmp.ind.base');
+
+  document.getElementById('c2-amount').textContent = eur(m2);
+  document.getElementById('c2-rate').textContent = pct(capital>0? m2/capital:0);
+
+  document.getElementById('c3-amount').textContent = eur(m3);
+  document.getElementById('c3-rate').textContent = pct(capital>0? m3/capital:0);
+  document.getElementById('c3-badge').textContent = L('badge.'+badge3);
+  document.getElementById('c3-badge').className = 'badge ' + badgeClass3;
+
+  document.getElementById('c4-amount').textContent = eur(m4);
+  document.getElementById('c4-rate').textContent = pct(capital>0? m4/capital:0);
+}
+
+Object.values(els).forEach(el => el.addEventListener('input', compute));
+
+(function init(){
+  const params = new URLSearchParams(window.location.search);
+  const initLang = params.get('lang');
+  if (initLang === 'en' || initLang === 'it') LANG = initLang;
+  const initTheme = params.get('theme');
+  if (initTheme === 'light' || initTheme === 'dark') THEME = initTheme;
+  applyTheme();
+  applyStaticTranslations();
+})();
+</script>
+</body>
+</html>
