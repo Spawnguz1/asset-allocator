@@ -26,16 +26,16 @@
   })();
 
   var TXT = {
-    it: {
-      msg: 'Questo sito non usa cookie di profilazione o di tracciamento, e non salva nulla nel tuo browser a fini statistici o pubblicitari. L\u2019unico dato conservato localmente \u00e8 il fatto che tu abbia visto questo avviso.',
-      more: 'Maggiori informazioni',
-      ack: 'Ho capito'
-    },
-    en: {
-      msg: 'This site does not use profiling or tracking cookies, and does not save anything in your browser for statistics or advertising. The only thing stored locally is the fact that you\u2019ve seen this notice.',
-      more: 'Learn more',
-      ack: 'Got it'
-    }
+it: {
+  msg: 'Questo sito non usa cookie di profilazione o di tracciamento. Usa Umami, uno strumento di analisi statistica anonimo e senza cookie, che non raccoglie dati personali. L\u2019unico dato conservato localmente \u00e8 il fatto che tu abbia visto questo avviso.',
+  more: 'Maggiori informazioni',
+  ack: 'Ho capito'
+},
+en: {
+  msg: 'This site does not use profiling or tracking cookies. It uses Umami, an anonymous, cookie-less analytics tool that collects no personal data. The only thing stored locally is the fact that you\u2019ve seen this notice.',
+  more: 'Learn more',
+  ack: 'Got it'
+}
   };
 
   function hasConsent() {
