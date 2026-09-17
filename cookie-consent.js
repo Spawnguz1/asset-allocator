@@ -1,17 +1,16 @@
 // CapitalFlow — Cookie / privacy notice banner.
-// This site sets NO cookies and uses NO browser storage for tracking or
-// profiling. Language and theme preferences travel only in the URL
+// This site uses Umami (cloud.umami.is) for anonymous, aggregate visit
+// statistics: no cookies, no persistent cross-site identifier, no IP stored
+// in plain form. Language and theme preferences travel only in the URL
 // (?lang=, ?theme=), not in cookies or localStorage. The only thing this
 // script itself stores is the fact that this notice was acknowledged —
 // via localStorage, which is "strictly necessary" storage under the
-// ePrivacy Directive and does not require consent.
+// ePrivacy Directive and does not require consent. See disclaimer.html#cookie
+// for the full explanation.
 //
-// If analytics or other non-essential trackers are ever added to the
-// site, gate them behind hasConsent() below, e.g.:
-//   if (window.CapitalFlowCookieConsent.hasConsent()) { loadAnalytics(); }
-// and change this banner to a real Accept/Reject choice at that point —
-// right now there is nothing optional to accept or reject, so a single
-// acknowledgment button is the honest UI, not a shortcut.
+// If a tool that DOES require consent is ever added (e.g. an identifying
+// or cross-site tracker), gate it behind hasConsent() below and change this
+// banner to a real Accept/Reject choice at that point.
 
 (function () {
   var STORAGE_KEY = 'cf_cookie_notice_ack';
@@ -26,16 +25,16 @@
   })();
 
   var TXT = {
-it: {
-  msg: 'Questo sito non usa cookie di profilazione o di tracciamento. Usa Umami, uno strumento di analisi statistica anonimo e senza cookie, che non raccoglie dati personali. L\u2019unico dato conservato localmente \u00e8 il fatto che tu abbia visto questo avviso.',
-  more: 'Maggiori informazioni',
-  ack: 'Ho capito'
-},
-en: {
-  msg: 'This site does not use profiling or tracking cookies. It uses Umami, an anonymous, cookie-less analytics tool that collects no personal data. The only thing stored locally is the fact that you\u2019ve seen this notice.',
-  more: 'Learn more',
-  ack: 'Got it'
-}
+    it: {
+      msg: 'Questo sito usa Umami, uno strumento di statistiche anonime e aggregate (nessun cookie, nessun dato che ti identifichi). L\u2019unico dato conservato nel tuo browser è il fatto che tu abbia visto questo avviso.',
+      more: 'Maggiori informazioni',
+      ack: 'Ho capito'
+    },
+    en: {
+      msg: 'This site uses Umami, an anonymous, aggregate-only statistics tool (no cookies, no data that identifies you). The only thing stored in your browser is the fact that you\u2019ve seen this notice.',
+      more: 'Learn more',
+      ack: 'Got it'
+    }
   };
 
   function hasConsent() {

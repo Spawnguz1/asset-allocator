@@ -150,7 +150,8 @@
   <section id="cookie">
     <h2 data-i18n="s7.h">Cookie e tecnologie simili</h2>
     <p data-i18n="s7.p1">Questo sito non usa cookie di profilazione, di tracciamento o di terze parti (a parte il link esterno di donazione PayPal, che non carica nulla su questa pagina finché non lo apri tu). La lingua e il tema che scegli viaggiano nei parametri dell'indirizzo (<code>?lang=</code>, <code>?theme=</code>), non in un cookie.</p>
-    <p data-i18n="s7.p2">L'unico dato conservato nel tuo browser è la memoria di aver già visto l'avviso mostrato in fondo alla pagina — tramite <code>localStorage</code>, non un cookie, e rientra tra i dati "tecnicamente necessari" per cui la normativa ePrivacy non richiede consenso. Se in futuro aggiungessimo strumenti di analisi statistica, questa sezione verrà aggiornata e l'avviso tornerà a chiedertelo esplicitamente.</p>
+    <p data-i18n="s7.p2">L'unico dato conservato nel tuo browser è la memoria di aver già visto l'avviso mostrato in fondo alla pagina — tramite <code>localStorage</code>, non un cookie, e rientra tra i dati "tecnicamente necessari" per cui la normativa ePrivacy non richiede consenso.</p>
+    <p data-i18n="s7.p4">Il sito usa <b>Umami</b>, uno strumento di statistiche di visita con sede nell'Unione Europea. Non usa cookie, non registra il tuo indirizzo IP in chiaro e non crea un identificativo che ti segua nel tempo o tra siti diversi: raccoglie solo dati aggregati e anonimi (numero di visite, pagine più lette, paese approssimativo, tipo di dispositivo). Non è possibile risalire alla tua identità da questi dati. Per questo, in linea con l'orientamento prevalente sugli strumenti di analisi non identificativi, non è richiesto un consenso preventivo — resta comunque un'area normativa con margini di interpretazione, e questa non è una valutazione legale formale.</p>
     <p data-i18n="s7.p3">Puoi rivedere l'avviso in qualsiasi momento: <a href="#" id="cookie-reopen-link">mostra di nuovo l'avviso cookie</a>.</p>
   </section>
 
@@ -182,13 +183,13 @@ const TR = {
     "s5.h": "Donazioni",
     "s5.p1": "Il pulsante \u201cSostieni il progetto\u201d rimanda a un link di donazione PayPal volontaria verso l'indirizzo email dell'autore. Una donazione è un gesto di sostegno libero e non rimborsabile: non costituisce pagamento per un servizio di consulenza, non crea alcun rapporto professionale o fiduciario, e non dà diritto a raccomandazioni personalizzate.",
     "s6.h": "Privacy e dati",
-    "s6.p1": "Il calcolatore gira int
+    "s6.p1": "Il calcolatore gira interamente nel tuo browser: gli input che inserisci (età, tassi, inflazione, ecc.) non vengono inviati a nessun server e non sono salvati da questo sito.",
     "s7.h": "Cookie e tecnologie simili",
     "s7.p1": "Questo sito non usa cookie di profilazione, di tracciamento o di terze parti (a parte il link esterno di donazione PayPal, che non carica nulla su questa pagina finché non lo apri tu). La lingua e il tema che scegli viaggiano nei parametri dell'indirizzo (<code>?lang=</code>, <code>?theme=</code>), non in un cookie.",
-    "s7.p2": "Per capire in forma aggregata quali pagine vengono lette e quante visite riceve il sito, usiamo <b>Umami</b>, uno strumento di analisi statistica open source, anonimo e <b>senza cookie</b>. Umami non raccoglie dati personali, non profila gli utenti, non condivide dati con terze parti a fini pubblicitari e non traccia gli utenti tra siti diversi. Per questo rientra tra gli strumenti che non richiedono consenso preventivo ai sensi della normativa ePrivacy/GDPR.",
-    "s7.p3": "L'unico dato conservato nel tuo browser è la memoria di aver già visto l'avviso mostrato in fondo alla pagina — tramite <code>localStorage</code>, non un cookie, e rientra tra i dati \u201ctecnicamente necessari\u201d per cui la normativa ePrivacy non richiede consenso. Se in futuro aggiungessimo strumenti di analisi che usano cookie o profilazione, questa sezione verrà aggiornata e l'avviso tornerà a chiedertelo esplicitamente.",
-    "s7.p4": "Puoi rivedere l'avviso in qualsiasi momento: <a href=\"#\" id=\"cookie-reopen-link\">mostra di nuovo l'avviso cookie</a>.",
-  </section>
+    "s7.p2": "L'unico dato conservato nel tuo browser è la memoria di aver già visto l'avviso mostrato in fondo alla pagina — tramite <code>localStorage</code>, non un cookie, e rientra tra i dati \u201ctecnicamente necessari\u201d per cui la normativa ePrivacy non richiede consenso.",
+    "s7.p4": "Il sito usa <b>Umami</b>, uno strumento di statistiche di visita con sede nell'Unione Europea. Non usa cookie, non registra il tuo indirizzo IP in chiaro e non crea un identificativo che ti segua nel tempo o tra siti diversi: raccoglie solo dati aggregati e anonimi (numero di visite, pagine più lette, paese approssimativo, tipo di dispositivo). Non è possibile risalire alla tua identità da questi dati. Per questo, in linea con l'orientamento prevalente sugli strumenti di analisi non identificativi, non è richiesto un consenso preventivo — resta comunque un'area normativa con margini di interpretazione, e questa non è una valutazione legale formale.",
+    "s7.p3": "Puoi rivedere l'avviso in qualsiasi momento: <a href=\"#\" id=\"cookie-reopen-link\">mostra di nuovo l'avviso cookie</a>.",
+    "footer": "Ultimo aggiornamento di questa pagina: consulta la cronologia del file per la data. Continuando a usare il sito accetti questi termini.",
   },
   en: {
     "nav.home": "ARCA", "nav.method": "Methodology", "nav.lazy": "Lazy Portfolio", "nav.decumulo": "CapitalFlow",
@@ -213,9 +214,10 @@ const TR = {
     "s6.p1": "The calculator runs entirely in your browser: the inputs you enter (age, rates, inflation, etc.) are never sent to any server and are not stored by this site.",
     "s7.h": "Cookies and similar technologies",
     "s7.p1": "This site does not use profiling, tracking, or third-party cookies (aside from the external PayPal donation link, which loads nothing on this page unless you open it). Your chosen language and theme travel in the URL parameters (<code>?lang=</code>, <code>?theme=</code>), not in a cookie.",
-    "s7.p2": "To understand in aggregate form which pages are read and how much traffic the site gets, we use <b>Umami</b>, an open-source, anonymous, <b>cookie-less</b> analytics tool. Umami does not collect personal data, does not profile users, does not share data with third parties for advertising, and does not track users across sites. For this reason it falls under tools that do not require prior consent under ePrivacy/GDPR rules.",
-    "s7.p3": "The only thing stored in your browser is the memory of having already seen the notice shown at the bottom of the page — via <code>localStorage</code>, not a cookie, and it falls under \u201cstrictly necessary\u201d data for which the ePrivacy directive requires no consent. If analytics tools that use cookies or profiling are ever added, this section will be updated and the notice will explicitly ask again.",
-    "s7.p4": "You can review the notice at any time: <a href=\"#\" id=\"cookie-reopen-link\">show the cookie notice again</a>.",
+    "s7.p2": "The only thing stored in your browser is the memory of having already seen the notice shown at the bottom of the page — via <code>localStorage</code>, not a cookie, and it falls under \u201cstrictly necessary\u201d data for which the ePrivacy directive requires no consent.",
+    "s7.p4": "This site uses <b>Umami</b>, a visit-statistics tool based in the European Union. It doesn't use cookies, doesn't log your IP address in plain form, and doesn't create an identifier that follows you over time or across sites: it only collects aggregated, anonymous data (visit counts, most-read pages, approximate country, device type). Your identity cannot be traced back from this data. Because of that, in line with the prevailing view on non-identifying analytics tools, no prior consent is required — this remains an area with some room for interpretation, and this is not a formal legal assessment.",
+    "s7.p3": "You can review the notice at any time: <a href=\"#\" id=\"cookie-reopen-link\">show the cookie notice again</a>.",
+    "footer": "Last updated: see the file's revision history for the date. By continuing to use the site you accept these terms.",
   }
 };
 
@@ -269,7 +271,7 @@ document.getElementById('theme-toggle').addEventListener('click', () => setTheme
   });
 })();
 </script>
-<script src="cookie-consent.js" defer></script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="e3dcced2-a589-413b-9c24-a3c51457536b"></script>
+<script src="cookie-consent.js" defer></script>
 </body>
 </html>
