@@ -134,7 +134,7 @@
         <span class="used" data-i18n="s1.r3">Usato per: la calibrazione della durata del reverse glide path (default 12 anni, range 5-20), basata su 1.700+ coorti storiche 1871-2015.</span>
       </li>
       <li><b>Moreira, A. & Muir, T. (2017).</b> "Volatility-Managed Portfolios." <i>Journal of Finance</i>, 72(4), 1611–1644.
-        <span class="used" data-i18n="s1.r4">Usato per: il comportamento "difensivo" di default (Buffett Mode spento), che riduce l'esposizione quando la volatilità attesa sale.</span>
+        <span class="used" data-i18n="s1.r4">Usato per: il comportamento della quota azionaria rispetto alla volatilità attesa nella formula del Core (w* = ERP/(RCS·σ²)), che riduce l'esposizione quando la volatilità sale.</span>
       </li>
       <li><b>Fama, E.F. & French, K.R. (2015).</b> "A Five-Factor Asset Pricing Model." <i>Journal of Financial Economics</i>, 116(1), 1–22.
         <span class="used" data-i18n="s1.r5">Presente tra i documenti caricati nel progetto originale (SSRN 2287202). Riguarda i fattori di rendimento all'interno dell'azionario (size, value, profittabilità, investimento) — non è implementato direttamente nello split Bond/Stock/Oro, ma può informare l'ipotesi su μ.</span>
@@ -192,7 +192,7 @@ const TR = {
     "s1.r1": "Usato per: la formula w* = (μ−r)/(γσ²) che governa lo split Azioni/Obbligazioni.",
     "s1.r2": "Usato per: la forma \u201ca campana\u201d del reverse glide path (γ che cresce fino al pensionamento e poi ridiscende).",
     "s1.r3": "Usato per: la calibrazione della durata del reverse glide path (default 12 anni, range 5-20), basata su 1.700+ coorti storiche 1871-2015.",
-    "s1.r4": "Usato per: il comportamento \u201cdifensivo\u201d di default (Buffett Mode spento), che riduce l'esposizione quando la volatilità attesa sale.",
+    "s1.r4": "Usato per: il comportamento della quota azionaria rispetto alla volatilità attesa nella formula del Core (w* = ERP/(RCS·σ²)), che riduce l'esposizione quando la volatilità sale.",
     "s1.r5": "Presente tra i documenti caricati nel progetto originale (SSRN 2287202). Riguarda i fattori di rendimento all'interno dell'azionario (size, value, profittabilità, investimento) — non è implementato direttamente nello split Bond/Stock/Oro, ma può informare l'ipotesi su μ.",
     "s1.r6": "Usato per: la media storica reale del prezzo dell'oro ($1.397/oncia in dollari 2025 dal 1980) nel fattore 1 del Gold Score.",
     "s2.h": "Documenti SSRN caricati nel progetto originale",
@@ -223,7 +223,7 @@ const TR = {
     "s1.r1": "Used for: the w* = (μ−r)/(γσ²) formula governing the Stock/Bond split.",
     "s1.r2": "Used for: the \u201cbell\u201d shape of the reverse glide path (γ rising to retirement, then easing).",
     "s1.r3": "Used for: calibrating the reverse glide path duration (default 12 years, range 5-20), based on 1,700+ historical cohorts from 1871-2015.",
-    "s1.r4": "Used for: the default \u201cdefensive\u201d behavior (Buffett Mode off), which cuts exposure as expected volatility rises.",
+    "s1.r4": "Used for: the equity share's behavior relative to expected volatility in the Core formula (w* = ERP/(RCS·σ²)), which cuts exposure as volatility rises.",
     "s1.r5": "Among the documents uploaded to the original project (SSRN 2287202). Concerns return factors within equities (size, value, profitability, investment) — not implemented directly in the Bond/Stock/Gold split, but can inform the μ assumption.",
     "s1.r6": "Used for: the real historical average gold price ($1,397/oz in 2025 dollars since 1980) in Gold Score factor 1.",
     "s2.h": "SSRN documents uploaded to the original project",

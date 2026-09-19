@@ -174,6 +174,12 @@
   .site-hero{ margin: -40px -20px 26px; border-bottom: 1px solid var(--line); overflow:hidden; }
   .site-hero img{ width:100%; height: 170px; object-fit: cover; display:block; }
   @media (max-width:640px){ .site-hero img{ height: 120px; } }
+
+  .tag-data{ display:inline-block; font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--gold-dim); background:rgba(201,162,75,0.1); padding:2px 7px; border-radius:3px; margin-left:6px; vertical-align:middle; }
+  .tag-pref{ display:inline-block; font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--ink-faint); background:var(--panel-2); border:1px solid var(--line); padding:2px 7px; border-radius:3px; margin-left:6px; vertical-align:middle; }
+  .range-note{ font-size:11.5px; color:var(--ink-faint); margin-top:2px; }
+  .layer-label{ font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--gold-dim); margin: 18px 0 4px; }
+  .layer-label:first-child{ margin-top:0; }
 </style>
 </head>
 <body>
@@ -209,7 +215,7 @@
     <div class="kicker" data-i18n="kicker">Age-Responsive Capital Allocation</div>
     <h1 data-i18n="title">ARCA — La Bussola per Bond, Stock & Oro</h1>
     <p class="tagline" data-i18n="tagline">Il tuo portafoglio, allineato alla tua fase di vita.</p>
-    <p data-i18n="subtitle">ARCA stima una ripartizione di riferimento tra Obbligazioni, Azioni e Oro a partire dalla tua età, dal contesto dei tassi d'interesse (BCE e FED) e dalla fase del ciclo macroeconomico. Combina la regola di allocazione di Merton (1969) con un percorso di rischio calibrato sul ciclo di vita (reverse glide path), una correzione per l'assenza di alternative reali alle azioni quando i tassi sono compressi (TINA) e un modello a sei fattori per la quota di oro. Muovi i parametri qui sotto per vedere come cambia l'allocazione suggerita.</p>
+    <p data-i18n="subtitle">ARCA stima un'allocazione di riferimento tra Obbligazioni, Azioni e Oro combinando il tuo profilo di rischio (età, orizzonte, tolleranza dichiarata) con dati di mercato osservabili — CAPE, rendimento reale obbligazionario, prezzo dell'oro — invece di stime interne fisse. L'output è un intervallo plausibile, non un numero singolo: i dati di mercato sono incerti, e il modello lo comunica invece di nasconderlo.</p>
   </header>
 
   <div class="grid">
@@ -217,16 +223,18 @@
     <div class="panel">
       <h2 data-i18n="panel.params">Parametri</h2>
 
+      <div class="layer-label" data-i18n="layer.profile">Profilo dell'investitore — preferenze personali</div>
+
       <div class="row2">
         <div class="field">
           <label><span data-i18n="lbl.age">Età</span> <span class="val" id="v-age">45 anni</span></label>
           <input type="range" id="age" min="20" max="90" value="45" step="1">
-          <p class="hint" data-i18n="hint.age">Influenza l'avversione al rischio γ lungo il reverse glide path.</p>
+          <p class="hint" data-i18n="hint.age">Determina l'Horizon Score: quanto tempo hai prima e dopo il pensionamento, non la tua reale propensione al rischio.</p>
         </div>
         <div class="field">
           <label><span data-i18n="lbl.retage">Età di pensionamento</span> <span class="val" id="v-ret">67 anni</span></label>
           <input type="range" id="retage" min="55" max="75" value="67" step="1">
-          <p class="hint" data-i18n="hint.retage">Il punto in cui γ tocca il picco (massima prudenza), poi ridiscende in decumulo.</p>
+          <p class="hint" data-i18n="hint.retage">Il punto in cui l'Horizon Score tocca il picco (massima prudenza), poi ridiscende in decumulo.</p>
         </div>
       </div>
 
@@ -237,77 +245,46 @@
       </div>
 
       <div class="field">
-        <label data-i18n="lbl.tolerance">Tolleranza al rischio</label>
+        <label data-i18n="lbl.tolerance">Tolleranza al rischio dichiarata</label>
         <select id="tolerance">
           <option value="0.75" data-i18n="opt.tol.high">Alta</option>
           <option value="1.0" selected data-i18n="opt.tol.med">Media</option>
           <option value="1.3" data-i18n="opt.tol.low">Bassa</option>
         </select>
-        <p class="hint" data-i18n="hint.tolerance">Moltiplica γ: più bassa la tolleranza, più prudente l'allocazione risultante.</p>
+        <p class="hint" data-i18n="hint.tolerance">Preferenza soggettiva che dichiari tu, tenuta separata dall'Horizon Score: il modello non pretende di dedurre la tua vera avversione al rischio dalla sola età.</p>
       </div>
 
-      <div class="row2">
-        <div class="field">
-          <label><span data-i18n="lbl.bce">Tasso BCE</span> <span class="val" id="v-bce">2.00%</span></label>
-          <input type="range" id="bce" min="0" max="8" value="2.0" step="0.1">
-          <p class="hint" data-i18n="hint.bce">Peso variabile nel tasso nominale di riferimento, secondo il profilo obbligazionario sotto.</p>
-        </div>
-        <div class="field">
-          <label><span data-i18n="lbl.fed">Tasso FED</span> <span class="val" id="v-fed">4.00%</span></label>
-          <input type="range" id="fed" min="0" max="8" value="4.0" step="0.1">
-          <p class="hint" data-i18n="hint.fed">Peso variabile nel tasso nominale di riferimento, secondo il profilo obbligazionario sotto.</p>
-        </div>
+      <div class="layer-label" data-i18n="layer.market">Dati di mercato — inserisci il valore osservato</div>
+
+      <div class="field">
+        <label><span data-i18n="lbl.cape">CAPE (Shiller P/E o equivalente)</span><span class="tag-data" data-i18n="tag.market">dato di mercato</span> <span class="val" id="v-cape">28.0</span></label>
+        <input type="range" id="cape" min="10" max="45" value="28" step="0.5">
+        <p class="hint" data-i18n="hint.cape">Determina l'earnings yield (1/CAPE), usato come proxy del rendimento azionario atteso al posto di una stima fissa interna. Cerca "Shiller CAPE" per l'indice USA, o l'equivalente per il tuo mercato di riferimento.</p>
       </div>
 
       <div class="field">
-        <label><span data-i18n="lbl.bondprofile">Profilo obbligazionario</span> <span class="val" id="v-bondprofile">25%</span></label>
+        <label><span data-i18n="lbl.realbondyield">Rendimento reale obbligazionario di riferimento</span><span class="tag-data" data-i18n="tag.market">dato di mercato</span> <span class="val" id="v-realbondyield">1.50%</span></label>
+        <input type="range" id="realbondyield" min="-1" max="5" value="1.5" step="0.1">
+        <p class="hint" id="hint-realbondyield" data-i18n="hint.realbondyield">Il rendimento reale (già al netto dell'inflazione) del titolo di riferimento — non il tasso di policy della banca centrale. Guarda il TIPS 10Y decennale USA o il Bund-linker tedesco a seconda del profilo scelto sotto.</p>
+      </div>
+
+      <div class="field">
+        <label><span data-i18n="lbl.equityvol">Volatilità azionaria attesa</span><span class="tag-pref" data-i18n="tag.assumption">assunzione</span> <span class="val" id="v-equityvol">16.0%</span></label>
+        <input type="range" id="equityvol" min="8" max="35" value="16" step="0.5">
+        <p class="hint" data-i18n="hint.equityvol">Default 16% = media storica di lungo periodo. Alza il valore se ti aspetti un contesto più turbolento, abbassalo per uno più tranquillo — è un'ipotesi, non un dato osservato in tempo reale in questa versione.</p>
+      </div>
+
+      <div class="field">
+        <label><span data-i18n="lbl.bondprofile">Profilo obbligazionario di riferimento</span><span class="tag-pref" data-i18n="tag.pref">preferenza</span> <span class="val" id="v-bondprofile">25%</span></label>
         <input type="range" id="bondprofile" min="0" max="100" value="25" step="1">
-        <p class="hint" id="hint-bondprofile" data-i18n="hint.bondprofile">0% = investitore europeo, titoli di Stato europei · 25% = investitore europeo, Global Aggregate Bond Index · 75% = investitore americano, Global Aggregate Bond Index · 100% = investitore americano, Treasury USA. Il valore imposta anche il peso BCE/FED nel tasso nominale di riferimento (0% = 100% BCE, 100% = 100% FED).</p>
+        <p class="hint" id="hint-bondprofile" data-i18n="hint.bondprofile">Non entra nel calcolo: serve solo a suggerirti quale titolo guardare per il rendimento reale sopra. 0% = titoli di Stato europei · 25% = Global Aggregate (investitore europeo) · 75% = Global Aggregate (investitore americano) · 100% = Treasury USA.</p>
         <p class="hint" id="bondprofile-readout" style="color:var(--gold-dim); margin-top:8px;"></p>
       </div>
 
-      <div class="callout" style="background:rgba(201,162,75,0.06); border:1px solid var(--gold-dim); border-radius:4px; padding:12px 14px; margin-top:14px; font-size:12px; color:var(--ink-dim); line-height:1.6;" data-i18n="eu.note">
-        <b>Nota per l'investitore europeo.</b> Il calcolatore pesa il tasso BCE al 75% e il tasso FED al 25% perché è pensato per un investitore che vive e spende in euro. Per coerenza, la quota obbligazionaria dovrebbe essere allocata in titoli di stato dell'area euro e, per la parte estera, in titoli di stato esteri con copertura del cambio (hedged) — per non aggiungere un rischio valutario non voluto alla componente "sicura" del portafoglio.
-      </div>
-
       <div class="field">
-        <label><span data-i18n="lbl.infl">Inflazione attesa (media EUR/USD)</span> <span class="val" id="v-infl">2.50%</span></label>
-        <input type="range" id="infl" min="-1" max="10" value="2.5" step="0.1">
-        <p class="hint" data-i18n="hint.infl">Tasso nominale meno inflazione = tasso reale, il perno di TINA e del costo-opportunità dell'oro.</p>
-      </div>
-
-      <div class="field">
-        <label data-i18n="lbl.phase">Fase del ciclo macro</label>
-        <select id="phase">
-          <option value="goldilocks" data-i18n="opt.phase.gold">Goldilocks — crescita stabile, bassa inflazione</option>
-          <option value="normale" selected data-i18n="opt.phase.norm">Regime normale</option>
-          <option value="rallentamento" data-i18n="opt.phase.slow">Rallentamento / recessione</option>
-          <option value="stagflazione" data-i18n="opt.phase.stag">Stagflazione</option>
-          <option value="crisi" data-i18n="opt.phase.crisis">Crisi geopolitica o finanziaria acuta</option>
-        </select>
-        <p class="hint" data-i18n="hint.phase">Imposta volatilità attesa, rischio geopolitico e i preset dell'Oro Score.</p>
-      </div>
-
-      <div class="field">
-        <label><span data-i18n="lbl.goldprice">Prezzo Oro attuale (USD/oncia)</span> <span class="val" id="v-goldprice">$4.390</span></label>
+        <label><span data-i18n="lbl.goldprice">Prezzo Oro attuale (USD/oncia)</span><span class="tag-data" data-i18n="tag.market">dato di mercato</span> <span class="val" id="v-goldprice">$4.390</span></label>
         <input type="range" id="goldprice" min="800" max="6000" value="4390" step="10">
-        <p class="hint" data-i18n="hint.goldprice">Attiva il fattore \u201cvalutazione storica\u201d del Gold Score: confronta questo prezzo con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia (fonte: InflationData.com). Più il prezzo attuale è alto rispetto a quella media, più il fattore penalizza la quota oro (oro \u201ccaro\u201d).</p>
-      </div>
-
-      <div class="field">
-        <label><span data-i18n="lbl.tina">Sensibilità TINA</span> <span class="val" id="v-tina">2.00x</span></label>
-        <input type="range" id="tina" min="0" max="4" value="2.0" step="0.1">
-        <p class="hint" data-i18n="hint.tina">TINA = "There Is No Alternative": con i tassi delle banche centrali vicini a zero, le obbligazioni non offrono un'alternativa reale, quindi il modello sposta l'allocazione verso l'azionario. A 0 disattivi l'effetto sull'ERP; più alto, più forte lo spostamento verso le azioni quando il tasso reale è basso.</p>
-      </div>
-
-      <div class="field">
-        <label class="switch-row" data-i18n="lbl.buffett">Buffett Mode — in crisi/incertezza, aumenta l'esposizione azionaria invece di ridurla</label>
-        <label class="switch">
-          <input type="checkbox" id="buffett">
-          <span class="switch-track"><span class="switch-thumb"></span></span>
-          <span class="switch-text" id="v-buffett">Off</span>
-        </label>
-        <p class="hint" data-i18n="hint.buffett">Filosofia contrarian (Buffett/Klarman): le valutazioni compresse in crisi alzano i rendimenti attesi più di quanto salga la volatilità. Spento = modello "difensivo" (volatility-managed): riduce l'azionario quando la volatilità sale.</p>
+        <p class="hint" data-i18n="hint.goldprice">Confrontato con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia (fonte: InflationData.com).</p>
       </div>
 
       <div class="field">
@@ -317,7 +294,11 @@
           <span class="switch-track"><span class="switch-thumb"></span></span>
           <span class="switch-text" id="v-includegold">On</span>
         </label>
-        <p class="hint" data-i18n="hint.includegold">Spento: l'oro esce dal modello e l'intero patrimonio si ripartisce solo tra Obbligazioni e Azioni secondo w* di Merton — utile per confrontare l'effetto dell'overlay Oro.</p>
+        <p class="hint" data-i18n="hint.includegold">Spento: l'oro esce dal modello e l'intero patrimonio si ripartisce solo tra Obbligazioni e Azioni secondo w* di Merton.</p>
+      </div>
+
+      <div class="callout" style="background:rgba(201,162,75,0.06); border:1px solid var(--gold-dim); border-radius:4px; padding:12px 14px; margin-top:14px; font-size:12px; color:var(--ink-dim); line-height:1.6;" data-i18n="data.note">
+        <b>Perché due tag diversi?</b> "Dato di mercato" indica un numero che dovresti inserire leggendolo da una fonte esterna (non una tua opinione). "Preferenza"/"assunzione" indica una scelta o un'ipotesi che dipende da te. Oggi inserisci i dati di mercato a mano; la struttura del codice è pensata perché in futuro possano essere recuperati automaticamente da una fonte dati esterna, senza cambiare il resto del modello — vedi la pagina Metodologia.
       </div>
     </div>
 
@@ -334,18 +315,19 @@
           <div class="item"><span class="dot" style="background:var(--stock)"></span><span data-i18n="leg.stock">Azioni</span> <span class="num" id="pct-stock">—</span></div>
           <div class="item"><span class="dot" style="background:var(--gold)"></span><span data-i18n="leg.gold">Oro</span> <span class="num" id="pct-gold">—</span></div>
         </div>
+        <p class="range-note" id="range-note"></p>
       </div>
 
       <div class="subgrid">
-        <div class="metric"><div class="label" data-i18n="m.gamma">Avversione al rischio (γ)</div><div class="value" id="m-gamma">—</div></div>
-        <div class="metric"><div class="label" data-i18n="m.real">Tasso reale stimato</div><div class="value" id="m-real">—</div></div>
+        <div class="metric"><div class="label" data-i18n="m.rcs">Risk Capacity Score</div><div class="value" id="m-rcs">—</div></div>
+        <div class="metric"><div class="label" data-i18n="m.erp">Equity Risk Premium</div><div class="value" id="m-erp">—</div></div>
         <div class="metric"><div class="label" data-i18n="m.gs">Gold Score (GS)</div><div class="value" id="m-gs">—</div></div>
       </div>
 
       <div class="interp" id="interp"></div>
 
-      <div class="tina-callout" data-i18n="tina.callout">
-        <b>Cos'è TINA?</b> "There Is No Alternative" — quando i tassi delle banche centrali sono vicini allo zero, le obbligazioni non rendono abbastanza da compensare il rischio, e non esiste una vera alternativa alle azioni per generare rendimento reale. Il modello traduce questo con un ERP più alto quando il tasso reale è basso, spostando l'allocazione il più possibile verso l'azionario.
+      <div class="tina-callout" data-i18n="range.callout">
+        <b>Perché un intervallo e non un numero solo?</b> Con parametri di mercato incerti, una precisione tipo "47,3% azioni" è illusoria. L'intervallo mostrato riflette la sensibilità dell'allocazione a una variazione ragionevole (±15%) del CAPE inserito — non è un errore statistico formale, ma un modo onesto di comunicare che il numero centrale non è l'unica risposta plausibile.
       </div>
       <div class="tina-callout" data-i18n="ern.callout">
         <b>Evidenza empirica (ERN, 2017).</b> Su 1.700+ coorti storiche 1871-2015, le transizioni 60%→100% azionario in 10-13 anni hanno dato i tassi di prelievo sicuri più alti tra tutte le strategie testate — statiche o dinamiche — soprattutto quando la valutazione azionaria (CAPE di Shiller) era elevata. Attenzione però: se il pensionamento parte proprio su un minimo di mercato, la stessa transizione può risultare peggiore di un'allocazione statica al 100% azionario. Non è un pasto gratis, è un'assicurazione.
@@ -355,47 +337,43 @@
   </div>
 
   <details>
-    <summary data-i18n="details.summary">Dettaglio del calcolo — regola di Merton e Gold Score a 6 fattori</summary>
+    <summary data-i18n="details.summary">Dettaglio del calcolo — Core allocation e Gold Score a 2 fattori</summary>
 
     <table>
-      <tr><th data-i18n="tbl.merton.h">Regola di Merton</th><th class="num" data-i18n="tbl.value">Valore</th></tr>
-      <tr><td data-i18n="tbl.mu">Rendimento atteso azionario reale (μ)</td><td class="num" id="d-mu">—</td></tr>
-      <tr><td data-i18n="tbl.r">Tasso risk-free reale (r)</td><td class="num" id="d-r">—</td></tr>
-      <tr><td data-i18n="tbl.erp">Equity Risk Premium (μ − r), inclusa correzione TINA sul tasso reale</td><td class="num" id="d-erp">—</td></tr>
-      <tr><td data-i18n="tbl.buffett">Bonus Buffett Mode (valutazioni compresse in fase di stress)</td><td class="num" id="d-buffett">—</td></tr>
+      <tr><th data-i18n="tbl.merton.h">Core allocation (regola di Merton)</th><th class="num" data-i18n="tbl.value">Valore</th></tr>
+      <tr><td data-i18n="tbl.cape">CAPE inserito → Earnings Yield (1/CAPE)</td><td class="num" id="d-ey">—</td></tr>
+      <tr><td data-i18n="tbl.realyield">Rendimento reale obbligazionario inserito</td><td class="num" id="d-ry">—</td></tr>
+      <tr><td data-i18n="tbl.erp">Equity Risk Premium = Earnings Yield − rendimento reale bond</td><td class="num" id="d-erp">—</td></tr>
       <tr><td data-i18n="tbl.sigma">Volatilità azionaria attesa (σ)</td><td class="num" id="d-sigma">—</td></tr>
-      <tr><td data-i18n="tbl.gamma">Avversione al rischio (γ), da età/pensionamento (reverse glide path) + tolleranza</td><td class="num" id="d-gamma">—</td></tr>
-      <tr><td data-i18n="tbl.wstar"><b>w* = (μ−r) / (γσ²) — quota nell'attivo rischioso</b></td><td class="num" id="d-wstar">—</td></tr>
+      <tr><td data-i18n="tbl.h">Horizon Score (H) — da età/pensionamento, reverse glide path</td><td class="num" id="d-h">—</td></tr>
+      <tr><td data-i18n="tbl.t">Tolleranza dichiarata (T)</td><td class="num" id="d-t">—</td></tr>
+      <tr><td data-i18n="tbl.rcs"><b>Risk Capacity Score = H × T</b></td><td class="num" id="d-rcs">—</td></tr>
+      <tr><td data-i18n="tbl.wstar"><b>w* = ERP / (RCS·σ²) — quota nell'attivo rischioso (centrale)</b></td><td class="num" id="d-wstar">—</td></tr>
+      <tr><td data-i18n="tbl.wstarrange"><b>Intervallo w* (CAPE ±15%)</b></td><td class="num" id="d-wstarrange">—</td></tr>
     </table>
 
     <table>
-      <tr><th data-i18n="tbl.gold.h">Fattore Gold Score</th><th class="num" data-i18n="tbl.weight">Peso</th><th class="num" data-i18n="tbl.z">z-score</th><th class="num" data-i18n="tbl.contrib">Contributo</th></tr>
-      <tr><td data-i18n="gs.f1">1. Valutazione storica dell'oro (vs. media reale 1980-oggi)</td><td class="num">15%</td><td class="num" id="z1">0.00</td><td class="num" id="c1">—</td></tr>
-      <tr><td data-i18n="gs.f2">2. Rischio geopolitico</td><td class="num">20%</td><td class="num" id="z2">—</td><td class="num" id="c2">—</td></tr>
-      <tr><td data-i18n="gs.f3">3. Regime macro (gap inflazione vs target + fase ciclo)</td><td class="num">25%</td><td class="num" id="z3">—</td><td class="num" id="c3">—</td></tr>
-      <tr><td data-i18n="gs.f4">4. Volatilità di mercato</td><td class="num">15%</td><td class="num" id="z4">—</td><td class="num" id="c4">—</td></tr>
-      <tr><td data-i18n="gs.f5">5. Correlazione dinamica oro/azioni-bond</td><td class="num">10%</td><td class="num" id="z5">—</td><td class="num" id="c5">—</td></tr>
-      <tr><td data-i18n="gs.f6">6. Costo opportunità (tasso reale, invertito)</td><td class="num">15%</td><td class="num" id="z6">—</td><td class="num" id="c6">—</td></tr>
-      <tr><td data-i18n="gs.tot"><b>Gold Score (GS) = Σ peso × z</b></td><td></td><td></td><td class="num" id="c-tot">—</td></tr>
-      <tr><td data-i18n="gs.wgold"><b>w_gold = 2% + 18% × logistica(4×GS)</b></td><td></td><td></td><td class="num" id="c-wgold">—</td></tr>
+      <tr><th data-i18n="tbl.gold.h">Fattore Gold Score</th><th class="num" data-i18n="tbl.weight">Peso</th><th class="num" data-i18n="tbl.z">z-score</th></tr>
+      <tr><td data-i18n="gs.f1">1. Valutazione storica dell'oro (vs. media reale 1980-oggi)</td><td class="num">50%</td><td class="num" id="z1">—</td></tr>
+      <tr><td data-i18n="gs.f2">2. Costo opportunità (rendimento reale bond, invertito)</td><td class="num">50%</td><td class="num" id="z2">—</td></tr>
+      <tr><td data-i18n="gs.tot"><b>Gold Score (GS) = media pesata degli z-score</b></td><td></td><td class="num" id="c-tot">—</td></tr>
+      <tr><td data-i18n="gs.wgold"><b>Quota oro = 8% ± (GS/3)×5pp, entro un range 2–20%</b></td><td></td><td class="num" id="c-wgold">—</td></tr>
     </table>
 
     <p class="note" data-i18n="note.long">
-      <b>Buffett Mode.</b> Quando attivo, in fase "rallentamento", "stagflazione" o "crisi" aggiunge un bonus all'ERP proporzionale allo stress della fase (0.4/0.6/1.0 → fino a +15pp in crisi acuta), abbastanza da compensare — e superare — l'effetto frenante della volatilità al quadrato nel denominatore di Merton. Riflette la tesi contrarian/value (Buffett, Klarman): un crollo dei prezzi comprime i multipli e alza i rendimenti attesi futuri più di quanto salga il rischio percepito nel breve. Con Buffett Mode spento il modello resta "difensivo" (volatility-managed, coerente con Moreira & Muir 2017): riduce l'esposizione quando la volatilità sale, indipendentemente dalla view sui prezzi.<br><br>
-      <b>Reverse glide path.</b> γ non cresce in modo monotono con l'età: sale durante l'accumulo fino a un picco (massima prudenza) proprio all'età di pensionamento — dove il rischio di sequenza dei rendimenti è più pericoloso — e poi ridiscende nell'arco di anni che imposti (default 12), aumentando gradualmente la quota azionaria in decumulo (Pfau & Kitces, 2014; evidenza storica 1871-2015 in Early Retirement Now, \u201cSWR Series Part 19: Equity Glidepaths\u201d, 2017, che trova l'ottimo in transizioni 60%\u2192100% su 10-13 anni). Modifica l'età di pensionamento per spostare il picco, e la durata per allungare o accorciare la transizione.<br><br>
-      <b>TINA.</b> "There Is No Alternative": l'ERP non è più fisso, ma si muove in senso opposto al tasso reale rispetto a un riferimento storico dell'1%. Con tassi reali bassi o negativi (banche centrali a zero) l'ERP sale e la quota obbligazionaria si riduce fortemente; con tassi reali elevati l'ERP si comprime e la quota bond torna competitiva.<br><br>
-      Il fattore 1 confronta il prezzo dell'oro che inserisci con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia in dollari 2025 (InflationData.com) — non è un valore ufficiale di consenso, ma una stima ragionevole; la deviazione standard reale (900$) è una calibrazione, non un dato pubblicato. Il gap-inflazione (fattore 3) usa un target 2% con deviazione di riferimento 1.5 punti; il costo-opportunità (fattore 6) usa media storica 1% e deviazione 1.5 punti sul tasso reale.<br><br>
-      Nota metodologica: questo strumento applica la regola del portafoglio di Merton (1969), un reverse glide path età/pensionamento calibrato anche su dati storici (Early Retirement Now, 2017), un aggiustamento TINA e un composite score per l'oro — non è un'implementazione del modello a fattori di Fama-French (che stima i rendimenti attesi all'interno dell'azionario tramite size, value, profittabilità). Per la spiegazione completa della costruzione, vedi la pagina "Come funziona".
+      <b>Perché il Gold Score è passato da 6 a 2 fattori.</b> I quattro fattori rimossi (rischio geopolitico, regime macro, volatilità di mercato, correlazione dinamica) non erano ancorati a un dato osservabile in modo ripetibile, oppure erano ridondanti con altre parti del modello. Restano solo i due fattori realmente misurabili da un dato di mercato: il prezzo dell'oro rispetto alla sua media reale storica, e il costo-opportunità di detenere un asset che non paga interesse quando il rendimento reale obbligazionario è alto o basso.<br><br>
+      <b>Perché Horizon Score e Tolleranza sono mostrati separati.</b> Il modello precedente derivava un unico parametro "γ" (avversione al rischio) direttamente dall'età, presentandolo implicitamente come se catturasse la vera propensione al rischio dell'investitore — che non è osservabile. Qui l'Horizon Score misura solo l'esposizione al rischio di sequenza dei rendimenti legata al tempo (quanto sei vicino al pensionamento), mentre la Tolleranza resta una preferenza dichiarata da te, esplicitamente separata. Il Risk Capacity Score che ne risulta è una calibrazione operativa, non una misura di un tratto psicologico.<br><br>
+      <b>Perché niente più TINA né Buffett Mode.</b> La versione precedente collegava l'Equity Risk Premium al tasso di policy delle banche centrali (TINA) e aggiungeva un bonus discrezionale in fase di crisi (Buffett Mode). Entrambi i meccanismi sono stati sostituiti da un solo input di mercato — l'earnings yield da CAPE meno il rendimento reale obbligazionario — che produce lo stesso tipo di effetto (più azioni quando le valutazioni sono compresse, meno quando sono care) in modo trasparente e senza cap arbitrari nascosti nella formula.<br><br>
+      <b>Reverse glide path.</b> L'Horizon Score sale durante l'accumulo fino a un picco (massima prudenza) proprio all'età di pensionamento — dove il rischio di sequenza dei rendimenti è più pericoloso — e poi ridiscende nell'arco di anni che imposti (default 12), aumentando gradualmente la quota azionaria in decumulo (Pfau & Kitces, 2014; evidenza storica 1871-2015 in Early Retirement Now, "SWR Series Part 19: Equity Glidepaths", 2017, che trova l'ottimo in transizioni 60%→100% su 10-13 anni).<br><br>
+      Nota metodologica: questo strumento applica la regola del portafoglio di Merton (1969) come struttura centrale (Core), alimentata da input di mercato osservabili invece che da stime interne fisse. Non è un'implementazione del modello a fattori di Fama-French. Per la spiegazione completa della costruzione e delle scelte metodologiche, vedi la pagina "Metodologia".
     </p>
   </details>
 
-  <p class="note" style="margin-top:28px;" data-i18n="footer.disclaimer">Strumento a scopo informativo ed educativo, costruito sulle ipotesi che hai definito nei tuoi modelli. Non costituisce consulenza finanziaria personalizzata.</p>
+  <p class="note" style="margin-top:28px;" data-i18n="footer.disclaimer">Strumento a scopo informativo ed educativo, costruito sulle ipotesi descritte in questa pagina. Non costituisce consulenza finanziaria personalizzata.</p>
 
 </div>
-
 <script>
 function clip(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
-function logistic(x){ return 1/(1+Math.exp(-x)); }
 function pct(v){ return (v*100).toFixed(1) + '%'; }
 
 const els = {
@@ -403,52 +381,90 @@ const els = {
   retage: document.getElementById('retage'),
   revspan: document.getElementById('revspan'),
   tolerance: document.getElementById('tolerance'),
-  bce: document.getElementById('bce'),
-  fed: document.getElementById('fed'),
+  cape: document.getElementById('cape'),
+  realbondyield: document.getElementById('realbondyield'),
+  equityvol: document.getElementById('equityvol'),
   bondprofile: document.getElementById('bondprofile'),
-  infl: document.getElementById('infl'),
-  phase: document.getElementById('phase'),
   goldprice: document.getElementById('goldprice'),
-  tina: document.getElementById('tina'),
-  buffett: document.getElementById('buffett'),
   includegold: document.getElementById('includegold'),
 };
 
-const PHASE = {
-  goldilocks:     { sigma: 0.12, erpAdj: -0.005, geo: -1.0, vix: -1.0, corr: 0.0,  recAdj: -0.5, stress: 0.0,  label: {it:'Goldilocks', en:'Goldilocks'} },
-  normale:        { sigma: 0.16, erpAdj:  0.0,   geo:  0.0, vix:  0.0, corr: 0.0,  recAdj:  0.0, stress: 0.0,  label: {it:'regime normale', en:'normal regime'} },
-  rallentamento:  { sigma: 0.20, erpAdj:  0.01,  geo:  0.3, vix:  1.0, corr: 0.0,  recAdj: -0.5, stress: 0.4,  label: {it:'rallentamento/recessione', en:'slowdown/recession'} },
-  stagflazione:   { sigma: 0.19, erpAdj:  0.005, geo:  1.0, vix:  0.7, corr: 0.5,  recAdj:  0.5, stress: 0.6,  label: {it:'stagflazione', en:'stagflation'} },
-  crisi:          { sigma: 0.26, erpAdj:  0.015, geo:  2.2, vix:  2.3, corr: 0.8,  recAdj: -0.3, stress: 1.0,  label: {it:'crisi acuta', en:'acute crisis'} },
-};
+// ============================================================
+// MARKET DATA LAYER
+// ------------------------------------------------------------
+// This is the single seam between the model and the outside world.
+// Every number the model treats as "observable market data" (as
+// opposed to a personal preference or an assumption) passes through
+// getMarketData(). Today every field is populated by manual entry —
+// see getManualMarketData() below. To wire in a live feed later:
+//
+//   1. Write an async fetchLiveMarketData() that returns the SAME
+//      shape as getManualMarketData() (capeEquity, realBondYield,
+//      goldPriceUSD — each {value, source, label}).
+//   2. Point it at whichever provider(s) you use. Note a purely
+//      static site (GitHub Pages) can't call most market-data APIs
+//      directly from the browser — they either block CORS or require
+//      a private key that shouldn't ship client-side. You'll likely
+//      need a small serverless function as a proxy/cache in front of
+//      the real data source.
+//   3. Flip DATA_SOURCE to 'live', make compute() await getMarketData(),
+//      and fall back to getManualMarketData() if the fetch fails so the
+//      calculator still works offline.
+//
+// Nothing else in the model (RCS, ERP, Gold Score, w*) needs to change —
+// they only ever read from the object getMarketData() returns.
+// ============================================================
+const DATA_SOURCE = 'manual'; // 'manual' | 'live' — flip when a live feed exists
 
-const WEIGHTS = { val:0.15, geo:0.20, macro:0.25, vix:0.15, corr:0.10, opp:0.15 };
-const W_MIN = 0.02, W_MAX = 0.20, K = 4;
-const MU_R_BASE = 0.045;
-const MU_BASE_R = 0.03;
-const BUFFETT_MAX = 0.15;
-// Media storica del prezzo dell'oro, aggiustata per l'inflazione (in dollari 2025),
-// dal 1980 a oggi: $1,397.44/oncia (fonte: InflationData.com, "Inflation Adjusted
-// Annual Average Gold Prices"). La deviazione standard reale è una stima calibrata,
-// non un dato ufficiale.
+function getManualMarketData(){
+  return {
+    capeEquity:    { value: +els.cape.value,                 source: 'manual', label: 'CAPE' },
+    realBondYield: { value: +els.realbondyield.value / 100,  source: 'manual', label: 'Real bond yield' },
+    equityVol:     { value: +els.equityvol.value / 100,      source: 'manual', label: 'Equity volatility' },
+    goldPriceUSD:  { value: +els.goldprice.value,             source: 'manual', label: 'Gold spot price' },
+  };
+}
+
+// async function fetchLiveMarketData(){ /* TODO: not implemented, see note above */ }
+
+function getMarketData(){
+  return DATA_SOURCE === 'live' ? getManualMarketData() /* placeholder until fetchLiveMarketData exists */ : getManualMarketData();
+}
+
+// Historical real gold price average, inflation-adjusted (2025 dollars),
+// 1980-present: $1,397.44/oz (source: InflationData.com, "Inflation
+// Adjusted Annual Average Gold Prices"). Standard deviation is a
+// calibrated estimate, not an official published figure.
 const GOLD_AVG_REAL = 1397;
 const GOLD_STD_REAL = 900;
 
-// Trasforma lo slider "Profilo obbligazionario" (0-100) nel relativo profilo di
-// investitore e benchmark obbligazionario. Interpolazione lineare tra i due
-// tassi (fedWeight = slider/100) riproduce esattamente i quattro scenari di
-// riferimento: 0% = 100% BCE (titoli di Stato europei), 25% = 75/25 BCE/FED
-// (Global Aggregate, investitore europeo), 75% = 25/75 BCE/FED (Global
-// Aggregate, investitore americano), 100% = 100% FED (Treasury USA).
+// CAPE sensitivity band used to build the plausible allocation range:
+// a ±15% swing in the CAPE you enter is treated as a reasonable
+// estimation uncertainty, not a statistically derived confidence interval.
+const CAPE_BAND = 0.15;
+
+// Gold hedge budget: a central allocation plus a bounded swing driven
+// by the 2-factor Gold Score, capped to a 2%-20% range.
+const GOLD_BUDGET_CENTRAL = 0.08;
+const GOLD_BUDGET_SWING = 0.05;
+
+// Horizon Score anchors (same bell-shape as the previous "gamma" reverse
+// glide path, relabeled: this measures time-driven sequence-of-returns
+// exposure, not a claim about the investor's true risk aversion).
+const H_YOUNG = 2.5, H_PEAK = 8.0, H_LATE = 5.0;
+
+// Transforms the "bond market profile" slider (0-100) into an investor/
+// benchmark label. It no longer feeds a calculation directly — it only
+// tells the user which real-yield figure to go look up. Kept as its own
+// function so a future live-data version can use the same slider to pick
+// which data-provider field to fetch.
 function getBondMarketProfile(sliderValue){
   const v = clip(sliderValue, 0, 100);
-  const fedWeight = v / 100;
-  const bceWeight = 1 - fedWeight;
   let investor, benchmark;
   if (v <= 0){ investor = 'EU'; benchmark = 'govEU'; }
   else if (v >= 100){ investor = 'US'; benchmark = 'treasuryUS'; }
   else { investor = v < 50 ? 'EU' : 'US'; benchmark = 'globalAgg'; }
-  return { fedWeight, bceWeight, investor, benchmark };
+  return { investor, benchmark };
 }
 
 let LANG = 'it';
@@ -462,88 +478,69 @@ const TR = {
     "nav.biblio": "Bibliografia",
     "nav.disclaimer": "Disclaimer",
     "nav.donate": "☕ Sostieni il progetto", "theme.dark": "Scuro", "theme.light": "Chiaro",
-    "nav.methodology": "Come funziona il modello →",
     "kicker": "Age-Responsive Capital Allocation",
     "tagline": "Il tuo portafoglio, allineato alla tua fase di vita.",
     "title": "ARCA — La Bussola per Bond, Stock & Oro",
-    "subtitle": "ARCA stima una ripartizione di riferimento tra Obbligazioni, Azioni e Oro a partire dalla tua età, dal contesto dei tassi d'interesse (BCE e FED) e dalla fase del ciclo macroeconomico. Combina la regola di allocazione di Merton (1969) con un percorso di rischio calibrato sul ciclo di vita (reverse glide path), una correzione per l'assenza di alternative reali alle azioni quando i tassi sono compressi (TINA) e un modello a sei fattori per la quota di oro. Muovi i parametri qui sotto per vedere come cambia l'allocazione suggerita.",
+    "subtitle": "ARCA stima un'allocazione di riferimento tra Obbligazioni, Azioni e Oro combinando il tuo profilo di rischio (età, orizzonte, tolleranza dichiarata) con dati di mercato osservabili — CAPE, rendimento reale obbligazionario, prezzo dell'oro — invece di stime interne fisse. L'output è un intervallo plausibile, non un numero singolo: i dati di mercato sono incerti, e il modello lo comunica invece di nasconderlo.",
     "hero.caption": "Il rischio che puoi permetterti di correre cambia nel tempo — la tua allocazione dovrebbe farlo con te.",
     "panel.params": "Parametri",
+    "layer.profile": "Profilo dell'investitore — preferenze personali",
+    "layer.market": "Dati di mercato — inserisci il valore osservato",
+    "tag.market": "dato di mercato", "tag.pref": "preferenza", "tag.assumption": "assunzione",
     "lbl.age": "Età",
-    "hint.age": "Influenza l'avversione al rischio γ lungo il reverse glide path.",
+    "hint.age": "Determina l'Horizon Score: quanto tempo hai prima e dopo il pensionamento, non la tua reale propensione al rischio.",
     "lbl.retage": "Età di pensionamento",
-    "hint.retage": "Il punto in cui γ tocca il picco (massima prudenza), poi ridiscende in decumulo.",
+    "hint.retage": "Il punto in cui l'Horizon Score tocca il picco (massima prudenza), poi ridiscende in decumulo.",
     "lbl.revspan": "Durata Reverse Glide Path",
     "hint.revspan": "ERN (2017): le transizioni 60%→100% in 10-13 anni hanno dato storicamente i prelievi sicuri più alti; sotto i 5-6 anni o sopra i 15-17 il vantaggio si riduce o si inverte.",
     "hint.revspan.active": "ERN (2017): le transizioni 60%→100% in 10-13 anni hanno dato storicamente i prelievi sicuri più alti; sotto i 5-6 anni o sopra i 15-17 il vantaggio si riduce o si inverte.",
-    "hint.revspan.inactive": (yearsToRet) => `Inattivo con i parametri attuali: sei ancora in fase di accumulo (mancano ${yearsToRet} anni al pensionamento). Questo slider incide solo dopo il pensionamento.`,
-    "lbl.includegold": "Includi l'Oro nell'allocazione",
-    "hint.includegold": "Spento: l'oro esce dal modello e l'intero patrimonio si ripartisce solo tra Obbligazioni e Azioni secondo w* di Merton — utile per confrontare l'effetto dell'overlay Oro.",
-    "lbl.tolerance": "Tolleranza al rischio",
+    "hint.revspan.inactive": (y) => `Inattivo con i parametri attuali: sei ancora in fase di accumulo (mancano ${y} anni al pensionamento). Questo slider incide solo dopo il pensionamento.`,
+    "lbl.tolerance": "Tolleranza al rischio dichiarata",
     "opt.tol.high": "Alta", "opt.tol.med": "Media", "opt.tol.low": "Bassa",
-    "hint.tolerance": "Moltiplica γ: più bassa la tolleranza, più prudente l'allocazione risultante.",
-    "lbl.bce": "Tasso BCE",
-    "hint.bce": "Peso variabile nel tasso nominale di riferimento, secondo il profilo obbligazionario sotto.",
-    "lbl.fed": "Tasso FED",
-    "hint.fed": "Peso variabile nel tasso nominale di riferimento, secondo il profilo obbligazionario sotto.",
-    "lbl.bondprofile": "Profilo obbligazionario",
-    "hint.bondprofile": "0% = investitore europeo, titoli di Stato europei · 25% = investitore europeo, Global Aggregate Bond Index · 75% = investitore americano, Global Aggregate Bond Index · 100% = investitore americano, Treasury USA. Il valore imposta anche il peso BCE/FED nel tasso nominale di riferimento (0% = 100% BCE, 100% = 100% FED).",
-    "investor.eu": "investitore europeo", "investor.us": "investitore americano",
-    "benchmark.govEU": "titoli di Stato europei", "benchmark.globalAgg": "Global Aggregate Bond Index", "benchmark.treasuryUS": "Treasury USA",
-    "bondprofile.readout": (investor, benchmark, bceW, fedW) => `Profilo: ${investor}, benchmark obbligazionario ${benchmark} (peso nel tasso: ${bceW}% BCE / ${fedW}% FED).`,
-    "eu.note": "<b>Nota per l'investitore europeo.</b> Il calcolatore pesa il tasso BCE al 75% e il tasso FED al 25% perché è pensato per un investitore che vive e spende in euro. Per coerenza, la quota obbligazionaria dovrebbe essere allocata in titoli di stato dell'area euro e, per la parte estera, in titoli di stato esteri con copertura del cambio (hedged) — per non aggiungere un rischio valutario non voluto alla componente \u201csicura\u201d del portafoglio.",
-    "lbl.infl": "Inflazione attesa (media EUR/USD)",
-    "hint.infl": "Tasso nominale meno inflazione = tasso reale, il perno di TINA e del costo-opportunità dell'oro.",
-    "lbl.phase": "Fase del ciclo macro",
-    "opt.phase.gold": "Goldilocks — crescita stabile, bassa inflazione",
-    "opt.phase.norm": "Regime normale",
-    "opt.phase.slow": "Rallentamento / recessione",
-    "opt.phase.stag": "Stagflazione",
-    "opt.phase.crisis": "Crisi geopolitica o finanziaria acuta",
-    "hint.phase": "Imposta volatilità attesa, rischio geopolitico e i preset dell'Oro Score.",
+    "hint.tolerance": "Preferenza soggettiva che dichiari tu, tenuta separata dall'Horizon Score: il modello non pretende di dedurre la tua vera avversione al rischio dalla sola età.",
+    "lbl.cape": "CAPE (Shiller P/E o equivalente)",
+    "hint.cape": "Determina l'earnings yield (1/CAPE), usato come proxy del rendimento azionario atteso al posto di una stima fissa interna. Cerca \u201cShiller CAPE\u201d per l'indice USA, o l'equivalente per il tuo mercato di riferimento.",
+    "lbl.realbondyield": "Rendimento reale obbligazionario di riferimento",
+    "hint.realbondyield": "Il rendimento reale (già al netto dell'inflazione) del titolo di riferimento — non il tasso di policy della banca centrale. Guarda il TIPS 10Y decennale USA o il Bund-linker tedesco a seconda del profilo scelto sotto.",
+    "lbl.equityvol": "Volatilità azionaria attesa",
+    "hint.equityvol": "Default 16% = media storica di lungo periodo. Alza il valore se ti aspetti un contesto più turbolento, abbassalo per uno più tranquillo — è un'ipotesi, non un dato osservato in tempo reale in questa versione.",
+    "lbl.bondprofile": "Profilo obbligazionario di riferimento",
+    "hint.bondprofile": "Non entra nel calcolo: serve solo a suggerirti quale titolo guardare per il rendimento reale sopra. 0% = titoli di Stato europei · 25% = Global Aggregate (investitore europeo) · 75% = Global Aggregate (investitore americano) · 100% = Treasury USA.",
     "lbl.goldprice": "Prezzo Oro attuale (USD/oncia)",
-    "hint.goldprice": "Attiva il fattore \u201cvalutazione storica\u201d del Gold Score: confronta questo prezzo con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia (fonte: InflationData.com). Più il prezzo attuale è alto rispetto a quella media, più il fattore penalizza la quota oro (oro \u201ccaro\u201d).",
-    "lbl.tina": "Sensibilità TINA",
-    "hint.tina": "TINA = \u201cThere Is No Alternative\u201d: con i tassi delle banche centrali vicini a zero, le obbligazioni non offrono un'alternativa reale, quindi il modello sposta l'allocazione verso l'azionario. A 0 disattivi l'effetto sull'ERP; più alto, più forte lo spostamento verso le azioni quando il tasso reale è basso.",
-    "lbl.buffett": "Buffett Mode — in crisi/incertezza, aumenta l'esposizione azionaria invece di ridurla",
-    "hint.buffett": "Filosofia contrarian (Buffett/Klarman): le valutazioni compresse in crisi alzano i rendimenti attesi più di quanto salga la volatilità. Spento = modello \u201cdifensivo\u201d (volatility-managed): riduce l'azionario quando la volatilità sale.",
+    "hint.goldprice": "Confrontato con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia (fonte: InflationData.com).",
+    "lbl.includegold": "Includi l'Oro nell'allocazione",
+    "hint.includegold": "Spento: l'oro esce dal modello e l'intero patrimonio si ripartisce solo tra Obbligazioni e Azioni secondo w* di Merton.",
+    "data.note": "<b>Perché due tag diversi?</b> \u201cDato di mercato\u201d indica un numero che dovresti inserire leggendolo da una fonte esterna (non una tua opinione). \u201cPreferenza\u201d/\u201cassunzione\u201d indica una scelta o un'ipotesi che dipende da te. Oggi inserisci i dati di mercato a mano; la struttura del codice è pensata perché in futuro possano essere recuperati automaticamente da una fonte dati esterna, senza cambiare il resto del modello — vedi la pagina Metodologia.",
     "panel.result": "Allocazione risultante",
     "leg.bond": "Obbligazioni", "leg.stock": "Azioni", "leg.gold": "Oro",
-    "m.gamma": "Avversione al rischio (γ)",
-    "m.real": "Tasso reale stimato",
-    "m.gs": "Gold Score (GS)",
-    "tina.callout": "<b>Cos'è TINA?</b> \u201cThere Is No Alternative\u201d — quando i tassi delle banche centrali sono vicini allo zero, le obbligazioni non rendono abbastanza da compensare il rischio, e non esiste una vera alternativa alle azioni per generare rendimento reale. Il modello traduce questo con un ERP più alto quando il tasso reale è basso, spostando l'allocazione il più possibile verso l'azionario.",
+    "m.rcs": "Risk Capacity Score", "m.erp": "Equity Risk Premium", "m.gs": "Gold Score (GS)",
+    "range.callout": "<b>Perché un intervallo e non un numero solo?</b> Con parametri di mercato incerti, una precisione tipo \u201c47,3% azioni\u201d è illusoria. L'intervallo mostrato riflette la sensibilità dell'allocazione a una variazione ragionevole (±15%) del CAPE inserito — non è un errore statistico formale, ma un modo onesto di comunicare che il numero centrale non è l'unica risposta plausibile.",
     "ern.callout": "<b>Evidenza empirica (ERN, 2017).</b> Su 1.700+ coorti storiche 1871-2015, le transizioni 60%→100% azionario in 10-13 anni hanno dato i tassi di prelievo sicuri più alti tra tutte le strategie testate — statiche o dinamiche — soprattutto quando la valutazione azionaria (CAPE di Shiller) era elevata. Attenzione però: se il pensionamento parte proprio su un minimo di mercato, la stessa transizione può risultare peggiore di un'allocazione statica al 100% azionario. Non è un pasto gratis, è un'assicurazione.",
-    "details.summary": "Dettaglio del calcolo — regola di Merton e Gold Score a 6 fattori",
-    "tbl.merton.h": "Regola di Merton", "tbl.value": "Valore",
-    "tbl.mu": "Rendimento atteso azionario reale (μ)",
-    "tbl.r": "Tasso risk-free reale (r)",
-    "tbl.erp": "Equity Risk Premium (μ − r), inclusa correzione TINA sul tasso reale",
-    "tbl.buffett": "Bonus Buffett Mode (valutazioni compresse in fase di stress)",
+    "details.summary": "Dettaglio del calcolo — Core allocation e Gold Score a 2 fattori",
+    "tbl.merton.h": "Core allocation (regola di Merton)", "tbl.value": "Valore",
+    "tbl.cape": "CAPE inserito → Earnings Yield (1/CAPE)",
+    "tbl.realyield": "Rendimento reale obbligazionario inserito",
+    "tbl.erp": "Equity Risk Premium = Earnings Yield − rendimento reale bond",
     "tbl.sigma": "Volatilità azionaria attesa (σ)",
-    "tbl.gamma": "Avversione al rischio (γ), da età/pensionamento (reverse glide path) + tolleranza",
-    "tbl.wstar": "w* = (μ−r) / (γσ²) — quota nell'attivo rischioso",
-    "tbl.gold.h": "Fattore Gold Score", "tbl.weight": "Peso", "tbl.z": "z-score", "tbl.contrib": "Contributo",
+    "tbl.h": "Horizon Score (H) — da età/pensionamento, reverse glide path",
+    "tbl.t": "Tolleranza dichiarata (T)",
+    "tbl.rcs": "Risk Capacity Score = H × T",
+    "tbl.wstar": "w* = ERP / (RCS·σ²) — quota nell'attivo rischioso (centrale)",
+    "tbl.wstarrange": "Intervallo w* (CAPE ±15%)",
+    "tbl.gold.h": "Fattore Gold Score", "tbl.weight": "Peso", "tbl.z": "z-score",
     "gs.f1": "1. Valutazione storica dell'oro (vs. media reale 1980-oggi)",
-    "gs.f2": "2. Rischio geopolitico",
-    "gs.f3": "3. Regime macro (gap inflazione vs target + fase ciclo)",
-    "gs.f4": "4. Volatilità di mercato",
-    "gs.f5": "5. Correlazione dinamica oro/azioni-bond",
-    "gs.f6": "6. Costo opportunità (tasso reale, invertito)",
-    "gs.tot": "Gold Score (GS) = Σ peso × z",
-    "gs.wgold": "w_gold = 2% + 18% × logistica(4×GS)",
-    "note.long": "<b>Buffett Mode.</b> Quando attivo, in fase \u201crallentamento\u201d, \u201cstagflazione\u201d o \u201ccrisi\u201d aggiunge un bonus all'ERP proporzionale allo stress della fase (0.4/0.6/1.0 → fino a +15pp in crisi acuta), abbastanza da compensare — e superare — l'effetto frenante della volatilità al quadrato nel denominatore di Merton. Riflette la tesi contrarian/value (Buffett, Klarman): un crollo dei prezzi comprime i multipli e alza i rendimenti attesi futuri più di quanto salga il rischio percepito nel breve. Con Buffett Mode spento il modello resta \u201cdifensivo\u201d (volatility-managed, coerente con Moreira & Muir 2017): riduce l'esposizione quando la volatilità sale, indipendentemente dalla view sui prezzi.<br><br><b>Reverse glide path.</b> γ non cresce in modo monotono con l'età: sale durante l'accumulo fino a un picco (massima prudenza) proprio all'età di pensionamento — dove il rischio di sequenza dei rendimenti è più pericoloso — e poi ridiscende nell'arco di anni che imposti (default 12), aumentando gradualmente la quota azionaria in decumulo (Pfau & Kitces, 2014; evidenza storica 1871-2015 in Early Retirement Now, \u201cSWR Series Part 19: Equity Glidepaths\u201d, 2017, che trova l'ottimo in transizioni 60%\u2192100% su 10-13 anni). Modifica l'età di pensionamento per spostare il picco, e la durata per allungare o accorciare la transizione.<br><br><b>TINA.</b> \u201cThere Is No Alternative\u201d: l'ERP non è più fisso, ma si muove in senso opposto al tasso reale rispetto a un riferimento storico dell'1%. Con tassi reali bassi o negativi (banche centrali a zero) l'ERP sale e la quota obbligazionaria si riduce fortemente; con tassi reali elevati l'ERP si comprime e la quota bond torna competitiva.<br><br>Il fattore 1 confronta il prezzo dell'oro che inserisci con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia in dollari 2025 (InflationData.com) — non è un valore ufficiale di consenso, ma una stima ragionevole; la deviazione standard reale (900$) è una calibrazione, non un dato pubblicato. Il gap-inflazione (fattore 3) usa un target 2% con deviazione di riferimento 1.5 punti; il costo-opportunità (fattore 6) usa media storica 1% e deviazione 1.5 punti sul tasso reale.<br><br>Nota metodologica: questo strumento applica la regola del portafoglio di Merton (1969), un reverse glide path età/pensionamento calibrato anche su dati storici (Early Retirement Now, 2017), un aggiustamento TINA e un composite score per l'oro — non è un'implementazione del modello a fattori di Fama-French (che stima i rendimenti attesi all'interno dell'azionario tramite size, value, profittabilità). Per la spiegazione completa della costruzione, vedi la pagina \u201cCome funziona\u201d.",
-    "footer.disclaimer": "Strumento a scopo informativo ed educativo, costruito sulle ipotesi che hai definito nei tuoi modelli. Non costituisce consulenza finanziaria personalizzata.",
-    "buffett.on": "Acceso", "buffett.off": "Spento",
-    "phaseLife.acc": "fase di accumulo", "phaseLife.dec": "fase di decumulo (post-pensionamento)",
-    "tinaNoteBelow": (rr, erp) => `Il tasso reale (${rr}) è sotto il riferimento di lungo periodo: effetto TINA attivo, ERP spinto al ${erp} e quota bond ridotta di conseguenza.`,
-    "tinaNoteAbove": (rr, erp) => `Il tasso reale (${rr}) è sopra il riferimento di lungo periodo: le obbligazioni offrono compensazione reale, ERP compresso al ${erp}.`,
-    "buffettNote": (label, bonus) => `Buffett Mode attivo: in fase "${label}" aggiunge +${bonus}pp all'ERP (valutazioni compresse = rendimenti attesi più alti), controbilanciando l'effetto della volatilità più alta e spingendo l'esposizione azionaria verso l'alto invece che verso il basso. `,
-    "mertonNote": (label, wstar) => `In fase "${label}" il modello indica un'esposizione al rischio (Merton) del ${wstar} sull'attivo rischioso complessivo, `,
-    "gsNeg": (gs) => `mentre il Gold Score negativo (${gs}) tiene la quota oro contenuta.`,
-    "gsPos": (gs) => `mentre il Gold Score positivo (${gs}) spinge la quota oro verso la parte alta del range 2%–20%.`,
-    "gsNeutral": (gs) => `mentre il Gold Score è vicino alla neutralità (${gs}).`,
-    "yearsSuffix": " anni",
+    "gs.f2": "2. Costo opportunità (rendimento reale bond, invertito)",
+    "gs.tot": "Gold Score (GS) = media pesata degli z-score",
+    "gs.wgold": "Quota oro = 8% ± (GS/3)×5pp, entro un range 2–20%",
+    "note.long": "<b>Perché il Gold Score è passato da 6 a 2 fattori.</b> I quattro fattori rimossi (rischio geopolitico, regime macro, volatilità di mercato, correlazione dinamica) non erano ancorati a un dato osservabile in modo ripetibile, oppure erano ridondanti con altre parti del modello. Restano solo i due fattori realmente misurabili da un dato di mercato: il prezzo dell'oro rispetto alla sua media reale storica, e il costo-opportunità di detenere un asset che non paga interesse quando il rendimento reale obbligazionario è alto o basso.<br><br><b>Perché Horizon Score e Tolleranza sono mostrati separati.</b> Il modello precedente derivava un unico parametro \u201cγ\u201d (avversione al rischio) direttamente dall'età, presentandolo implicitamente come se catturasse la vera propensione al rischio dell'investitore — che non è osservabile. Qui l'Horizon Score misura solo l'esposizione al rischio di sequenza dei rendimenti legata al tempo (quanto sei vicino al pensionamento), mentre la Tolleranza resta una preferenza dichiarata da te, esplicitamente separata. Il Risk Capacity Score che ne risulta è una calibrazione operativa, non una misura di un tratto psicologico.<br><br><b>Perché niente più TINA né Buffett Mode.</b> La versione precedente collegava l'Equity Risk Premium al tasso di policy delle banche centrali (TINA) e aggiungeva un bonus discrezionale in fase di crisi (Buffett Mode). Entrambi i meccanismi sono stati sostituiti da un solo input di mercato — l'earnings yield da CAPE meno il rendimento reale obbligazionario — che produce lo stesso tipo di effetto (più azioni quando le valutazioni sono compresse, meno quando sono care) in modo trasparente e senza cap arbitrari nascosti nella formula.<br><br><b>Reverse glide path.</b> L'Horizon Score sale durante l'accumulo fino a un picco (massima prudenza) proprio all'età di pensionamento — dove il rischio di sequenza dei rendimenti è più pericoloso — e poi ridiscende nell'arco di anni che imposti (default 12), aumentando gradualmente la quota azionaria in decumulo (Pfau & Kitces, 2014; evidenza storica 1871-2015 in Early Retirement Now, \u201cSWR Series Part 19: Equity Glidepaths\u201d, 2017, che trova l'ottimo in transizioni 60%\u2192100% su 10-13 anni).<br><br>Nota metodologica: questo strumento applica la regola del portafoglio di Merton (1969) come struttura centrale (Core), alimentata da input di mercato osservabili invece che da stime interne fisse. Non è un'implementazione del modello a fattori di Fama-French. Per la spiegazione completa della costruzione e delle scelte metodologiche, vedi la pagina \u201cMetodologia\u201d.",
+    "footer.disclaimer": "Strumento a scopo informativo ed educativo, costruito sulle ipotesi descritte in questa pagina. Non costituisce consulenza finanziaria personalizzata.",
+    "range.text": (lo,hi) => `intervallo plausibile: ${lo}–${hi}`,
+    "interp.text": (rcs,erpTxt,wstarTxt,gsTxt,goldNote) => `Con un Risk Capacity Score di ${rcs} e un Equity Risk Premium di ${erpTxt} (earnings yield da CAPE meno rendimento reale obbligazionario), la regola di Merton indica una quota nell'attivo rischioso del ${wstarTxt}. ${goldNote}`,
+    "gold.note.on": (gs) => `Il Gold Score (${gs}) determina la quota oro entro la banda 2%–20%.`,
+    "gold.note.off": `L'oro è escluso: l'intero patrimonio si divide tra obbligazioni e azioni.`,
+    "investor.eu": "investitore europeo", "investor.us": "investitore americano",
+    "benchmark.govEU": "titoli di Stato europei", "benchmark.globalAgg": "Global Aggregate Bond Index", "benchmark.treasuryUS": "Treasury USA",
+    "bondprofile.readout": (investor, benchmark) => `Profilo: ${investor}, guarda il rendimento reale del benchmark ${benchmark} per il campo sopra.`,
   },
   en: {
     "nav.home": "ARCA",
@@ -552,102 +549,72 @@ const TR = {
     "nav.biblio": "Bibliography",
     "nav.disclaimer": "Disclaimer",
     "nav.donate": "☕ Support this project", "theme.dark": "Dark", "theme.light": "Light",
-    "nav.methodology": "How the model works →",
     "kicker": "Age-Responsive Capital Allocation",
     "tagline": "Your portfolio, aligned with your life stage.",
     "title": "ARCA — Your Compass for Bonds, Stocks & Gold",
-    "subtitle": "ARCA estimates a reference split across Bonds, Stocks, and Gold based on your age, the interest-rate environment (ECB and Fed), and the macroeconomic cycle phase. It combines Merton's (1969) allocation rule with a lifecycle-calibrated risk path (reverse glide path), a correction for the absence of a real alternative to equities when rates are compressed (TINA), and a 6-factor model for the gold share. Move the parameters below to see how the suggested allocation changes.",
+    "subtitle": "ARCA estimates a reference allocation across Bonds, Stocks, and Gold by combining your risk profile (age, horizon, stated tolerance) with observable market data — CAPE, real bond yield, gold price — instead of fixed internal assumptions. The output is a plausible range, not a single number: market inputs are uncertain, and the model says so instead of hiding it.",
     "hero.caption": "The risk you can afford to take changes over time — your allocation should too.",
     "panel.params": "Parameters",
+    "layer.profile": "Investor profile — personal preferences",
+    "layer.market": "Market data — enter the observed value",
+    "tag.market": "market data", "tag.pref": "preference", "tag.assumption": "assumption",
     "lbl.age": "Age",
-    "hint.age": "Drives risk aversion γ along the reverse glide path.",
+    "hint.age": "Drives the Horizon Score: how much time you have before and after retirement, not your true risk aversion.",
     "lbl.retage": "Retirement age",
-    "hint.retage": "The point where γ peaks (maximum caution), then eases through decumulation.",
+    "hint.retage": "The point where the Horizon Score peaks (maximum caution), then eases through decumulation.",
     "lbl.revspan": "Reverse Glide Path duration",
     "hint.revspan": "ERN (2017): 60%\u2192100% transitions over 10-13 years historically delivered the highest safe withdrawal rates; under 5-6 years or beyond 15-17 the edge shrinks or reverses.",
     "hint.revspan.active": "ERN (2017): 60%\u2192100% transitions over 10-13 years historically delivered the highest safe withdrawal rates; under 5-6 years or beyond 15-17 the edge shrinks or reverses.",
-    "hint.revspan.inactive": (yearsToRet) => `Inactive with current parameters: you're still in accumulation (${yearsToRet} years to retirement). This slider only matters after retirement.`,
-    "lbl.includegold": "Include Gold in the allocation",
-    "hint.includegold": "Off: gold drops out of the model and the whole portfolio splits only between Bonds and Stocks per Merton's w* — useful for isolating the Gold overlay's effect.",
-    "lbl.tolerance": "Risk tolerance",
+    "hint.revspan.inactive": (y) => `Inactive with current parameters: you're still in accumulation (${y} years to retirement). This slider only matters after retirement.`,
+    "lbl.tolerance": "Stated risk tolerance",
     "opt.tol.high": "High", "opt.tol.med": "Medium", "opt.tol.low": "Low",
-    "hint.tolerance": "Multiplies γ: lower tolerance means a more conservative resulting allocation.",
-    "lbl.bce": "ECB rate",
-    "hint.bce": "Weighted variably into the reference nominal rate, per the bond profile below.",
-    "lbl.fed": "Fed rate",
-    "hint.fed": "Weighted variably into the reference nominal rate, per the bond profile below.",
-    "lbl.bondprofile": "Bond market profile",
-    "hint.bondprofile": "0% = European investor, European government bonds · 25% = European investor, Global Aggregate Bond Index · 75% = US investor, Global Aggregate Bond Index · 100% = US investor, US Treasuries. The value also sets the ECB/Fed weight in the reference nominal rate (0% = 100% ECB, 100% = 100% Fed).",
-    "investor.eu": "European investor", "investor.us": "US investor",
-    "benchmark.govEU": "European government bonds", "benchmark.globalAgg": "Global Aggregate Bond Index", "benchmark.treasuryUS": "US Treasuries",
-    "bondprofile.readout": (investor, benchmark, bceW, fedW) => `Profile: ${investor}, ${benchmark} bond benchmark (rate weight: ${bceW}% ECB / ${fedW}% Fed).`,
-    "eu.note": "<b>Note for European investors.</b> The calculator weights the ECB rate at 75% and the Fed rate at 25% because it's built for an investor who lives and spends in euros. For consistency, the bond allocation should sit in euro-area government bonds and, for the foreign portion, in currency-hedged foreign government bonds — so as not to add unwanted currency risk to the \u201csafe\u201d part of the portfolio.",
-    "lbl.infl": "Expected inflation (EUR/USD average)",
-    "hint.infl": "Nominal rate minus inflation = real rate, the pivot for TINA and gold's opportunity cost.",
-    "lbl.phase": "Macro cycle phase",
-    "opt.phase.gold": "Goldilocks — steady growth, low inflation",
-    "opt.phase.norm": "Normal regime",
-    "opt.phase.slow": "Slowdown / recession",
-    "opt.phase.stag": "Stagflation",
-    "opt.phase.crisis": "Acute geopolitical or financial crisis",
-    "hint.phase": "Sets expected volatility, geopolitical risk, and the Gold Score presets.",
+    "hint.tolerance": "A subjective preference you state yourself, kept separate from the Horizon Score: the model doesn't claim to infer your true risk aversion from age alone.",
+    "lbl.cape": "CAPE (Shiller P/E or equivalent)",
+    "hint.cape": "Drives the earnings yield (1/CAPE), used as a proxy for expected equity return instead of a fixed internal estimate. Look up \u201cShiller CAPE\u201d for the US index, or the equivalent for your reference market.",
+    "lbl.realbondyield": "Reference real bond yield",
+    "hint.realbondyield": "The real (already inflation-adjusted) yield on the reference bond — not the central bank's policy rate. Check the 10Y US TIPS or the German Bund-linker depending on the profile below.",
+    "lbl.equityvol": "Expected equity volatility",
+    "hint.equityvol": "Default 16% = long-run historical average. Raise it if you expect a more turbulent environment, lower it for a calmer one — it's an assumption, not a real-time observed figure in this version.",
+    "lbl.bondprofile": "Reference bond market profile",
+    "hint.bondprofile": "Doesn't enter the calculation: it only tells you which bond to check for the real yield above. 0% = European government bonds · 25% = Global Aggregate (European investor) · 75% = Global Aggregate (US investor) · 100% = US Treasuries.",
     "lbl.goldprice": "Current Gold price (USD/oz)",
-    "hint.goldprice": "Activates the Gold Score's \u201chistorical valuation\u201d factor: compares this price against the real (inflation-adjusted) average since 1980, $1,397/oz (source: InflationData.com). The higher the current price relative to that average, the more this factor penalizes the gold share (\u201cexpensive\u201d gold).",
-    "lbl.tina": "TINA sensitivity",
-    "hint.tina": "TINA = \u201cThere Is No Alternative\u201d: when central bank rates sit near zero, bonds offer no real alternative, so the model shifts allocation toward equities. At 0 you switch off the effect on the ERP; higher values push harder toward stocks when the real rate is low.",
-    "lbl.buffett": "Buffett Mode — in crisis/uncertainty, increases equity exposure instead of cutting it",
-    "hint.buffett": "Contrarian philosophy (Buffett/Klarman): valuations compressed in a crisis raise expected returns more than volatility rises. Off = \u201cdefensive\u201d model (volatility-managed): cuts equities as volatility rises.",
+    "hint.goldprice": "Compared against the real (inflation-adjusted) average since 1980, $1,397/oz (source: InflationData.com).",
+    "lbl.includegold": "Include Gold in the allocation",
+    "hint.includegold": "Off: gold drops out of the model and the whole portfolio splits only between Bonds and Stocks per Merton's w*.",
+    "data.note": "<b>Why two different tags?</b> \u201cMarket data\u201d means a number you should enter by reading it from an external source (not your own opinion). \u201cPreference\u201d/\u201cassumption\u201d means a choice or hypothesis that's up to you. Today you enter market data by hand; the code is structured so it could fetch it automatically from an external source in the future, without changing the rest of the model — see the Methodology page.",
     "panel.result": "Resulting allocation",
     "leg.bond": "Bonds", "leg.stock": "Stocks", "leg.gold": "Gold",
-    "m.gamma": "Risk aversion (γ)",
-    "m.real": "Estimated real rate",
-    "m.gs": "Gold Score (GS)",
-    "tina.callout": "<b>What is TINA?</b> \u201cThere Is No Alternative\u201d — when central bank rates sit near zero, bonds don't yield enough to compensate for risk, and there's no real alternative to equities for real returns. The model captures this with a higher ERP when the real rate is low, pushing the allocation as far as possible toward equities.",
+    "m.rcs": "Risk Capacity Score", "m.erp": "Equity Risk Premium", "m.gs": "Gold Score (GS)",
+    "range.callout": "<b>Why a range instead of one number?</b> With uncertain market inputs, a precise figure like \u201c47.3% equities\u201d is illusory. The range shown reflects the allocation's sensitivity to a reasonable swing (±15%) in the CAPE you enter — not a formal statistical confidence interval, but an honest way to communicate that the central number isn't the only plausible answer.",
     "ern.callout": "<b>Empirical evidence (ERN, 2017).</b> Across 1,700+ historical cohorts from 1871-2015, 60%\u2192100% equity transitions over 10-13 years delivered the highest safe withdrawal rates of any strategy tested — static or dynamic — especially when equity valuations (Shiller CAPE) were elevated. Caveat: if retirement starts right at a market bottom, the same transition can underperform a static 100% equity allocation. It's not a free lunch, it's insurance.",
-    "details.summary": "Calculation detail — Merton rule and 6-factor Gold Score",
-    "tbl.merton.h": "Merton rule", "tbl.value": "Value",
-    "tbl.mu": "Expected real equity return (μ)",
-    "tbl.r": "Real risk-free rate (r)",
-    "tbl.erp": "Equity Risk Premium (μ − r), including the TINA correction on the real rate",
-    "tbl.buffett": "Buffett Mode bonus (compressed valuations under stress)",
+    "details.summary": "Calculation detail — Core allocation and 2-factor Gold Score",
+    "tbl.merton.h": "Core allocation (Merton rule)", "tbl.value": "Value",
+    "tbl.cape": "Entered CAPE \u2192 Earnings Yield (1/CAPE)",
+    "tbl.realyield": "Entered real bond yield",
+    "tbl.erp": "Equity Risk Premium = Earnings Yield \u2212 real bond yield",
     "tbl.sigma": "Expected equity volatility (σ)",
-    "tbl.gamma": "Risk aversion (γ), from age/retirement (reverse glide path) + tolerance",
-    "tbl.wstar": "w* = (μ−r) / (γσ²) — share of the risky asset",
-    "tbl.gold.h": "Gold Score factor", "tbl.weight": "Weight", "tbl.z": "z-score", "tbl.contrib": "Contribution",
+    "tbl.h": "Horizon Score (H) — from age/retirement, reverse glide path",
+    "tbl.t": "Stated tolerance (T)",
+    "tbl.rcs": "Risk Capacity Score = H × T",
+    "tbl.wstar": "w* = ERP / (RCS·σ²) — share of the risky asset (central)",
+    "tbl.wstarrange": "w* range (CAPE ±15%)",
+    "tbl.gold.h": "Gold Score factor", "tbl.weight": "Weight", "tbl.z": "z-score",
     "gs.f1": "1. Historical gold valuation (vs. real 1980-present average)",
-    "gs.f2": "2. Geopolitical risk",
-    "gs.f3": "3. Macro regime (inflation gap vs target + cycle phase)",
-    "gs.f4": "4. Market volatility",
-    "gs.f5": "5. Dynamic gold/stocks-bonds correlation",
-    "gs.f6": "6. Opportunity cost (real rate, inverted)",
-    "gs.tot": "Gold Score (GS) = Σ weight × z",
-    "gs.wgold": "w_gold = 2% + 18% × logistic(4×GS)",
-    "note.long": "<b>Buffett Mode.</b> When on, in the \u201cslowdown\u201d, \u201cstagflation\u201d or \u201ccrisis\u201d phases it adds an ERP bonus proportional to that phase's stress level (0.4/0.6/1.0 → up to +15pp in an acute crisis), enough to offset — and overcome — the drag of volatility squared in the Merton denominator. It reflects the contrarian/value thesis (Buffett, Klarman): a price crash compresses multiples and raises future expected returns more than perceived near-term risk rises. With Buffett Mode off the model stays \u201cdefensive\u201d (volatility-managed, consistent with Moreira & Muir 2017): it cuts exposure as volatility rises, regardless of the valuation view.<br><br><b>Reverse glide path.</b> γ does not rise monotonically with age: it climbs through accumulation to a peak (maximum caution) right at retirement age — where sequence-of-returns risk is most dangerous — then eases over the span you set (default 12 years), gradually raising the equity share through decumulation (Pfau & Kitces, 2014; historical evidence 1871-2015 in Early Retirement Now, \u201cSWR Series Part 19: Equity Glidepaths\u201d, 2017, finding the sweet spot in 60%\u2192100% transitions over 10-13 years). Change the retirement age to shift the peak, and the duration to lengthen or shorten the transition.<br><br><b>TINA.</b> \u201cThere Is No Alternative\u201d: the ERP is no longer fixed — it moves opposite to the real rate relative to a 1% historical reference. With low or negative real rates (central banks at zero) the ERP rises and the bond share shrinks sharply; with elevated real rates the ERP compresses and bonds become competitive again.<br><br>Factor 1 compares the gold price you enter against the real (inflation-adjusted) average since 1980, $1,397/oz in 2025 dollars (InflationData.com) — not an official consensus figure, but a reasonable estimate; the real standard deviation ($900) is a calibration, not a published statistic. The inflation gap (factor 3) uses a 2% target with a 1.5-point reference deviation; the opportunity cost (factor 6) uses a 1% historical average and a 1.5-point deviation on the real rate.<br><br>Methodological note: this tool applies Merton's (1969) portfolio rule, an age/retirement reverse glide path, a TINA adjustment, and a gold composite score — it is not an implementation of the Fama-French factor model (which estimates expected returns within equities via size, value, profitability). For the full build write-up, see the \u201cHow it works\u201d page.",
-    "footer.disclaimer": "An informational and educational tool, built on the assumptions you defined in your own models. Not personalized financial advice.",
-    "buffett.on": "On", "buffett.off": "Off",
-    "phaseLife.acc": "accumulation phase", "phaseLife.dec": "decumulation phase (post-retirement)",
-    "tinaNoteBelow": (rr, erp) => `The real rate (${rr}) is below the long-run reference: TINA is active, ERP pushed to ${erp} and the bond share cut accordingly.`,
-    "tinaNoteAbove": (rr, erp) => `The real rate (${rr}) is above the long-run reference: bonds offer real compensation, ERP compressed to ${erp}.`,
-    "buffettNote": (label, bonus) => `Buffett Mode active: in the "${label}" phase it adds +${bonus}pp to the ERP (compressed valuations = higher expected returns), offsetting higher volatility and pushing equity exposure up instead of down. `,
-    "mertonNote": (label, wstar) => `In the "${label}" phase the model puts risk exposure (Merton) at ${wstar} of the total risky asset, `,
-    "gsNeg": (gs) => `while the negative Gold Score (${gs}) keeps the gold share contained.`,
-    "gsPos": (gs) => `while the positive Gold Score (${gs}) pushes the gold share toward the top of the 2%–20% range.`,
-    "gsNeutral": (gs) => `while the Gold Score is close to neutral (${gs}).`,
-    "yearsSuffix": "",
+    "gs.f2": "2. Opportunity cost (real bond yield, inverted)",
+    "gs.tot": "Gold Score (GS) = weighted average of the z-scores",
+    "gs.wgold": "Gold share = 8% ± (GS/3)×5pp, within a 2\u201320% range",
+    "note.long": "<b>Why the Gold Score went from 6 to 2 factors.</b> The four removed factors (geopolitical risk, macro regime, market volatility, dynamic correlation) weren't anchored to a repeatably observable data point, or were redundant with other parts of the model. What remains are the two factors actually measurable from market data: the gold price relative to its real historical average, and the opportunity cost of holding a non-interest-bearing asset when the real bond yield is high or low.<br><br><b>Why the Horizon Score and Tolerance are shown separately.</b> The previous model derived a single \u201cgamma\u201d parameter (risk aversion) directly from age, implicitly presenting it as if it captured the investor's true risk appetite — which isn't observable. Here the Horizon Score only measures time-driven sequence-of-returns exposure (how close you are to retirement), while Tolerance stays a preference you state yourself, explicitly kept separate. The resulting Risk Capacity Score is an operational calibration, not a measurement of a psychological trait.<br><br><b>Why there's no more TINA or Buffett Mode.</b> The previous version tied the Equity Risk Premium to central bank policy rates (TINA) and added a discretionary bonus during crises (Buffett Mode). Both mechanisms have been replaced by a single market input — earnings yield from CAPE minus the real bond yield — which produces the same kind of effect (more equities when valuations are compressed, less when they're expensive) transparently and without arbitrary caps hidden in the formula.<br><br><b>Reverse glide path.</b> The Horizon Score rises through accumulation to a peak (maximum caution) right at retirement age — where sequence-of-returns risk is most dangerous — then eases over the span you set (default 12 years), gradually raising the equity share through decumulation (Pfau & Kitces, 2014; historical evidence 1871-2015 in Early Retirement Now, \u201cSWR Series Part 19: Equity Glidepaths\u201d, 2017, finding the sweet spot in 60%\u2192100% transitions over 10-13 years).<br><br>Methodological note: this tool applies Merton's (1969) portfolio rule as the central (Core) structure, fed by observable market inputs instead of fixed internal estimates. It is not an implementation of the Fama-French factor model. For the full build write-up and methodological choices, see the \u201cMethodology\u201d page.",
+    "footer.disclaimer": "An informational and educational tool, built on the assumptions described on this page. Not personalized financial advice.",
+    "range.text": (lo,hi) => `plausible range: ${lo}\u2013${hi}`,
+    "interp.text": (rcs,erpTxt,wstarTxt,gsTxt,goldNote) => `With a Risk Capacity Score of ${rcs} and an Equity Risk Premium of ${erpTxt} (CAPE earnings yield minus real bond yield), the Merton rule points to a ${wstarTxt} share in the risky asset. ${goldNote}`,
+    "gold.note.on": (gs) => `The Gold Score (${gs}) sets the gold share within the 2%\u201320% band.`,
+    "gold.note.off": `Gold is excluded: the whole portfolio splits between bonds and stocks.`,
+    "investor.eu": "European investor", "investor.us": "US investor",
+    "benchmark.govEU": "European government bonds", "benchmark.globalAgg": "Global Aggregate Bond Index", "benchmark.treasuryUS": "US Treasuries",
+    "bondprofile.readout": (investor, benchmark) => `Profile: ${investor}, check the real yield on the ${benchmark} benchmark for the field above.`,
   }
 };
-
 function L(key){ return TR[LANG][key]; }
-
-
-function updateNav(){
-  const current = (window.location.pathname.split('/').pop() || 'index.html');
-  document.querySelectorAll('.navitem').forEach(a => {
-    const base = a.getAttribute('data-file');
-    a.href = base + '?lang=' + LANG + '&theme=' + THEME;
-    a.classList.toggle('active', base === current);
-  });
-}
 
 function applyStaticTranslations(){
   updateNav();
@@ -666,9 +633,17 @@ function setLang(lang){
   applyStaticTranslations();
   compute();
 }
-
 document.getElementById('lang-it').addEventListener('click', () => setLang('it'));
 document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+
+function updateNav(){
+  const current = (window.location.pathname.split('/').pop() || 'index.html');
+  document.querySelectorAll('.navitem').forEach(a => {
+    const base = a.getAttribute('data-file');
+    a.href = base + '?lang=' + LANG + '&theme=' + THEME;
+    a.classList.toggle('active', base === current);
+  });
+}
 
 function applyTheme(){
   document.getElementById('html-root').setAttribute('data-theme', THEME);
@@ -683,42 +658,10 @@ function compute(){
   const age = +els.age.value;
   const retAge = +els.retage.value;
   const tol = +els.tolerance.value;
-  const bce = +els.bce.value;
-  const fed = +els.fed.value;
-  const infl = +els.infl.value;
-  const ph = PHASE[els.phase.value];
-  const tinaK = +els.tina.value;
-  const buffettOn = els.buffett.checked;
-  const includeGold = els.includegold.checked;
-  document.getElementById('v-includegold').textContent = includeGold ? L('buffett.on') : L('buffett.off');
 
   document.getElementById('v-age').textContent = age + (LANG==='it' ? ' anni' : '');
   document.getElementById('v-ret').textContent = retAge + (LANG==='it' ? ' anni' : '');
-  document.getElementById('v-tina').textContent = tinaK.toFixed(2) + 'x';
-  document.getElementById('v-buffett').textContent = buffettOn ? L('buffett.on') : L('buffett.off');
-  document.getElementById('v-bce').textContent = bce.toFixed(2) + '%';
-  document.getElementById('v-fed').textContent = fed.toFixed(2) + '%';
-  document.getElementById('v-infl').textContent = infl.toFixed(2) + '%';
 
-  // --- Merton rule ---
-  const bondProfile = getBondMarketProfile(+els.bondprofile.value);
-  document.getElementById('v-bondprofile').textContent = (+els.bondprofile.value) + '%';
-  const nominalRate = (bondProfile.bceWeight*bce + bondProfile.fedWeight*fed) / 100;
-  document.getElementById('bondprofile-readout').textContent = L('bondprofile.readout')(
-    bondProfile.investor === 'EU' ? L('investor.eu') : L('investor.us'),
-    L('benchmark.' + bondProfile.benchmark),
-    Math.round(bondProfile.bceWeight*100), Math.round(bondProfile.fedWeight*100)
-  );
-  const realRate = nominalRate - infl / 100;
-
-  const RATE_REF = 0.01;
-  const buffettBonus = buffettOn ? BUFFETT_MAX * ph.stress : 0;
-  const erpCap = buffettOn ? 0.20 : 0.09;
-  const erp = clip(MU_R_BASE + ph.erpAdj - tinaK * (realRate - RATE_REF) + buffettBonus, 0.015, erpCap);
-  const mu = MU_BASE_R + erp;
-  const sigma = ph.sigma;
-
-  const GAMMA_YOUNG = 2.5, GAMMA_PEAK = 8.0, GAMMA_LATE = 5.0;
   const REVERSE_SPAN = +els.revspan.value;
   document.getElementById('v-revspan').textContent = REVERSE_SPAN + (LANG==='it' ? ' anni' : (REVERSE_SPAN===1?' year':' years'));
   const revHint = document.getElementById('hint-revspan');
@@ -729,86 +672,96 @@ function compute(){
     revHint.textContent = L('hint.revspan.active');
     revHint.style.opacity = '1';
   }
-  let gammaAge;
+
+  // --- Horizon Score (H) + Risk Capacity Score (RCS) ---
+  let H;
   if (age <= retAge) {
     const t = clip((age - 20) / Math.max(retAge - 20, 1), 0, 1);
-    gammaAge = GAMMA_YOUNG + t * (GAMMA_PEAK - GAMMA_YOUNG);
+    H = H_YOUNG + t * (H_PEAK - H_YOUNG);
   } else {
     const t2 = clip((age - retAge) / REVERSE_SPAN, 0, 1);
-    gammaAge = GAMMA_PEAK - t2 * (GAMMA_PEAK - GAMMA_LATE);
+    H = H_PEAK - t2 * (H_PEAK - H_LATE);
   }
-  const gamma = clip(gammaAge * tol, 1.5, 13);
+  const RCS = clip(H * tol, 1.5, 13);
 
-  let wStar = erp / (gamma * sigma * sigma);
-  wStar = clip(wStar, 0.05, 0.95);
+  // --- Market data (manual today; see getMarketData() for the live-data seam) ---
+  const md = getMarketData();
+  document.getElementById('v-cape').textContent = md.capeEquity.value.toFixed(1);
+  document.getElementById('v-realbondyield').textContent = pct(md.realBondYield.value);
+  document.getElementById('v-equityvol').textContent = pct(md.equityVol.value);
+  document.getElementById('v-goldprice').textContent = '$' + md.goldPriceUSD.value.toLocaleString(LANG==='it' ? 'it-IT' : 'en-US');
 
-  // --- Gold score ---
-  const goldPrice = +els.goldprice.value;
-  document.getElementById('v-goldprice').textContent = '$' + goldPrice.toLocaleString(LANG==='it' ? 'it-IT' : 'en-US');
-  const z1 = clip(-(goldPrice - GOLD_AVG_REAL) / GOLD_STD_REAL, -3, 3);
-  const z2 = ph.geo;
-  const inflGap = clip((infl - 2.0) / 1.5, -2, 3);
-  const z3 = clip(inflGap + ph.recAdj, -3, 3);
-  const z4 = ph.vix;
-  const z5 = ph.corr;
-  const realPct = realRate * 100;
-  const z6 = clip(-(realPct - 1.0) / 1.5, -3, 3);
+  const bondProfile = getBondMarketProfile(+els.bondprofile.value);
+  document.getElementById('v-bondprofile').textContent = (+els.bondprofile.value) + '%';
+  document.getElementById('bondprofile-readout').textContent = L('bondprofile.readout')(
+    bondProfile.investor === 'EU' ? L('investor.eu') : L('investor.us'),
+    L('benchmark.' + bondProfile.benchmark)
+  );
 
-  const c1 = WEIGHTS.val * z1;
-  const c2 = WEIGHTS.geo * z2;
-  const c3 = WEIGHTS.macro * z3;
-  const c4 = WEIGHTS.vix * z4;
-  const c5 = WEIGHTS.corr * z5;
-  const c6 = WEIGHTS.opp * z6;
-  const GS = c1+c2+c3+c4+c5+c6;
+  // --- Core allocation: Equity Risk Premium from CAPE and real bond yield ---
+  const cape = md.capeEquity.value;
+  const capeHigh = cape * (1 + CAPE_BAND); // more expensive scenario -> lower ERP
+  const capeLow  = cape * (1 - CAPE_BAND); // cheaper scenario -> higher ERP
+  const eyCentral = 1 / cape;
+  const eyLow  = 1 / capeHigh;
+  const eyHigh = 1 / capeLow;
+  const ry = md.realBondYield.value;
+  const erpCentral = eyCentral - ry;
+  const erpLow  = eyLow - ry;
+  const erpHigh = eyHigh - ry;
 
-  const wGold = includeGold ? (W_MIN + (W_MAX - W_MIN) * logistic(K * GS)) : 0;
+  const sigma = md.equityVol.value;
+  let wStar      = clip(erpCentral / (RCS * sigma * sigma), 0.05, 0.95);
+  let wStarLow   = clip(erpLow    / (RCS * sigma * sigma), 0.05, 0.95);
+  let wStarHigh  = clip(erpHigh   / (RCS * sigma * sigma), 0.05, 0.95);
 
-  const stock = (1 - wGold) * wStar;
-  const bond = (1 - wGold) * (1 - wStar);
+  // --- Gold Score: 2 factors ---
+  const includeGold = els.includegold.checked;
+  document.getElementById('v-includegold').textContent = includeGold ? (LANG==='it'?'On':'On') : (LANG==='it'?'Off':'Off');
 
-  document.getElementById('bar-bond').style.width = (bond*100)+'%';
-  document.getElementById('bar-stock').style.width = (stock*100)+'%';
+  const goldPrice = md.goldPriceUSD.value;
+  const zVal = clip(-(goldPrice - GOLD_AVG_REAL) / GOLD_STD_REAL, -3, 3);
+  const zOpp = clip(-(ry*100 - 1.0) / 1.5, -3, 3);
+  const GS = 0.5*zVal + 0.5*zOpp;
+  const wGold = includeGold ? clip(GOLD_BUDGET_CENTRAL + (GS/3)*GOLD_BUDGET_SWING, 0.02, 0.20) : 0;
+
+  const stockC = (1-wGold) * wStar;
+  const bondC  = (1-wGold) * (1-wStar);
+  const stockLo = (1-wGold) * wStarLow;
+  const stockHi = (1-wGold) * wStarHigh;
+  const bondLo  = (1-wGold) * (1-wStarHigh);
+  const bondHi  = (1-wGold) * (1-wStarLow);
+
+  // --- render allocation bar (central estimate) ---
+  document.getElementById('bar-bond').style.width = (bondC*100)+'%';
+  document.getElementById('bar-stock').style.width = (stockC*100)+'%';
   document.getElementById('bar-gold').style.width = (wGold*100)+'%';
-  document.getElementById('pct-bond').textContent = pct(bond);
-  document.getElementById('pct-stock').textContent = pct(stock);
+  document.getElementById('pct-bond').textContent = pct(bondC);
+  document.getElementById('pct-stock').textContent = pct(stockC);
   document.getElementById('pct-gold').textContent = pct(wGold);
+  document.getElementById('range-note').textContent =
+    L('range.text')(pct(Math.min(stockLo,stockHi)), pct(Math.max(stockLo,stockHi))) + ' (' + L('leg.stock').toLowerCase() + ')';
 
-  document.getElementById('m-gamma').textContent = gamma.toFixed(2) + 'x';
-  document.getElementById('m-real').textContent = pct(realRate);
+  document.getElementById('m-rcs').textContent = RCS.toFixed(2) + 'x';
+  document.getElementById('m-erp').textContent = pct(erpCentral);
   document.getElementById('m-gs').textContent = GS.toFixed(2);
 
-  const phaseLife = age <= retAge ? L('phaseLife.acc') : L('phaseLife.dec');
-  const phLabel = ph.label[LANG];
-  const tinaNote = realRate < RATE_REF ? L('tinaNoteBelow')(pct(realRate), pct(erp)) : L('tinaNoteAbove')(pct(realRate), pct(erp));
-  let interp = `${LANG==='it' ? 'A' : 'At'} ${age} ${LANG==='it' ? 'anni' : 'years old'} (${phaseLife}${LANG==='it' ? ', pensionamento a ' : ', retiring at '}${retAge}), ${LANG==='it' ? 'con tassi BCE/FED al' : 'with ECB/Fed rates at'} ${bce.toFixed(1)}%/${fed.toFixed(1)}% ${LANG==='it' ? 'e inflazione al' : 'and inflation at'} ${infl.toFixed(1)}%: ${tinaNote} `;
-  if (buffettOn && ph.stress > 0) {
-    interp += L('buffettNote')(phLabel, (buffettBonus*100).toFixed(1));
-  }
-  interp += L('mertonNote')(phLabel, pct(wStar));
-  interp += GS < -0.15 ? L('gsNeg')(GS.toFixed(2)) : GS > 0.15 ? L('gsPos')(GS.toFixed(2)) : L('gsNeutral')(GS.toFixed(2));
-  document.getElementById('interp').textContent = interp;
+  const goldNote = includeGold ? L('gold.note.on')(GS.toFixed(2)) : L('gold.note.off');
+  document.getElementById('interp').textContent = L('interp.text')(RCS.toFixed(2)+'x', pct(erpCentral), pct(wStar), GS.toFixed(2), goldNote);
 
-  document.getElementById('d-mu').textContent = pct(mu);
-  document.getElementById('d-r').textContent = pct(realRate);
-  document.getElementById('d-erp').textContent = pct(erp);
-  document.getElementById('d-buffett').textContent = buffettOn ? '+' + pct(buffettBonus) : (LANG==='it' ? 'spento' : 'off');
+  // --- detail table ---
+  document.getElementById('d-ey').textContent = pct(eyCentral);
+  document.getElementById('d-ry').textContent = pct(ry);
+  document.getElementById('d-erp').textContent = pct(erpCentral);
   document.getElementById('d-sigma').textContent = pct(sigma);
-  document.getElementById('d-gamma').textContent = gamma.toFixed(2)+'x';
+  document.getElementById('d-h').textContent = H.toFixed(2);
+  document.getElementById('d-t').textContent = tol.toFixed(2) + 'x';
+  document.getElementById('d-rcs').textContent = RCS.toFixed(2) + 'x';
   document.getElementById('d-wstar').textContent = pct(wStar);
+  document.getElementById('d-wstarrange').textContent = pct(Math.min(wStarLow,wStarHigh)) + ' – ' + pct(Math.max(wStarLow,wStarHigh));
 
-  document.getElementById('z1').textContent = z1.toFixed(2);
-  document.getElementById('z2').textContent = z2.toFixed(2);
-  document.getElementById('z3').textContent = z3.toFixed(2);
-  document.getElementById('z4').textContent = z4.toFixed(2);
-  document.getElementById('z5').textContent = z5.toFixed(2);
-  document.getElementById('z6').textContent = z6.toFixed(2);
-  document.getElementById('c1').textContent = c1.toFixed(3);
-  document.getElementById('c2').textContent = c2.toFixed(3);
-  document.getElementById('c3').textContent = c3.toFixed(3);
-  document.getElementById('c4').textContent = c4.toFixed(3);
-  document.getElementById('c5').textContent = c5.toFixed(3);
-  document.getElementById('c6').textContent = c6.toFixed(3);
+  document.getElementById('z1').textContent = zVal.toFixed(2);
+  document.getElementById('z2').textContent = zOpp.toFixed(2);
   document.getElementById('c-tot').textContent = GS.toFixed(3);
   document.getElementById('c-wgold').textContent = pct(wGold);
 }

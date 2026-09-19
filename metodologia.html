@@ -120,66 +120,77 @@
 
   <div class="partlabel">
     <div class="num">1</div>
-    <div class="txt"><h2 data-i18n="p1.h">ARCA — Age-Responsive Capital Allocation</h2><p data-i18n="p1.sub">Allocazione dinamica tra Obbligazioni, Azioni e Oro</p></div>
+    <div class="txt"><h2 data-i18n="p1.h">ARCA — Age-Responsive Capital Allocation</h2><p data-i18n="p1.sub">Allocazione tra Obbligazioni, Azioni e Oro, guidata da dati di mercato osservabili</p></div>
   </div>
 
   <section>
-    <h3 data-i18n="s1.h">La regola di Merton (1969)</h3>
-    <p data-i18n="s1.p1">La quota ottimale da destinare all'attivo rischioso rispetto a quello sicuro segue la regola del portafoglio di Merton:</p>
-    <div class="formula">w* = (μ − r) / (γ · σ²)</div>
-    <p class="dim" data-i18n="s1.p2">μ è il rendimento atteso dell'azionario, r il tasso privo di rischio, γ l'avversione al rischio dell'investitore, σ la volatilità attesa dell'azionario. Un premio per il rischio (μ−r) più alto aumenta la quota rischiosa; un'avversione al rischio o una volatilità più alte la riducono. ARCA rende μ, γ e σ dinamici — legati rispettivamente ai tassi d'interesse, all'età e alla fase del ciclo macroeconomico — invece di trattarli come costanti.</p>
+    <h3 data-i18n="s1.h">La regola di Merton (1969) come Core allocation</h3>
+    <p data-i18n="s1.p1">La quota di riferimento da destinare all'attivo rischioso rispetto a quello sicuro segue la regola del portafoglio di Merton:</p>
+    <div class="formula">w* = ERP / (RCS · σ²)</div>
+    <p class="dim" data-i18n="s1.p2">ERP è l'Equity Risk Premium, RCS il Risk Capacity Score dell'investitore, σ la volatilità azionaria attesa. Un premio per il rischio più alto aumenta la quota rischiosa; una capacità di rischio più bassa o una volatilità più alta la riducono. La formula è rimasta invariata rispetto alla versione precedente — quello che è cambiato è come ERP e RCS vengono calcolati: da dati osservabili quando possibile, non da stime interne fisse (vedi sotto).</p>
   </section>
 
   <section>
-    <h3 data-i18n="s2.h">Tassi d'interesse ed effetto TINA</h3>
-    <p data-i18n="s2.p1">Il tasso nominale di riferimento pesa il tasso BCE al 75% e il tasso FED al 25%, coerentemente con un investitore che vive e spende in euro; il tasso FED è disattivabile per isolare l'effetto della sola politica monetaria europea. Il tasso reale che ne risulta (tasso nominale meno inflazione) alimenta l'effetto TINA ("There Is No Alternative"): quando è vicino allo zero o negativo, le obbligazioni non offrono un rendimento sufficiente a compensare il rischio, e il capitale non ha una vera alternativa alle azioni.</p>
-    <div class="formula">ERP = ERP_base − k · (tasso_reale − 1%)</div>
-    <p class="dim" data-i18n="s2.p2">Il coefficiente k (parametro "Sensibilità TINA", regolabile da 0 a 4x) determina l'intensità dell'effetto: con tassi reali bassi o negativi l'ERP sale, w* sale, e la quota obbligazionaria si riduce; con tassi reali elevati le obbligazioni tornano competitive.</p>
-    <div class="callout" data-i18n="s2.note">
-      <b>Nota per l'investitore europeo.</b> La componente obbligazionaria dovrebbe essere allocata in titoli di stato dell'area euro e, per la parte estera, in titoli di stato esteri con copertura del cambio (hedged), per non introdurre un rischio valutario non voluto nella componente "sicura" del portafoglio.
-    </div>
+    <h3 data-i18n="s2.h">Equity Risk Premium da CAPE, non da un rendimento fisso</h3>
+    <p data-i18n="s2.p1">Le versioni precedenti del modello usavano un rendimento azionario atteso fisso (μ) corretto da un meccanismo legato ai tassi delle banche centrali ("TINA"). Un'analisi critica indipendente ha evidenziato che questo produceva un rendimento reale implicito vicino al 9,5% nello scenario di default — sopra qualunque stima forward-looking prudente — e trattava una relazione storicamente contingente (tassi bassi → più azioni) come se fosse una legge strutturale.</p>
+    <p data-i18n="s2.p2">Il modello attuale sostituisce entrambi i meccanismi con un solo confronto tra due dati di mercato:</p>
+    <div class="formula">ERP = 1/CAPE − rendimento_reale_obbligazionario</div>
+    <p class="dim" data-i18n="s2.p3">L'earnings yield (1/CAPE) è un proxy diffuso del rendimento azionario atteso: quando le valutazioni sono compresse (CAPE basso), l'earnings yield sale e con esso l'ERP — lo stesso effetto "contrarian" che la vecchia modalità Buffett Mode cercava di simulare con un bonus discrezionale, qui ottenuto direttamente dal dato di valutazione. Il rendimento reale obbligazionario è inserito direttamente (es. TIPS 10Y USA o Bund-linker tedesco), non derivato dal tasso di policy delle banche centrali meno un'inflazione stimata — un tasso di policy non è il rendimento del titolo effettivamente detenuto, e ignora duration e curva.</p>
   </section>
 
   <section>
-    <h3 data-i18n="s3.h">Reverse Glide Path</h3>
-    <p data-i18n="s3.p1">Il rischio di sequenza dei rendimenti — il danno permanente causato dal prelevare da un portafoglio durante un mercato in calo — è massimo nei primi anni di pensionamento. Pfau & Kitces (2014) mostrano che un "reverse glide path" (o "rising equity glidepath"), in cui l'esposizione azionaria è minima al pensionamento e risale successivamente, protegge meglio da questo rischio rispetto a una riduzione continua legata all'età.</p>
+    <h3 data-i18n="s3.h">Risk Capacity Score: Horizon e Tolerance separati</h3>
+    <p data-i18n="s3.p1">Le versioni precedenti derivavano un unico parametro "γ" (avversione al rischio) direttamente dall'età, presentandolo implicitamente come se catturasse la vera propensione al rischio dell'investitore — che non è osservabile, e che la letteratura comportamentale mostra instabile nel tempo. Il modello attuale separa esplicitamente due concetti distinti:</p>
+    <ul class="factors">
+      <li><b data-i18n="s3.h1.t">Horizon Score (H)</b><br><span class="dim" data-i18n="s3.h1.d">Misura solo l'esposizione al rischio di sequenza dei rendimenti legata al tempo — quanto sei vicino al pensionamento — non la tua psicologia del rischio.</span></li>
+      <li><b data-i18n="s3.h2.t">Tolleranza dichiarata (T)</b><br><span class="dim" data-i18n="s3.h2.d">Una preferenza soggettiva che dichiari tu stesso, tenuta separata e mostrata come tale, non nascosta dentro un unico numero.</span></li>
+    </ul>
+    <div class="formula" style="font-size:14px;">Risk Capacity Score = H × T</div>
+    <p class="dim" data-i18n="s3.p2">Il Risk Capacity Score che ne risulta è dichiarato per quello che è: una calibrazione operativa dell'esposizione al rischio, non una misura di un tratto psicologico "vero".</p>
+  </section>
+
+  <section>
+    <h3 data-i18n="s4.h">Reverse Glide Path</h3>
+    <p data-i18n="s4.p1">Il rischio di sequenza dei rendimenti — il danno permanente causato dal prelevare da un portafoglio durante un mercato in calo — è massimo nei primi anni di pensionamento. Pfau & Kitces (2014) mostrano che un "reverse glide path" (o "rising equity glidepath"), in cui l'esposizione azionaria è minima al pensionamento e risale successivamente, protegge meglio da questo rischio rispetto a una riduzione continua legata all'età.</p>
     <div class="glidepath-viz">
       <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
         <line x1="50" y1="180" x2="650" y2="180" stroke="#2a3242" stroke-width="1"/>
         <line x1="50" y1="20" x2="50" y2="180" stroke="#2a3242" stroke-width="1"/>
         <path d="M 50 150 Q 220 40 340 40 Q 460 40 550 120 Q 610 165 650 170" fill="none" stroke="#c9a24b" stroke-width="2.5"/>
         <circle cx="340" cy="40" r="4" fill="#c9a24b"/>
-        <text x="340" y="26" text-anchor="middle" fill="#e8e6df" font-family="Georgia, serif" font-size="12" data-i18n="s3.viz.peak">picco γ = pensionamento</text>
-        <text x="55" y="200" fill="#6c7686" font-family="-apple-system, sans-serif" font-size="11" data-i18n="s3.viz.young">giovane (accumulo)</text>
-        <text x="600" y="200" text-anchor="end" fill="#6c7686" font-family="-apple-system, sans-serif" font-size="11" data-i18n="s3.viz.late">tarda età (decumulo)</text>
-        <text x="20" y="45" fill="#6c7686" font-family="-apple-system, sans-serif" font-size="11" transform="rotate(-90 20 45)" data-i18n="s3.viz.axis">γ (prudenza)</text>
+        <text x="340" y="26" text-anchor="middle" fill="#e8e6df" font-family="Georgia, serif" font-size="12" data-i18n="s4.viz.peak">picco H = pensionamento</text>
+        <text x="55" y="200" fill="#6c7686" font-family="-apple-system, sans-serif" font-size="11" data-i18n="s4.viz.young">giovane (accumulo)</text>
+        <text x="600" y="200" text-anchor="end" fill="#6c7686" font-family="-apple-system, sans-serif" font-size="11" data-i18n="s4.viz.late">tarda età (decumulo)</text>
+        <text x="20" y="45" fill="#6c7686" font-family="-apple-system, sans-serif" font-size="11" transform="rotate(-90 20 45)" data-i18n="s4.viz.axis">H (prudenza)</text>
       </svg>
     </div>
-    <p data-i18n="s3.p2">ARCA implementa questa forma a campana: l'avversione al rischio γ sale da 2.5 (giovane investitore) a un picco di 8.0 all'età di pensionamento impostata, poi ridiscende verso 5.0 nell'arco di anni configurato dal parametro "Durata Reverse Glide Path".</p>
-    <p data-i18n="s3.p3">La calibrazione della durata si appoggia a un'analisi empirica su oltre 1.700 coorti storiche di pensionamento dal 1871 al 2015 (Jeske, "Early Retirement Now", 2017): le transizioni dal 60% al 100% azionario in 10-13 anni hanno prodotto i tassi di prelievo sicuri più alti tra tutte le strategie testate, statiche o dinamiche — un vantaggio che si amplifica quando le valutazioni azionarie di partenza (Shiller CAPE) sono elevate.</p>
-    <div class="callout warn" data-i18n="s3.callout">
+    <p data-i18n="s4.p2">ARCA implementa questa forma a campana: l'Horizon Score sale da 2.5 (giovane investitore) a un picco di 8.0 all'età di pensionamento impostata, poi ridiscende verso 5.0 nell'arco di anni configurato dal parametro "Durata Reverse Glide Path".</p>
+    <p data-i18n="s4.p3">La calibrazione della durata si appoggia a un'analisi empirica su oltre 1.700 coorti storiche di pensionamento dal 1871 al 2015 (Jeske, "Early Retirement Now", 2017): le transizioni dal 60% al 100% azionario in 10-13 anni hanno prodotto i tassi di prelievo sicuri più alti tra tutte le strategie testate, statiche o dinamiche — un vantaggio che si amplifica quando le valutazioni azionarie di partenza (Shiller CAPE) sono elevate.</p>
+    <div class="callout warn" data-i18n="s4.callout">
       <b>Non è un'assicurazione gratuita.</b> Se il pensionamento inizia proprio su un minimo di mercato, un reverse glide path può performare peggio di un'allocazione statica al 100% azionario, perché parte del rimbalzo iniziale viene ceduta spostando risorse verso le obbligazioni.
     </div>
   </section>
 
   <section>
-    <h3 data-i18n="s4.h">Gold Score — la quota Oro a sei fattori</h3>
-    <p data-i18n="s4.p1">La quota di oro è determinata da sei fattori, ciascuno ridotto a uno z-score, combinati con pesi fissi in un punteggio composito (GS) e passati attraverso una funzione logistica per ottenere una quota compresa tra il 2% e il 20%.</p>
+    <h3 data-i18n="s5.h">Gold Score — da sei a due fattori</h3>
+    <p data-i18n="s5.p1">La versione precedente pesava sei fattori: valutazione storica, rischio geopolitico, regime macro, volatilità di mercato, correlazione dinamica, costo opportunità. Un'analisi critica ha evidenziato che quattro di questi non erano ancorati a un dato osservabile in modo ripetibile (il "rischio geopolitico" non è misurabile in modo consistente) o erano ridondanti con altre parti del modello (regime macro e volatilità duplicavano informazioni già catturate altrove; la correlazione storica oro/azioni-obbligazioni non garantisce quella futura). Restano solo i due fattori realmente ancorati a un dato di mercato:</p>
     <ul class="factors">
-      <li><span class="weight">15%</span><b data-i18n="s4.f1.t">Valutazione storica dell'oro</b><br><span class="dim" data-i18n="s4.f1.d">Confronta il prezzo dell'oro inserito con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia in dollari 2025 (InflationData.com): più l'oro è caro rispetto a quella media, più il fattore penalizza la quota oro.</span></li>
-      <li><span class="weight">20%</span><b data-i18n="s4.f2.t">Rischio geopolitico</b><br><span class="dim" data-i18n="s4.f2.d">Determinato dalla fase macro selezionata.</span></li>
-      <li><span class="weight">25%</span><b data-i18n="s4.f3.t">Regime macro</b><br><span class="dim" data-i18n="s4.f3.d">Gap tra l'inflazione inserita e il target 2%, corretto per fase del ciclo.</span></li>
-      <li><span class="weight">15%</span><b data-i18n="s4.f4.t">Volatilità di mercato</b><br><span class="dim" data-i18n="s4.f4.d">Determinata dalla fase macro selezionata (proxy VIX).</span></li>
-      <li><span class="weight">10%</span><b data-i18n="s4.f5.t">Correlazione dinamica</b><br><span class="dim" data-i18n="s4.f5.d">Sale in scenari di crisi o stagflazione, dove la correlazione oro/azioni-obbligazioni tende a rompersi.</span></li>
-      <li><span class="weight">15%</span><b data-i18n="s4.f6.t">Costo opportunità</b><br><span class="dim" data-i18n="s4.f6.d">Tasso reale invertito: più basso il tasso reale, meno costa detenere oro (che non paga interessi).</span></li>
+      <li><span class="weight">50%</span><b data-i18n="s5.f1.t">Valutazione storica dell'oro</b><br><span class="dim" data-i18n="s5.f1.d">Confronta il prezzo dell'oro inserito con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia in dollari 2025 (InflationData.com).</span></li>
+      <li><span class="weight">50%</span><b data-i18n="s5.f2.t">Costo opportunità</b><br><span class="dim" data-i18n="s5.f2.d">Rendimento reale obbligazionario invertito: più basso il rendimento reale, meno costa detenere oro (che non paga interessi).</span></li>
     </ul>
-    <div class="formula" style="font-size:14px;">w_gold = 2% + 18% × logistica(4 × GS)</div>
+    <div class="formula" style="font-size:14px;">Quota oro = 8% ± (GS/3) × 5pp, entro un range 2%–20%</div>
+    <p class="dim" data-i18n="s5.p2">La funzione logistica precedente è stata sostituita da una relazione lineare più semplice e trasparente, con lo stesso effetto di limitare la quota oro entro una banda ragionevole.</p>
   </section>
 
   <section>
-    <h3 data-i18n="s5.h">Buffett Mode — regime difensivo e regime contrarian</h3>
-    <p data-i18n="s5.p1">Nella regola di Merton, σ è al quadrato nel denominatore: un incremento di volatilità in fase di crisi riduce w* più di quanto lo aumenti un pari incremento dell'ERP. Questo produce un comportamento coerente con la letteratura sui "volatility-managed portfolios" (Moreira & Muir, 2017), che riduce l'esposizione quando la volatilità attesa sale, indipendentemente dalla valutazione dei prezzi.</p>
-    <p data-i18n="s5.p2">Buffett Mode introduce un regime alternativo, di matrice contrarian/value (Buffett, Klarman): un crollo dei prezzi comprime i multipli e alza i rendimenti attesi futuri più di quanto salga il rischio percepito nel breve periodo. Quando attivo, aggiunge un bonus all'ERP proporzionale allo stress della fase (fino a +15 punti percentuali in crisi acuta), sufficiente a superare l'effetto della volatilità e a portare l'esposizione azionaria sopra il livello di un regime normale.</p>
+    <h3 data-i18n="s6.h">Cosa è stato eliminato, e perché</h3>
+    <p data-i18n="s6.p1">La modalità "Buffett Mode" aggiungeva un bonus discrezionale all'ERP in fase di crisi (fino a +15 punti percentuali), sulla base della tesi che valutazioni compresse alzano i rendimenti attesi futuri. Il problema, evidenziato in un'analisi critica indipendente, è che una crisi non implica necessariamente valutazioni sufficientemente basse, e il bonus era una view discrezionale mascherata da parametro tecnico. Il nuovo meccanismo basato su CAPE produce lo stesso tipo di effetto — più azioni quando il mercato è a buon mercato — ma lo fa leggendo il dato di valutazione stesso, non attivando un interruttore. La modalità è stata quindi rimossa: non serve più, perché il suo scopo è già coperto dal nuovo calcolo dell'ERP.</p>
+    <p data-i18n="s6.p2">L'effetto "TINA" (tassi reali bassi → più azioni) è stato rimosso come meccanismo separato per lo stesso motivo: era una relazione storicamente contingente (osservata soprattutto nel regime di tassi repressi 2009-2021) applicata come se fosse strutturale. Il rendimento reale obbligazionario ora entra nel modello una sola volta, come termine diretto dell'ERP — non più come slider di "sensibilità" con un coefficiente arbitrario.</p>
+  </section>
+
+  <section>
+    <h3 data-i18n="s7.h">Perché un intervallo, non un numero singolo</h3>
+    <p data-i18n="s7.p1">Con parametri di mercato incerti, un output come "47,3% azioni" comunica una precisione che i dati non sostengono. ARCA calcola quindi anche un intervallo plausibile, ottenuto facendo variare il CAPE inserito di ±15% (una stima ragionevole dell'incertezza su quale sia il valore "corretto" di quel dato, non un intervallo di confidenza statistico formale) e osservando come cambia l'allocazione risultante. L'intervallo è mostrato accanto al numero centrale nella pagina del calcolatore.</p>
   </section>
 
   <div class="partlabel">
@@ -233,31 +244,35 @@ const TR = {
     "kicker": "Metodologia",
     "title": "Come funzionano ARCA e CapitalFlow",
     "subtitle": "Documentazione tecnica dei due modelli quantitativi del progetto: ARCA per l'allocazione patrimoniale nella fase di accumulo, CapitalFlow per il tasso di prelievo nella fase di decumulo.",
-    "p1.h": "ARCA — Age-Responsive Capital Allocation", "p1.sub": "Allocazione dinamica tra Obbligazioni, Azioni e Oro",
-    "s1.h": "La regola di Merton (1969)",
-    "s1.p1": "La quota ottimale da destinare all'attivo rischioso rispetto a quello sicuro segue la regola del portafoglio di Merton:",
-    "s1.p2": "μ è il rendimento atteso dell'azionario, r il tasso privo di rischio, γ l'avversione al rischio dell'investitore, σ la volatilità attesa dell'azionario. Un premio per il rischio (μ−r) più alto aumenta la quota rischiosa; un'avversione al rischio o una volatilità più alte la riducono. ARCA rende μ, γ e σ dinamici — legati rispettivamente ai tassi d'interesse, all'età e alla fase del ciclo macroeconomico — invece di trattarli come costanti.",
-    "s2.h": "Tassi d'interesse ed effetto TINA",
-    "s2.p1": "Il tasso nominale di riferimento pesa il tasso BCE al 75% e il tasso FED al 25%, coerentemente con un investitore che vive e spende in euro; il tasso FED è disattivabile per isolare l'effetto della sola politica monetaria europea. Il tasso reale che ne risulta (tasso nominale meno inflazione) alimenta l'effetto TINA (\u201cThere Is No Alternative\u201d): quando è vicino allo zero o negativo, le obbligazioni non offrono un rendimento sufficiente a compensare il rischio, e il capitale non ha una vera alternativa alle azioni.",
-    "s2.p2": "Il coefficiente k (parametro \u201cSensibilità TINA\u201d, regolabile da 0 a 4x) determina l'intensità dell'effetto: con tassi reali bassi o negativi l'ERP sale, w* sale, e la quota obbligazionaria si riduce; con tassi reali elevati le obbligazioni tornano competitive.",
-    "s2.note": "<b>Nota per l'investitore europeo.</b> La componente obbligazionaria dovrebbe essere allocata in titoli di stato dell'area euro e, per la parte estera, in titoli di stato esteri con copertura del cambio (hedged), per non introdurre un rischio valutario non voluto nella componente \u201csicura\u201d del portafoglio.",
-    "s3.h": "Reverse Glide Path",
-    "s3.p1": "Il rischio di sequenza dei rendimenti — il danno permanente causato dal prelevare da un portafoglio durante un mercato in calo — è massimo nei primi anni di pensionamento. Pfau & Kitces (2014) mostrano che un \u201creverse glide path\u201d (o \u201crising equity glidepath\u201d), in cui l'esposizione azionaria è minima al pensionamento e risale successivamente, protegge meglio da questo rischio rispetto a una riduzione continua legata all'età.",
-    "s3.viz.peak": "picco γ = pensionamento", "s3.viz.young": "giovane (accumulo)", "s3.viz.late": "tarda età (decumulo)", "s3.viz.axis": "γ (prudenza)",
-    "s3.p2": "ARCA implementa questa forma a campana: l'avversione al rischio γ sale da 2.5 (giovane investitore) a un picco di 8.0 all'età di pensionamento impostata, poi ridiscende verso 5.0 nell'arco di anni configurato dal parametro \u201cDurata Reverse Glide Path\u201d.",
-    "s3.p3": "La calibrazione della durata si appoggia a un'analisi empirica su oltre 1.700 coorti storiche di pensionamento dal 1871 al 2015 (Jeske, \u201cEarly Retirement Now\u201d, 2017): le transizioni dal 60% al 100% azionario in 10-13 anni hanno prodotto i tassi di prelievo sicuri più alti tra tutte le strategie testate, statiche o dinamiche — un vantaggio che si amplifica quando le valutazioni azionarie di partenza (Shiller CAPE) sono elevate.",
-    "s3.callout": "<b>Non è un'assicurazione gratuita.</b> Se il pensionamento inizia proprio su un minimo di mercato, un reverse glide path può performare peggio di un'allocazione statica al 100% azionario, perché parte del rimbalzo iniziale viene ceduta spostando risorse verso le obbligazioni.",
-    "s4.h": "Gold Score — la quota Oro a sei fattori",
-    "s4.p1": "La quota di oro è determinata da sei fattori, ciascuno ridotto a uno z-score, combinati con pesi fissi in un punteggio composito (GS) e passati attraverso una funzione logistica per ottenere una quota compresa tra il 2% e il 20%.",
-    "s4.f1.t": "Valutazione storica dell'oro", "s4.f1.d": "Confronta il prezzo dell'oro inserito con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia in dollari 2025 (InflationData.com): più l'oro è caro rispetto a quella media, più il fattore penalizza la quota oro.",
-    "s4.f2.t": "Rischio geopolitico", "s4.f2.d": "Determinato dalla fase macro selezionata.",
-    "s4.f3.t": "Regime macro", "s4.f3.d": "Gap tra l'inflazione inserita e il target 2%, corretto per fase del ciclo.",
-    "s4.f4.t": "Volatilità di mercato", "s4.f4.d": "Determinata dalla fase macro selezionata (proxy VIX).",
-    "s4.f5.t": "Correlazione dinamica", "s4.f5.d": "Sale in scenari di crisi o stagflazione, dove la correlazione oro/azioni-obbligazioni tende a rompersi.",
-    "s4.f6.t": "Costo opportunità", "s4.f6.d": "Tasso reale invertito: più basso il tasso reale, meno costa detenere oro (che non paga interessi).",
-    "s5.h": "Buffett Mode — regime difensivo e regime contrarian",
-    "s5.p1": "Nella regola di Merton, σ è al quadrato nel denominatore: un incremento di volatilità in fase di crisi riduce w* più di quanto lo aumenti un pari incremento dell'ERP. Questo produce un comportamento coerente con la letteratura sui \u201cvolatility-managed portfolios\u201d (Moreira & Muir, 2017), che riduce l'esposizione quando la volatilità attesa sale, indipendentemente dalla valutazione dei prezzi.",
-    "s5.p2": "Buffett Mode introduce un regime alternativo, di matrice contrarian/value (Buffett, Klarman): un crollo dei prezzi comprime i multipli e alza i rendimenti attesi futuri più di quanto salga il rischio percepito nel breve periodo. Quando attivo, aggiunge un bonus all'ERP proporzionale allo stress della fase (fino a +15 punti percentuali in crisi acuta), sufficiente a superare l'effetto della volatilità e a portare l'esposizione azionaria sopra il livello di un regime normale.",
+    "p1.h": "ARCA — Age-Responsive Capital Allocation", "p1.sub": "Allocazione tra Obbligazioni, Azioni e Oro, guidata da dati di mercato osservabili",
+    "s1.h": "La regola di Merton (1969) come Core allocation",
+    "s1.p1": "La quota di riferimento da destinare all'attivo rischioso rispetto a quello sicuro segue la regola del portafoglio di Merton:",
+    "s1.p2": "ERP è l'Equity Risk Premium, RCS il Risk Capacity Score dell'investitore, σ la volatilità azionaria attesa. Un premio per il rischio più alto aumenta la quota rischiosa; una capacità di rischio più bassa o una volatilità più alta la riducono. La formula è rimasta invariata rispetto alla versione precedente — quello che è cambiato è come ERP e RCS vengono calcolati: da dati osservabili quando possibile, non da stime interne fisse (vedi sotto).",
+    "s2.h": "Equity Risk Premium da CAPE, non da un rendimento fisso",
+    "s2.p1": "Le versioni precedenti del modello usavano un rendimento azionario atteso fisso (μ) corretto da un meccanismo legato ai tassi delle banche centrali (\u201cTINA\u201d). Un'analisi critica indipendente ha evidenziato che questo produceva un rendimento reale implicito vicino al 9,5% nello scenario di default — sopra qualunque stima forward-looking prudente — e trattava una relazione storicamente contingente (tassi bassi \u2192 più azioni) come se fosse una legge strutturale.",
+    "s2.p2": "Il modello attuale sostituisce entrambi i meccanismi con un solo confronto tra due dati di mercato:",
+    "s2.p3": "L'earnings yield (1/CAPE) è un proxy diffuso del rendimento azionario atteso: quando le valutazioni sono compresse (CAPE basso), l'earnings yield sale e con esso l'ERP — lo stesso effetto \u201ccontrarian\u201d che la vecchia modalità Buffett Mode cercava di simulare con un bonus discrezionale, qui ottenuto direttamente dal dato di valutazione. Il rendimento reale obbligazionario è inserito direttamente (es. TIPS 10Y USA o Bund-linker tedesco), non derivato dal tasso di policy delle banche centrali meno un'inflazione stimata — un tasso di policy non è il rendimento del titolo effettivamente detenuto, e ignora duration e curva.",
+    "s3.h": "Risk Capacity Score: Horizon e Tolerance separati",
+    "s3.p1": "Le versioni precedenti derivavano un unico parametro \u201cγ\u201d (avversione al rischio) direttamente dall'età, presentandolo implicitamente come se catturasse la vera propensione al rischio dell'investitore — che non è osservabile, e che la letteratura comportamentale mostra instabile nel tempo. Il modello attuale separa esplicitamente due concetti distinti:",
+    "s3.h1.t": "Horizon Score (H)", "s3.h1.d": "Misura solo l'esposizione al rischio di sequenza dei rendimenti legata al tempo — quanto sei vicino al pensionamento — non la tua psicologia del rischio.",
+    "s3.h2.t": "Tolleranza dichiarata (T)", "s3.h2.d": "Una preferenza soggettiva che dichiari tu stesso, tenuta separata e mostrata come tale, non nascosta dentro un unico numero.",
+    "s3.p2": "Il Risk Capacity Score che ne risulta è dichiarato per quello che è: una calibrazione operativa dell'esposizione al rischio, non una misura di un tratto psicologico \u201cvero\u201d.",
+    "s4.h": "Reverse Glide Path",
+    "s4.p1": "Il rischio di sequenza dei rendimenti — il danno permanente causato dal prelevare da un portafoglio durante un mercato in calo — è massimo nei primi anni di pensionamento. Pfau & Kitces (2014) mostrano che un \u201creverse glide path\u201d (o \u201crising equity glidepath\u201d), in cui l'esposizione azionaria è minima al pensionamento e risale successivamente, protegge meglio da questo rischio rispetto a una riduzione continua legata all'età.",
+    "s4.viz.peak": "picco H = pensionamento", "s4.viz.young": "giovane (accumulo)", "s4.viz.late": "tarda età (decumulo)", "s4.viz.axis": "H (prudenza)",
+    "s4.p2": "ARCA implementa questa forma a campana: l'Horizon Score sale da 2.5 (giovane investitore) a un picco di 8.0 all'età di pensionamento impostata, poi ridiscende verso 5.0 nell'arco di anni configurato dal parametro \u201cDurata Reverse Glide Path\u201d.",
+    "s4.p3": "La calibrazione della durata si appoggia a un'analisi empirica su oltre 1.700 coorti storiche di pensionamento dal 1871 al 2015 (Jeske, \u201cEarly Retirement Now\u201d, 2017): le transizioni dal 60% al 100% azionario in 10-13 anni hanno prodotto i tassi di prelievo sicuri più alti tra tutte le strategie testate, statiche o dinamiche — un vantaggio che si amplifica quando le valutazioni azionarie di partenza (Shiller CAPE) sono elevate.",
+    "s4.callout": "<b>Non è un'assicurazione gratuita.</b> Se il pensionamento inizia proprio su un minimo di mercato, un reverse glide path può performare peggio di un'allocazione statica al 100% azionario, perché parte del rimbalzo iniziale viene ceduta spostando risorse verso le obbligazioni.",
+    "s5.h": "Gold Score — da sei a due fattori",
+    "s5.p1": "La versione precedente pesava sei fattori: valutazione storica, rischio geopolitico, regime macro, volatilità di mercato, correlazione dinamica, costo opportunità. Un'analisi critica ha evidenziato che quattro di questi non erano ancorati a un dato osservabile in modo ripetibile (il \u201crischio geopolitico\u201d non è misurabile in modo consistente) o erano ridondanti con altre parti del modello (regime macro e volatilità duplicavano informazioni già catturate altrove; la correlazione storica oro/azioni-obbligazioni non garantisce quella futura). Restano solo i due fattori realmente ancorati a un dato di mercato:",
+    "s5.f1.t": "Valutazione storica dell'oro", "s5.f1.d": "Confronta il prezzo dell'oro inserito con la media reale (aggiustata per inflazione) dal 1980, $1.397/oncia in dollari 2025 (InflationData.com).",
+    "s5.f2.t": "Costo opportunità", "s5.f2.d": "Rendimento reale obbligazionario invertito: più basso il rendimento reale, meno costa detenere oro (che non paga interessi).",
+    "s5.p2": "La funzione logistica precedente è stata sostituita da una relazione lineare più semplice e trasparente, con lo stesso effetto di limitare la quota oro entro una banda ragionevole.",
+    "s6.h": "Cosa è stato eliminato, e perché",
+    "s6.p1": "La modalità \u201cBuffett Mode\u201d aggiungeva un bonus discrezionale all'ERP in fase di crisi (fino a +15 punti percentuali), sulla base della tesi che valutazioni compresse alzano i rendimenti attesi futuri. Il problema, evidenziato in un'analisi critica indipendente, è che una crisi non implica necessariamente valutazioni sufficientemente basse, e il bonus era una view discrezionale mascherata da parametro tecnico. Il nuovo meccanismo basato su CAPE produce lo stesso tipo di effetto — più azioni quando il mercato è a buon mercato — ma lo fa leggendo il dato di valutazione stesso, non attivando un interruttore. La modalità è stata quindi rimossa: non serve più, perché il suo scopo è già coperto dal nuovo calcolo dell'ERP.",
+    "s6.p2": "L'effetto \u201cTINA\u201d (tassi reali bassi \u2192 più azioni) è stato rimosso come meccanismo separato per lo stesso motivo: era una relazione storicamente contingente (osservata soprattutto nel regime di tassi repressi 2009-2021) applicata come se fosse strutturale. Il rendimento reale obbligazionario ora entra nel modello una sola volta, come termine diretto dell'ERP — non più come slider di \u201csensibilità\u201d con un coefficiente arbitrario.",
+    "s7.h": "Perché un intervallo, non un numero singolo",
+    "s7.p1": "Con parametri di mercato incerti, un output come \u201c47,3% azioni\u201d comunica una precisione che i dati non sostengono. ARCA calcola quindi anche un intervallo plausibile, ottenuto facendo variare il CAPE inserito di ±15% (una stima ragionevole dell'incertezza su quale sia il valore \u201ccorretto\u201d di quel dato, non un intervallo di confidenza statistico formale) e osservando come cambia l'allocazione risultante. L'intervallo è mostrato accanto al numero centrale nella pagina del calcolatore.",
     "p2.h": "Decumulo — Tasso di Prelievo Sicuro", "p2.sub": "Quattro strategie classiche per la fase di decumulo",
     "s6.h": "Perché il decumulo è un problema diverso dall'accumulo",
     "s6.p1": "Durante l'accumulo, la volatilità è spesso un'opportunità: un ribasso è un'occasione d'acquisto con anni davanti per recuperare. Durante il decumulo diventa un rischio, perché i prelievi regolari trasformano un calo temporaneo dei mercati in una perdita permanente di capitale — il cosiddetto rischio di sequenza dei rendimenti. La letteratura ha affrontato il problema con diversi approcci, sintetizzati nel podcast <i>Too Big To Fail</i> (\u201cVivere di Rendita e Decumulo: 4 Metodi per Ritirare gli Investimenti Senza Finire i Soldi\u201d) a cui questa sezione fa riferimento.",
@@ -280,31 +295,35 @@ const TR = {
     "kicker": "Methodology",
     "title": "How ARCA and CapitalFlow work",
     "subtitle": "Technical documentation for the project's two quantitative models: ARCA for asset allocation during accumulation, CapitalFlow for the withdrawal rate during decumulation.",
-    "p1.h": "ARCA — Age-Responsive Capital Allocation", "p1.sub": "Dynamic allocation across Bonds, Stocks and Gold",
-    "s1.h": "The Merton rule (1969)",
-    "s1.p1": "The optimal share allocated to the risky asset versus the safe one follows Merton's portfolio rule:",
-    "s1.p2": "μ is the expected equity return, r the risk-free rate, γ the investor's risk aversion, σ the expected equity volatility. A higher risk premium (μ−r) raises the risky share; higher risk aversion or volatility lowers it. ARCA makes μ, γ and σ dynamic — tied respectively to interest rates, age, and the macroeconomic cycle phase — instead of treating them as constants.",
-    "s2.h": "Interest rates and the TINA effect",
-    "s2.p1": "The reference nominal rate weights the ECB rate at 75% and the Fed rate at 25%, consistent with an investor who lives and spends in euros; the Fed rate can be switched off to isolate the effect of European monetary policy alone. The resulting real rate (nominal rate minus inflation) feeds the TINA effect (\u201cThere Is No Alternative\u201d): when it is near zero or negative, bonds don't offer enough return to compensate for risk, and capital has no real alternative to equities.",
-    "s2.p2": "The coefficient k (the \u201cTINA sensitivity\u201d parameter, adjustable from 0 to 4x) sets the strength of the effect: with low or negative real rates the ERP rises, w* rises, and the bond share shrinks; with elevated real rates bonds become competitive again.",
-    "s2.note": "<b>Note for European investors.</b> The bond allocation should sit in euro-area government bonds and, for the foreign portion, in currency-hedged foreign government bonds, so as not to introduce unwanted currency risk into the \u201csafe\u201d part of the portfolio.",
-    "s3.h": "Reverse Glide Path",
-    "s3.p1": "Sequence-of-returns risk — the permanent damage caused by withdrawing from a portfolio during a down market — peaks in the first years of retirement. Pfau & Kitces (2014) show that a \u201creverse glide path\u201d (or \u201crising equity glidepath\u201d), where equity exposure is lowest at retirement and rises afterward, protects better against this risk than a continuous age-based decline.",
-    "s3.viz.peak": "γ peak = retirement", "s3.viz.young": "young (accumulation)", "s3.viz.late": "later years (decumulation)", "s3.viz.axis": "γ (caution)",
-    "s3.p2": "ARCA implements this bell shape: risk aversion γ rises from 2.5 (young investor) to a peak of 8.0 at the set retirement age, then eases back toward 5.0 over the span configured by the \u201cReverse Glide Path duration\u201d parameter.",
-    "s3.p3": "The duration is calibrated on an empirical analysis of over 1,700 historical retirement cohorts from 1871 to 2015 (Jeske, \u201cEarly Retirement Now\u201d, 2017): 60%\u2192100% equity transitions over 10-13 years produced the highest safe withdrawal rates of any strategy tested, static or dynamic — an edge that grows when starting equity valuations (Shiller CAPE) are elevated.",
-    "s3.callout": "<b>Not free insurance.</b> If retirement starts right at a market bottom, a reverse glide path can underperform a static 100% equity allocation, because part of the early rebound is given up by shifting into bonds.",
-    "s4.h": "Gold Score — the six-factor Gold share",
-    "s4.p1": "The gold share is determined by six factors, each reduced to a z-score, combined with fixed weights into a composite (GS) score, then passed through a logistic function to produce a share between 2% and 20%.",
-    "s4.f1.t": "Historical gold valuation", "s4.f1.d": "Compares the entered gold price against the real (inflation-adjusted) average since 1980, $1,397/oz in 2025 dollars (InflationData.com): the more expensive gold is relative to that average, the more this factor penalizes the gold share.",
-    "s4.f2.t": "Geopolitical risk", "s4.f2.d": "Set by the selected macro phase.",
-    "s4.f3.t": "Macro regime", "s4.f3.d": "Gap between the entered inflation and the 2% target, adjusted for cycle phase.",
-    "s4.f4.t": "Market volatility", "s4.f4.d": "Set by the selected macro phase (VIX proxy).",
-    "s4.f5.t": "Dynamic correlation", "s4.f5.d": "Rises in crisis or stagflation scenarios, where the gold/stocks-bonds correlation tends to break down.",
-    "s4.f6.t": "Opportunity cost", "s4.f6.d": "Inverted real rate: the lower the real rate, the cheaper it is to hold gold (which pays no interest).",
-    "s5.h": "Buffett Mode — defensive and contrarian regimes",
-    "s5.p1": "In the Merton rule, σ is squared in the denominator: a rise in volatility during a crisis reduces w* more than an equal rise in the ERP increases it. This produces behavior consistent with the \u201cvolatility-managed portfolios\u201d literature (Moreira & Muir, 2017), which cuts exposure as expected volatility rises, regardless of the valuation picture.",
-    "s5.p2": "Buffett Mode introduces an alternative, contrarian/value-oriented regime (Buffett, Klarman): a price crash compresses multiples and raises future expected returns more than perceived near-term risk rises. When active, it adds an ERP bonus proportional to that phase's stress (up to +15 percentage points in an acute crisis), enough to overcome the volatility effect and push equity exposure above the normal-regime level.",
+    "p1.h": "ARCA — Age-Responsive Capital Allocation", "p1.sub": "Allocation across Bonds, Stocks and Gold, driven by observable market data",
+    "s1.h": "The Merton rule (1969) as Core allocation",
+    "s1.p1": "The reference share allocated to the risky asset versus the safe one follows Merton's portfolio rule:",
+    "s1.p2": "ERP is the Equity Risk Premium, RCS the investor's Risk Capacity Score, σ the expected equity volatility. A higher risk premium raises the risky share; lower risk capacity or higher volatility lowers it. The formula itself is unchanged from the previous version — what changed is how ERP and RCS are computed: from observable data where possible, not from fixed internal estimates (see below).",
+    "s2.h": "Equity Risk Premium from CAPE, not a fixed return",
+    "s2.p1": "Earlier versions of the model used a fixed expected equity return (μ) adjusted by a mechanism tied to central bank rates (\u201cTINA\u201d). An independent critical review found this produced an implied real return close to 9.5% in the default scenario — above any prudent forward-looking estimate — and treated a historically contingent relationship (low rates \u2192 more equities) as if it were a structural law.",
+    "s2.p2": "The current model replaces both mechanisms with a single comparison between two market data points:",
+    "s2.p3": "Earnings yield (1/CAPE) is a widely used proxy for expected equity return: when valuations are compressed (low CAPE), earnings yield rises and so does the ERP — the same \u201ccontrarian\u201d effect the old Buffett Mode tried to simulate with a discretionary bonus, here obtained directly from the valuation input. The real bond yield is entered directly (e.g. 10Y US TIPS or German Bund-linker), not derived from the central bank's policy rate minus an estimated inflation figure — a policy rate isn't the yield on the bond actually held, and it ignores duration and the curve.",
+    "s3.h": "Risk Capacity Score: Horizon and Tolerance kept separate",
+    "s3.p1": "Earlier versions derived a single \u201cgamma\u201d parameter (risk aversion) directly from age, implicitly presenting it as if it captured the investor's true risk appetite — which isn't observable, and which behavioral literature shows is unstable over time. The current model explicitly separates two distinct concepts:",
+    "s3.h1.t": "Horizon Score (H)", "s3.h1.d": "Measures only the time-driven exposure to sequence-of-returns risk — how close you are to retirement — not your risk psychology.",
+    "s3.h2.t": "Stated Tolerance (T)", "s3.h2.d": "A subjective preference you state yourself, kept separate and shown as such, not hidden inside a single number.",
+    "s3.p2": "The resulting Risk Capacity Score is presented for what it is: an operational calibration of risk exposure, not a measurement of a \u201ctrue\u201d psychological trait.",
+    "s4.h": "Reverse Glide Path",
+    "s4.p1": "Sequence-of-returns risk — the permanent damage caused by withdrawing from a portfolio during a down market — peaks in the first years of retirement. Pfau & Kitces (2014) show that a \u201creverse glide path\u201d (or \u201crising equity glidepath\u201d), where equity exposure is lowest at retirement and rises afterward, protects better against this risk than a continuous age-based decline.",
+    "s4.viz.peak": "H peak = retirement", "s4.viz.young": "young (accumulation)", "s4.viz.late": "later years (decumulation)", "s4.viz.axis": "H (caution)",
+    "s4.p2": "ARCA implements this bell shape: the Horizon Score rises from 2.5 (young investor) to a peak of 8.0 at the set retirement age, then eases back toward 5.0 over the span configured by the \u201cReverse Glide Path duration\u201d parameter.",
+    "s4.p3": "The duration is calibrated on an empirical analysis of over 1,700 historical retirement cohorts from 1871 to 2015 (Jeske, \u201cEarly Retirement Now\u201d, 2017): 60%\u2192100% equity transitions over 10-13 years produced the highest safe withdrawal rates of any strategy tested, static or dynamic — an edge that grows when starting equity valuations (Shiller CAPE) are elevated.",
+    "s4.callout": "<b>Not free insurance.</b> If retirement starts right at a market bottom, a reverse glide path can underperform a static 100% equity allocation, because part of the early rebound is given up by shifting into bonds.",
+    "s5.h": "Gold Score — from six factors to two",
+    "s5.p1": "The previous version weighted six factors: historical valuation, geopolitical risk, macro regime, market volatility, dynamic correlation, opportunity cost. A critical review found that four of these weren't anchored to a repeatably observable data point (\u201cgeopolitical risk\u201d can't be measured consistently) or were redundant with other parts of the model (macro regime and volatility duplicated information captured elsewhere; the historical gold/stocks-bonds correlation offers no guarantee for the future). What remains are the two factors genuinely anchored to market data:",
+    "s5.f1.t": "Historical gold valuation", "s5.f1.d": "Compares the entered gold price against the real (inflation-adjusted) average since 1980, $1,397/oz in 2025 dollars (InflationData.com).",
+    "s5.f2.t": "Opportunity cost", "s5.f2.d": "Inverted real bond yield: the lower the real yield, the cheaper it is to hold gold (which pays no interest).",
+    "s5.p2": "The previous logistic function has been replaced by a simpler, more transparent linear relationship, with the same effect of bounding the gold share within a reasonable range.",
+    "s6.h": "What was removed, and why",
+    "s6.p1": "\u201cBuffett Mode\u201d added a discretionary bonus to the ERP during crises (up to +15 percentage points), on the premise that compressed valuations raise future expected returns. The problem, flagged in an independent critical review, is that a crisis doesn't necessarily imply sufficiently low valuations, and the bonus was a discretionary view dressed up as a technical parameter. The new CAPE-based mechanism produces the same kind of effect — more equities when the market is cheap — but does so by reading the valuation input itself, not by flipping a switch. The mode has therefore been removed: it's no longer needed, because its purpose is already covered by the new ERP calculation.",
+    "s6.p2": "The \u201cTINA\u201d effect (low real rates \u2192 more equities) was removed as a separate mechanism for the same reason: it was a historically contingent relationship (observed mainly in the 2009-2021 repressed-rates regime) applied as if it were structural. The real bond yield now enters the model exactly once, as a direct term of the ERP — no longer as a \u201csensitivity\u201d slider with an arbitrary coefficient.",
+    "s7.h": "Why a range, not a single number",
+    "s7.p1": "With uncertain market inputs, an output like \u201c47.3% equities\u201d communicates a precision the data doesn't support. ARCA therefore also computes a plausible range, obtained by varying the entered CAPE by \u00b115% (a reasonable estimate of the uncertainty over what the \u201ccorrect\u201d value of that input is, not a formal statistical confidence interval) and observing how the resulting allocation changes. The range is shown alongside the central figure on the calculator page.",
     "p2.h": "Decumulation — Safe Withdrawal Rate", "p2.sub": "Four classic strategies for the decumulation phase",
     "s6.h": "Why decumulation is a different problem from accumulation",
     "s6.p1": "During accumulation, volatility is often an opportunity: a downturn is a buying opportunity with years ahead to recover. During decumulation it becomes a risk, because regular withdrawals turn a temporary market decline into a permanent loss of capital — the so-called sequence-of-returns risk. The literature has addressed this in several ways, summarized in the <i>Too Big To Fail</i> podcast (\u201cLiving Off Your Portfolio and Decumulation: 4 Methods to Withdraw Your Investments Without Running Out of Money\u201d), which this section draws on.",
